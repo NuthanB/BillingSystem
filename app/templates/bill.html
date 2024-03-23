@@ -1,0 +1,39 @@
+<!-- templates/bill.html -->
+{% extends 'layout.html' %}
+
+{% block title %}Bill {{ bill.bill_number }}{% endblock %}
+
+{% block content %}
+<section>
+    <h2>Bill {{ bill.bill_number }}</h2>
+    <p>User: {{ bill.user }}</p>
+    <p>Date & Time: {{ bill.bill_date_time }}</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Item Name</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Total</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in bill.items %}
+            <tr>
+                <td>{{ item.item_name }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.price }}</td>
+                <td>{{ item.quantity * item.price }}</td>
+                <td>
+                    <form action="{{ url_for('delete_item', item_id=item.id) }}" method="post">
+                        <button type="submit">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <p>Total: {{ bill.total }}</p>
+</section>
+{% endblock %}

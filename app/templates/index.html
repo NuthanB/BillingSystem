@@ -3,60 +3,15 @@
 {% block title %}Billing System{% endblock %}
 
 {% block content %}
-<section>
-    <h2>Billing System</h2>
-    <div>
-        <input type="text" id="searchInput" placeholder="Search...">
-        <button onclick="filterItems('C')">C</button>
-        <!-- Add more filter buttons as needed -->
-    </div>
-    <div id="itemsList">
-        <!-- Display filtered items here -->
-    </div>
-    <div>
-        <label for="quantity">Quantity:</label>
-        <input type="number" id="quantity" value="1">
-        <button onclick="addToBill()">Add to Bill</button>
-    </div>
-    <div id="billItems">
-        <!-- Display items added to the bill here -->
-    </div>
-    <div>
-        <button onclick="calculateTotal()">Calculate Total</button>
-        <p>Total: <span id="total"></span></p>
-    </div>
-    <button onclick="printBill()">Print Bill</button>
-</section>
-
-<script>
-    // Sample items data
-    const itemsData = [
-        { name: "Coffee", price: 5 },
-        { name: "Tea", price: 3 },
-        // Add more items as needed
-    ];
-
-    // Function to filter items based on filter value
-    function filterItems(filter) {
-        // Logic to filter items based on filter value
-        // Display filtered items in #itemsList
-    }
-
-    // Function to add item to the bill
-    function addToBill() {
-        // Logic to add item to the bill
-        // Display added item in #billItems
-    }
-
-    // Function to calculate total bill amount
-    function calculateTotal() {
-        // Logic to calculate total bill amount
-        // Display total amount in #total
-    }
-
-    // Function to print the bill
-    function printBill() {
-        // Logic to print the bill
-    }
-</script>
+<div class="container">
+    <h2>Welcome to the Billing System</h2>
+    {% if logged_in %}
+        <p>You are logged in. What would you like to do?</p>
+        <div>
+            <a href="{{ url_for('create_bill') }}" class="btn btn-primary">Create a New Bill</a>
+        </div>
+    {% else %}
+        <p>Please <a href="{{ url_for('login') }}">login</a> or <a href="{{ url_for('signup') }}">sign up</a> to access the billing system.</p>
+    {% endif %}
+</div>
 {% endblock %}
