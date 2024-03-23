@@ -50,3 +50,22 @@ def add_item():
         else:
             return redirect(url_for('login'))  # Redirect to login page if user is not logged in
     return render_template('add_item.html')
+
+@app.route('/items')
+def items():
+    items = Item.query.all()
+    return render_template('items.html', items=items)
+
+@app.route('/edit_item', methods=['POST'])
+def edit_item():
+    item_id = request.form['id']
+    name = request.form['name']
+    group = request.form['group']
+    price = float(request.form['price'])
+    item = Item.query.get(item_id)
+    if item:
+        item.name = name
+        item.group = group
+        item.price = price
+        db.session.commit()
+    return redirect(url_for('items'))

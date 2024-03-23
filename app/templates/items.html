@@ -1,0 +1,48 @@
+<!-- templates/items.html -->
+{% extends 'layout.html' %}
+
+{% block title %}Items{% endblock %}
+
+{% block content %}
+<section>
+    <h2>Items</h2>
+    <table class="item-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Group</th>
+                <th>Price</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td>{{ item.name }}</td>
+                <td>{{ item.group }}</td>
+                <td>{{ item.price }}</td>
+                <td><a href="#" class="edit-item" data-item-id="{{ item.id }}">Edit</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+
+<!-- Edit Item Modal -->
+<div id="edit-item-modal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h3>Edit Item</h3>
+        <form id="edit-item-form">
+            <input type="hidden" id="edit-item-id" name="id">
+            <label for="edit-name">Name:</label>
+            <input type="text" id="edit-name" name="name" required>
+            <label for="edit-group">Group:</label>
+            <input type="text" id="edit-group" name="group" required>
+            <label for="edit-price">Price:</label>
+            <input type="number" id="edit-price" name="price" step="0.01" required>
+            <button type="submit">Update</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
