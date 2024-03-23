@@ -46,3 +46,42 @@
     </div>
 </div>
 {% endblock %}
+
+{% block scripts %}
+<script>
+    // Get the modal
+    var modal = document.getElementById('edit-item-modal');
+
+    // Get the <span> element that closes the modal
+    var span = document.getElementsByClassName("close")[0];
+
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function() {
+        modal.style.display = "none";
+    }
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+
+    // Show the modal when the edit link is clicked
+    var editLinks = document.querySelectorAll('.edit-item');
+    editLinks.forEach(function(link) {
+        link.addEventListener('click', function(event) {
+            event.preventDefault();
+            var itemId = this.getAttribute('data-item-id');
+            var itemName = this.parentElement.parentElement.querySelector('td:nth-child(1)').innerText;
+            var itemGroup = this.parentElement.parentElement.querySelector('td:nth-child(2)').innerText;
+            var itemPrice = this.parentElement.parentElement.querySelector('td:nth-child(3)').innerText;
+            document.getElementById('edit-item-id').value = itemId;
+            document.getElementById('edit-name').value = itemName;
+            document.getElementById('edit-group').value = itemGroup;
+            document.getElementById('edit-price').value = itemPrice;
+            modal.style.display = "block";
+        });
+    });
+</script>
+{% endblock %}
