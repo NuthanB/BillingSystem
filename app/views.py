@@ -1,7 +1,7 @@
 from flask import render_template, request, redirect, session, url_for
 from app import app, db
 from app.models import User, Item,Bill, BillItem
-from flask import jsonify
+from flask import jsonify,request
 
 
 @app.route('/')
@@ -26,21 +26,47 @@ def get_suggestions():
         return jsonify([])
 
 
+@app.route('/add_item_to_bill', methods=['POST'])
+def add_item_to_bill():
+    # Get item details from the request
+    item_name = request.json['item_name']
+    quantity = request.json['quantity']
+    price = request.json['price']
+    
+    # Perform any necessary validation or processing
+    
+    # Add the item to the bill table
+    # For example, you might create a new entry in the BillItem table
+    new_item = BillItem(item_name=item_name, quantity=quantity, price=price)
+    db.session.add(new_item)
+    db.session.commit()
+    
+    # Return a response indicating success
+    return jsonify({'message': 'Item added to bill successfully'}), 200
+
 @app.route('/create_bill', methods=['POST'])
 def create_bill():
-    item_name = request.form['item_name']
-    quantity = int(request.form['quantity'])
-    # Assuming you have a function to fetch item details from the database based on the item name
-    item_price = get_item_price(item_name)
-    if not item_price:
-        # Handle invalid item name
-        return "Invalid item name"
-    total = item_price * quantity
-    bill_item = BillItem(item_name=item_name, quantity=quantity, price=item_price)
-    db.session.add(bill_item)
-    db.session.commit()
-    # Update the total in the session or calculate it here
-    return redirect(url_for('index'))
+    # Extract bill details from the request
+    bill_number = request.form['bill_number']
+    user_id = session.get('user_id')
+    if user_id:
+        user = User.query.get(user_id)
+        bill = Bill(bill_number=bill_number, user=user)
+        db.session.add(bill)
+        db.session.commit()
+
+        # Extract item details from the form and add them to the bill
+        item_name = request.form['item_name']
+        quantity = int(request.form['quantity'])
+        price = float(request.form['price'])
+        bill_item = BillItem(item_name=item_name, quantity=quantity, price=price, bill=bill)
+        db.session.add(bill_item)
+        db.session.commit()
+
+        return redirect(url_for('index'))
+    else:
+        return redirect(url_for('login'))
+
 
 @app.route('/delete_item/<int:item_id>', methods=['POST'])
 def delete_item(item_id):
@@ -122,3 +148,12 @@ def update_item():
         db.session.commit()
     return redirect(url_for('items'))
 
+@app.route('/get_item_price')
+def get_item_price():
+    item_name = request.args.get('item_name')
+    # Query the database to retrieve the price for the selected item
+    item = Item.query.filter_by(name=item_name).first()
+    if item:
+        return jsonify({'price': item.price})
+    else:
+        return jsonify({'error': 'Item not found'})

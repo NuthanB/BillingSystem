@@ -4,7 +4,7 @@
 {% block content %}
 <section>
     <h2>Create a New Bill</h2>
-    <form action="{{ url_for('create_bill') }}" method="post">
+    <form id="bill-form" action="{{ url_for('create_bill') }}" method="post">
         <div class="form-group">
             <label for="item_name">Item Name:</label>
             <input type="text" id="item_name" name="item_name" class="form-control" autocomplete="off" oninput="getSuggestions(this.value)">
@@ -59,41 +59,49 @@
     }
 
     function addItemToBill() {
-    // Get the selected item's name, quantity, and price
-    var itemName = document.getElementById('item-name').value;
-    var itemQuantity = parseInt(document.getElementById('item-quantity').value);
-    var itemPrice = parseFloat(document.getElementById('item-price').value);
+    // Get the selected item's name and quantity
+    var itemName = document.getElementById('item_name').value;
+    var itemQuantity = parseInt(document.getElementById('quantity').value);
     
-    // Create a new row for the bill table
-    var table = document.getElementById('bill-table');
-    var newRow = table.insertRow(-1); // Append row at the end of the table
-    
-    // Insert cells for item name, quantity, price, and delete option
-    var cellName = newRow.insertCell(0);
-    var cellQuantity = newRow.insertCell(1);
-    var cellPrice = newRow.insertCell(2);
-    var cellDelete = newRow.insertCell(3);
-    
-    // Populate cells with item details
-    cellName.innerHTML = itemName;
-    cellQuantity.innerHTML = itemQuantity;
-    cellPrice.innerHTML = itemPrice;
-    
-    // Create delete button and attach event listener
-    var deleteButton = document.createElement('button');
-    deleteButton.innerHTML = 'Delete';
-    deleteButton.onclick = function() {
-        table.deleteRow(newRow.rowIndex);
-        // Optionally, update total amount in the bill after deletion
-    };
-    cellDelete.appendChild(deleteButton);
-    
-    // Update total amount in the bill (if needed)
-    // For example:
-    // updateTotalAmount(itemQuantity * itemPrice);
+    // Make AJAX request to fetch the price for the selected item
+    fetch(`/get_item_price?item_name=${itemName}`)
+        .then(response => response.json())
+        .then(data => {
+            var itemPrice = data.price; // Assuming the server returns the price in the response
+            if (itemPrice) {
+                // Create a new row for the bill table
+                var table = document.getElementById('bill_items');
+                var newRow = table.insertRow();
+                
+                // Insert cells for item name, quantity, price, and delete option
+                var cellName = newRow.insertCell(0);
+                var cellQuantity = newRow.insertCell(1);
+                var cellPrice = newRow.insertCell(2);
+                var cellDelete = newRow.insertCell(3);
+                
+                // Populate cells with item details
+                cellName.innerHTML = itemName;
+                cellQuantity.innerHTML = itemQuantity;
+                cellPrice.innerHTML = itemPrice;
+                
+                // Create delete button and attach event listener
+                var deleteButton = document.createElement('button');
+                deleteButton.innerHTML = 'Delete';
+                deleteButton.onclick = function() {
+                    table.deleteRow(newRow.rowIndex);
+                    // Optionally, update total amount in the bill after deletion
+                };
+                cellDelete.appendChild(deleteButton);
+                
+                // Update total amount in the bill (if needed)
+                // For example:
+                // updateTotalAmount(itemQuantity * itemPrice);
+            } else {
+                console.error('Price not found for the selected item.');
+            }
+        })
+        .catch(error => console.error('Error fetching item price:', error));
 }
-
-
     function deleteItemFromBill(itemId) {
         // Code to delete an item from the bill and update the table
     }
