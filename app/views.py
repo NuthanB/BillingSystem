@@ -1,15 +1,54 @@
 from flask import render_template, request, redirect, session, url_for
 from app import app, db
 from app.models import User, Item,Bill, BillItem
+from flask import jsonify
+
 
 @app.route('/')
+@app.route('/index')
 def index():
-    if 'user_id' in session:
-        # User is logged in, proceed to render the index page
-        return render_template('index.html')
+    return render_template('index.html')
+
+
+
+@app.route('/get_suggestions')
+def get_suggestions():
+    keyword = request.args.get('keyword')
+    if keyword:  # Check if keyword is not empty
+        # Query the Item table to get suggestions based on the keyword
+        suggestions = Item.query.filter(Item.name.ilike(f'%{keyword}%')).limit(10).all()
+        # Extract names from suggestions
+        suggestion_names = [item.name for item in suggestions]
+        # Return suggestion names as JSON response
+        return jsonify(suggestion_names)
     else:
-        # User is not logged in, redirect to the login page
-        return redirect(url_for('login'))
+        # Return an empty list if keyword is empty
+        return jsonify([])
+
+
+@app.route('/create_bill', methods=['POST'])
+def create_bill():
+    item_name = request.form['item_name']
+    quantity = int(request.form['quantity'])
+    # Assuming you have a function to fetch item details from the database based on the item name
+    item_price = get_item_price(item_name)
+    if not item_price:
+        # Handle invalid item name
+        return "Invalid item name"
+    total = item_price * quantity
+    bill_item = BillItem(item_name=item_name, quantity=quantity, price=item_price)
+    db.session.add(bill_item)
+    db.session.commit()
+    # Update the total in the session or calculate it here
+    return redirect(url_for('index'))
+
+@app.route('/delete_item/<int:item_id>', methods=['POST'])
+def delete_item(item_id):
+    item = BillItem.query.get(item_id)
+    if item:
+        db.session.delete(item)
+        db.session.commit()
+    return redirect(url_for('index'))
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
