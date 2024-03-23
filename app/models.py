@@ -14,3 +14,18 @@ class Item(db.Model):
     quantity = db.Column(db.Integer, nullable=False)
     price = db.Column(db.Float, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
+class Bill(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    bill_number = db.Column(db.String(20), nullable=False)
+    user = db.Column(db.String(100), nullable=False)
+    bill_date_time = db.Column(db.DateTime, nullable=False)
+    total = db.Column(db.Float, nullable=False)
+    items = db.relationship('BillItem', backref='bill', lazy=True)
+
+class BillItem(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    bill_id = db.Column(db.Integer, db.ForeignKey('bill.id'), nullable=False)
+    item_name = db.Column(db.String(100), nullable=False)
+    quantity = db.Column(db.Integer, nullable=False)
+    price = db.Column(db.Float, nullable=False)

@@ -1,6 +1,6 @@
 from flask import render_template, request, redirect, session, url_for
 from app import app, db
-from app.models import User, Item
+from app.models import User, Item,Bill, BillItem
 
 @app.route('/')
 @app.route('/index')
@@ -78,3 +78,4 @@ def update_item():
         item.price = price
         db.session.commit()
     return redirect(url_for('items'))
+
