@@ -1,7 +1,7 @@
 from flask import render_template, request, redirect, session, url_for
 from app import app, db
-from app.models import User, Item,Bill, BillItem
-from flask import jsonify,request
+from app.models import User, Item, Bill, BillItem
+from flask import jsonify, request
 
 
 @app.route('/')
@@ -10,13 +10,13 @@ def index():
     return render_template('index.html')
 
 
-
 @app.route('/get_suggestions')
 def get_suggestions():
     keyword = request.args.get('keyword')
     if keyword:  # Check if keyword is not empty
         # Query the Item table to get suggestions based on the keyword
-        suggestions = Item.query.filter(Item.name.ilike(f'%{keyword}%')).limit(10).all()
+        suggestions = Item.query.filter(
+            Item.name.ilike(f'%{keyword}%')).limit(10).all()
         # Extract names from suggestions
         suggestion_names = [item.name for item in suggestions]
         # Return suggestion names as JSON response
@@ -24,8 +24,6 @@ def get_suggestions():
     else:
         # Return an empty list if keyword is empty
         return jsonify([])
-
-
 
 
 @app.route('/create_bill', methods=['POST'])
@@ -43,7 +41,8 @@ def create_bill():
         item_name = request.form['item_name']
         quantity = int(request.form['quantity'])
         price = float(request.form['price'])
-        bill_item = BillItem(item_name=item_name, quantity=quantity, price=price, bill=bill)
+        bill_item = BillItem(item_name=item_name,
+                             quantity=quantity, price=price, bill=bill)
         db.session.add(bill_item)
         db.session.commit()
 
@@ -56,30 +55,36 @@ def create_bill():
 def submit_bill():
     if 'user_id' in session:
         user_id = session['user_id']  # Retrieve user_id from session
+        print(user_id)
         data = request.json
         if data:
             # Process the bill data here
             items = data.get('items')
             total = data.get('total')
-            
-            # Perform database operations or other necessary tasks
-            # Create a new bill instance and associate it with the user
-            new_bill = Bill(user_id=user_id, total=total)
-            db.session.add(new_bill)
 
-            for item in items:
-                # Create a new bill item instance and associate it with the bill
-                bill_item = BillItem(bill=new_bill, item_name=item['name'], quantity=item['quantity'], price=item['price'])
-                db.session.add(bill_item)
+            user = User.query.get(user_id)
 
-            db.session.commit()
+            if user:
+                # Perform database operations or other necessary tasks
+                # Create a new bill instance and associate it with the user
+                new_bill = Bill(user=user, total=total)
+                db.session.add(new_bill)
 
-            return jsonify({'message': 'Bill submitted successfully'}), 200
+                for item in items:
+                    # Create a new bill item instance and associate it with the bill
+                    bill_item = BillItem(
+                        bill=new_bill, item_name=item['name'], quantity=item['quantity'], price=item['price'])
+                    db.session.add(bill_item)
+
+                db.session.commit()
+
+                return jsonify({'message': 'Bill submitted successfully'}), 200
+            else:
+                return jsonify({'error': 'User not found'}), 401
         else:
             return jsonify({'error': 'No data received'}), 400
     else:
-        return jsonify({'error': 'User not authenticated'}), 401
-
+        return jsonify({'error': 'User not authenticated'}), 402
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -91,11 +96,13 @@ def login():
         if user:
             # Authentication successful, store user ID in session
             session['user_id'] = user.id
+            print(user.id, session['user_id'])
             return redirect(url_for('index'))
         else:
             # Authentication failed, redirect back to login page with an error message
             return render_template('login.html', error='Invalid email or password.')
     return render_template('login.html')
+
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -109,6 +116,7 @@ def signup():
         return redirect(url_for('login'))
     return render_template('signup.html')
 
+
 @app.route('/add_item', methods=['GET', 'POST'])
 def add_item():
     if request.method == 'POST':
@@ -116,20 +124,26 @@ def add_item():
         group = request.form['group']
         quantity = int(request.form['quantity'])
         price = float(request.form['price'])
-        user_id = session.get('user_id')  # Assuming user is logged in and session contains user ID
+        # Assuming user is logged in and session contains user ID
+        user_id = session.get('user_id')
         if user_id:
-            item = Item(name=name, group=group, quantity=quantity, price=price, user_id=user_id)
+            item = Item(name=name, group=group, quantity=quantity,
+                        price=price, user_id=user_id)
             db.session.add(item)
             db.session.commit()
-            return redirect(url_for('index'))  # Redirect to home page after adding item
+            # Redirect to home page after adding item
+            return redirect(url_for('index'))
         else:
-            return redirect(url_for('login'))  # Redirect to login page if user is not logged in
+            # Redirect to login page if user is not logged in
+            return redirect(url_for('login'))
     return render_template('add_item.html')
+
 
 @app.route('/items')
 def items():
     items = Item.query.all()
     return render_template('items.html', items=items)
+
 
 @app.route('/edit_item/<int:item_id>', methods=['GET'])
 def edit_item(item_id):
@@ -139,6 +153,7 @@ def edit_item(item_id):
     else:
         # Item not found, handle appropriately (e.g., redirect to items page)
         return redirect(url_for('items'))
+
 
 @app.route('/update_item', methods=['POST'])
 def update_item():
@@ -153,6 +168,7 @@ def update_item():
         item.price = price
         db.session.commit()
     return redirect(url_for('items'))
+
 
 @app.route('/get_item_price')
 def get_item_price():

@@ -1,196 +1,232 @@
 <!-- index.html -->
-{% extends 'layout.html' %}
-{% block title %}Billing System{% endblock %}
-{% block content %}
+{% extends 'layout.html' %} {% block title %}Billing System{% endblock %} {%
+block content %}
 <section>
-    <h2>Create a New Bill</h2>
-    <form id="bill-form" action="{{ url_for('create_bill') }}" method="post">
-        <div class="form-group">
-            <label for="item_name">Item Name:</label>
-            <input type="text" id="item_name" name="item_name" class="form-control" autocomplete="off" oninput="getSuggestions(this.value)">
-            <div id="suggestions"></div>
-        </div>
-        <div class="form-group">
-            <label for="quantity">Quantity:</label>
-            <input type="number" id="quantity" name="quantity" class="form-control" min="1" value="1">
-        </div>
-        <button type="button" onclick="addItemToBill()" class="btn btn-primary">Add Item</button>
-    </form>
-    <hr>
-    <h2>Current Bill</h2>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Item Name</th>
-                <th>Quantity</th>
-                <th>Price</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody id="bill_items">
-            <!-- This will be populated dynamically with JavaScript -->
-        </tbody>
-    </table>
-    <div id="total">Total: $0</div>
-    <button onclick="submitBill()" class="btn btn-success">Submit Bill</button>
+  <h2>Create a New Bill</h2>
+  <form id="bill-form" action="{{ url_for('create_bill') }}" method="post">
+    <div class="form-group">
+      <label for="item_name">Item Name:</label>
+      <input
+        type="text"
+        id="item_name"
+        name="item_name"
+        class="form-control"
+        autocomplete="off"
+        oninput="getSuggestions(this.value)"
+      />
+      <div id="suggestions"></div>
+    </div>
+    <div class="form-group">
+      <label for="quantity">Quantity:</label>
+      <input
+        type="number"
+        id="quantity"
+        name="quantity"
+        class="form-control"
+        min="1"
+        value="1"
+      />
+    </div>
+    <button type="button" onclick="addItemToBill()" class="btn btn-primary">
+      Add Item
+    </button>
+  </form>
+  <hr />
+  <h2>Current Bill</h2>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Item Name</th>
+        <th>Quantity</th>
+        <th>Price</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody id="bill_items">
+      <!-- This will be populated dynamically with JavaScript -->
+    </tbody>
+  </table>
+  <div id="total">Total: $0</div>
+  <button onclick="submitBill()" class="btn btn-success">Submit Bill</button>
 </section>
 <script>
-   function getSuggestions(keyword) {
-        // Clear previous suggestions
-        document.getElementById('suggestions').innerHTML = '';
-        // Make AJAX request to fetch suggestions
-        fetch(`/get_suggestions?keyword=${keyword}`)
-            .then(response => response.json())
-            .then(data => {
-                // Populate suggestions div with the received suggestions
-                data.forEach(suggestion => {
-                    const suggestionElement = document.createElement('div');
-                    suggestionElement.textContent = suggestion;
-                    suggestionElement.onclick = () => {
-                        // Set the clicked suggestion as the input value
-                        document.getElementById('item_name').value = suggestion;
-                        // Clear suggestions
-                        document.getElementById('suggestions').innerHTML = '';
-                    };
-                    document.getElementById('suggestions').appendChild(suggestionElement);
-                });
-            })
-            .catch(error => console.error('Error fetching suggestions:', error));
-    }
+  function getSuggestions(keyword) {
+    // Clear previous suggestions
+    document.getElementById("suggestions").innerHTML = "";
+    // Make AJAX request to fetch suggestions
+    fetch(`/get_suggestions?keyword=${keyword}`)
+      .then((response) => response.json())
+      .then((data) => {
+        // Populate suggestions div with the received suggestions
+        data.forEach((suggestion) => {
+          const suggestionElement = document.createElement("div");
+          suggestionElement.textContent = suggestion;
+          suggestionElement.onclick = () => {
+            // Set the clicked suggestion as the input value
+            document.getElementById("item_name").value = suggestion;
+            // Clear suggestions
+            document.getElementById("suggestions").innerHTML = "";
+          };
+          document.getElementById("suggestions").appendChild(suggestionElement);
+        });
+      })
+      .catch((error) => console.error("Error fetching suggestions:", error));
+  }
 
-    function addItemToBill() {
+  function addItemToBill() {
     // Get the selected item's name, quantity, and price
-    var itemName = document.getElementById('item_name').value;
-    var itemQuantity = parseInt(document.getElementById('quantity').value);
+    var itemName = document.getElementById("item_name").value;
+    var itemQuantity = parseInt(document.getElementById("quantity").value);
 
     // Check if the item already exists in the bill
     var existingRow = findItemRow(itemName);
     if (existingRow) {
-        // Update quantity of existing item
-        var existingQuantity = parseInt(existingRow.cells[1].innerHTML);
-        existingRow.cells[1].innerHTML = existingQuantity + itemQuantity;
+      // Update quantity of existing item
+      var existingQuantity = parseInt(existingRow.cells[1].innerHTML);
+      existingRow.cells[1].innerHTML = existingQuantity + itemQuantity;
 
-        // Update total amount in the bill
-        var itemPrice = parseFloat(existingRow.cells[2].innerHTML);
-        updateTotalAmount(itemQuantity * itemPrice);
+      // Update total amount in the bill
+      var itemPrice = parseFloat(existingRow.cells[2].innerHTML);
+      updateTotalAmount(itemQuantity * itemPrice);
     } else {
-        // Make AJAX request to fetch the price for the selected item
-        fetch(`/get_item_price?item_name=${itemName}`)
-            .then(response => response.json())
-            .then(data => {
-                var itemPrice = data.price; // Assuming the server returns the price in the response
-                if (itemPrice) {
-                    // Create a new row for the bill table
-                    var table = document.getElementById('bill_items');
-                    var newRow = table.insertRow();
+      // Make AJAX request to fetch the price for the selected item
+      fetch(`/get_item_price?item_name=${itemName}`)
+        .then((response) => response.json())
+        .then((data) => {
+          var itemPrice = data.price; // Assuming the server returns the price in the response
+          if (itemPrice) {
+            // Create a new row for the bill table
+            var table = document.getElementById("bill_items");
+            var newRow = table.insertRow();
 
-                    // Insert cells for item name, quantity, price, and delete option
-                    var cellName = newRow.insertCell(0);
-                    var cellQuantity = newRow.insertCell(1);
-                    var cellPrice = newRow.insertCell(2);
-                    var cellDelete = newRow.insertCell(3);
+            // Insert cells for item name, quantity, price, and delete option
+            var cellName = newRow.insertCell(0);
+            var cellQuantity = newRow.insertCell(1);
+            var cellPrice = newRow.insertCell(2);
+            var cellDelete = newRow.insertCell(3);
 
-                    // Populate cells with item details
-                    cellName.innerHTML = itemName;
-                    cellQuantity.innerHTML = itemQuantity;
-                    cellPrice.innerHTML = itemPrice;
+            // Populate cells with item details
+            cellName.innerHTML = itemName;
+            cellQuantity.innerHTML = itemQuantity;
+            cellPrice.innerHTML = itemPrice;
 
-                    // Create delete button and attach event listener
-                    var deleteButton = document.createElement('button');
-                    deleteButton.innerHTML = 'Delete';
-                    deleteButton.onclick = function () {
-                        deleteItemFromBill(newRow); // Pass newRow as parameter
-                    };
-                    cellDelete.appendChild(deleteButton);
+            // Create delete button and attach event listener
+            var deleteButton = document.createElement("button");
+            deleteButton.innerHTML = "Delete";
+            deleteButton.onclick = function () {
+              deleteItemFromBill(this); // Pass newRow as parameter
+            };
+            cellDelete.appendChild(deleteButton);
 
-                    // Update total amount in the bill
-                    updateTotalAmount(itemQuantity * itemPrice);
-                } else {
-                    console.error('Price not found for the selected item.');
-                }
-            })
-            .catch(error => console.error('Error fetching item price:', error));
+            // Update total amount in the bill
+            updateTotalAmount(itemQuantity * itemPrice);
+          } else {
+            console.error("Price not found for the selected item.");
+          }
+        })
+        .catch((error) => console.error("Error fetching item price:", error));
     }
-}
+  }
 
-function findItemRow(itemName) {
-    var table = document.getElementById('bill_items');
+  function findItemRow(itemName) {
+    var table = document.getElementById("bill_items");
     for (var i = 0; i < table.rows.length; i++) {
-        if (table.rows[i].cells[0].innerHTML === itemName) {
-            return table.rows[i];
-        }
+      if (table.rows[i].cells[0].innerHTML === itemName) {
+        return table.rows[i];
+      }
     }
     return null;
-}
-    function deleteItemFromBill(row) {
-        var table = document.getElementById('bill_items');
-        console.log(table);
-        if (row.rowIndex >= 0 && row.rowIndex < table.rows.length) {
-            // Get the item's price from the row
-            var price = parseFloat(row.cells[2].innerHTML);
-            
-            // Remove the row from the table
-            table.deleteRow(row.rowIndex);
-            
-            // Update total amount in the bill
-            updateTotalAmount(-price); // Subtract the price of the deleted item
-        } else {
-            console.error('Row index is out of range.');
-        }
-    }
+  }
 
-    function updateTotalAmount(amount) {
-        var totalElement = document.getElementById('total');
-        var currentTotal = parseFloat(totalElement.textContent.replace('Total: $', '')) || 0;
-        var newTotal = currentTotal + amount;
-        totalElement.textContent = 'Total: $' + newTotal.toFixed(2);
+  function deleteItemFromBill(button) {
+    var row = button.parentNode.parentNode; // Traverse up the DOM tree to find the parent row
+    var table = document.getElementById("bill_items");
+    var rowIndex = row.rowIndex;
+
+    if (rowIndex >= 0 && rowIndex < table.rows.length) {
+      var price = parseFloat(row.cells[2].textContent);
+      var quantity = parseInt(row.cells[1].innerHTML);
+
+      console.log(quantity);
+      if (quantity > 1) {
+        row.cells[2].textContent -= 1;
+      } else {
+        table.deleteRow(rowIndex - 1);
+      }
+
+      updateTotalAmount(-price);
+    } else if (rowIndex == table.rows.length) {
+      var price = parseFloat(row.cells[2].textContent);
+      var quantity = parseInt(row.cells[1].innerHTML);
+
+      console.log(price, quantity);
+      if (quantity > 1) {
+        row.cells[2].textContent -= 1;
+      } else {
+        table.deleteRow(-1);
+      }
+      updateTotalAmount(-price);
+    } else {
+      console.error("Row index is out of range.");
     }
-    function submitBill() {
+  }
+
+  function updateTotalAmount(amount) {
+    var totalElement = document.getElementById("total");
+    var currentTotal =
+      parseFloat(totalElement.textContent.replace("Total: $", "")) || 0;
+    var newTotal = currentTotal + amount;
+    totalElement.textContent = "Total: $" + newTotal.toFixed(2);
+  }
+  function submitBill() {
     // Get the items from the bill table
-    var tableRows = document.querySelectorAll('#bill_items tr');
+    var tableRows = document.querySelectorAll("#bill_items tr");
     var items = [];
     var total = 0; // Initialize total amount
-    
+
     tableRows.forEach(function (row) {
-        var item = {
-            name: row.cells[0].textContent,
-            quantity: parseInt(row.cells[1].textContent),
-            price: parseFloat(row.cells[2].textContent)
-        };
-        items.push(item);
-        
-        // Update total amount
-        total += item.quantity * item.price;
+      var item = {
+        name: row.cells[0].textContent,
+        quantity: parseInt(row.cells[1].textContent),
+        price: parseFloat(row.cells[2].textContent),
+      };
+      items.push(item);
+
+      // Update total amount
+      total += item.quantity * item.price;
     });
 
     // Prepare the data to send to the server
     var data = {
-        items: items,
-        total: total
+      items: items,
+      total: total,
     };
 
     // Make an AJAX request to submit the bill data to the server
-    fetch('/submit_bill', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
+    fetch("/submit_bill", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
     })
-    .then(response => {
+      .then((response) => {
         if (response.ok) {
-            // Handle successful submission
-            console.log('Bill submitted successfully');
+          // Handle successful submission
+          console.log("Bill submitted successfully");
         } else {
-            // Handle error response
-            console.error('Failed to submit bill:', response.statusText);
+          // Handle error response
+          console.error(
+            "Failed to submit bill:",
+            response.statusText,
+            response
+          );
         }
-    })
-    .catch(error => {
+      })
+      .catch((error) => {
         // Handle network error
-        console.error('Error submitting bill:', error);
-    });
-}
-
+        console.error("Error submitting bill:", error);
+      });
+  }
 </script>
 {% endblock %}
