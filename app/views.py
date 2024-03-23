@@ -1,11 +1,86 @@
 from flask import render_template, request, redirect, session, url_for
 from app import app, db
 from app.models import User, Item,Bill, BillItem
+from flask import jsonify,request
+
 
 @app.route('/')
 @app.route('/index')
 def index():
     return render_template('index.html')
+
+
+
+@app.route('/get_suggestions')
+def get_suggestions():
+    keyword = request.args.get('keyword')
+    if keyword:  # Check if keyword is not empty
+        # Query the Item table to get suggestions based on the keyword
+        suggestions = Item.query.filter(Item.name.ilike(f'%{keyword}%')).limit(10).all()
+        # Extract names from suggestions
+        suggestion_names = [item.name for item in suggestions]
+        # Return suggestion names as JSON response
+        return jsonify(suggestion_names)
+    else:
+        # Return an empty list if keyword is empty
+        return jsonify([])
+
+
+
+
+@app.route('/create_bill', methods=['POST'])
+def create_bill():
+    # Extract bill details from the request
+    bill_number = request.form['bill_number']
+    user_id = session.get('user_id')
+    if user_id:
+        user = User.query.get(user_id)
+        bill = Bill(bill_number=bill_number, user=user)
+        db.session.add(bill)
+        db.session.commit()
+
+        # Extract item details from the form and add them to the bill
+        item_name = request.form['item_name']
+        quantity = int(request.form['quantity'])
+        price = float(request.form['price'])
+        bill_item = BillItem(item_name=item_name, quantity=quantity, price=price, bill=bill)
+        db.session.add(bill_item)
+        db.session.commit()
+
+        return redirect(url_for('index'))
+    else:
+        return redirect(url_for('login'))
+
+
+@app.route('/submit_bill', methods=['POST'])
+def submit_bill():
+    if 'user_id' in session:
+        user_id = session['user_id']  # Retrieve user_id from session
+        data = request.json
+        if data:
+            # Process the bill data here
+            items = data.get('items')
+            total = data.get('total')
+            
+            # Perform database operations or other necessary tasks
+            # Create a new bill instance and associate it with the user
+            new_bill = Bill(user_id=user_id, total=total)
+            db.session.add(new_bill)
+
+            for item in items:
+                # Create a new bill item instance and associate it with the bill
+                bill_item = BillItem(bill=new_bill, item_name=item['name'], quantity=item['quantity'], price=item['price'])
+                db.session.add(bill_item)
+
+            db.session.commit()
+
+            return jsonify({'message': 'Bill submitted successfully'}), 200
+        else:
+            return jsonify({'error': 'No data received'}), 400
+    else:
+        return jsonify({'error': 'User not authenticated'}), 401
+
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -79,3 +154,12 @@ def update_item():
         db.session.commit()
     return redirect(url_for('items'))
 
+@app.route('/get_item_price')
+def get_item_price():
+    item_name = request.args.get('item_name')
+    # Query the database to retrieve the price for the selected item
+    item = Item.query.filter_by(name=item_name).first()
+    if item:
+        return jsonify({'price': item.price})
+    else:
+        return jsonify({'error': 'Item not found'})
