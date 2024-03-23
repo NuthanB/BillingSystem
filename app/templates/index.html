@@ -62,14 +62,14 @@
     // Get the selected item's name, quantity, and price
     var itemName = document.getElementById('item_name').value;
     var itemQuantity = parseInt(document.getElementById('quantity').value);
-    
+
     // Check if the item already exists in the bill
     var existingRow = findItemRow(itemName);
     if (existingRow) {
         // Update quantity of existing item
         var existingQuantity = parseInt(existingRow.cells[1].innerHTML);
         existingRow.cells[1].innerHTML = existingQuantity + itemQuantity;
-        
+
         // Update total amount in the bill
         var itemPrice = parseFloat(existingRow.cells[2].innerHTML);
         updateTotalAmount(itemQuantity * itemPrice);
@@ -83,26 +83,26 @@
                     // Create a new row for the bill table
                     var table = document.getElementById('bill_items');
                     var newRow = table.insertRow();
-                    
+
                     // Insert cells for item name, quantity, price, and delete option
                     var cellName = newRow.insertCell(0);
                     var cellQuantity = newRow.insertCell(1);
                     var cellPrice = newRow.insertCell(2);
                     var cellDelete = newRow.insertCell(3);
-                    
+
                     // Populate cells with item details
                     cellName.innerHTML = itemName;
                     cellQuantity.innerHTML = itemQuantity;
                     cellPrice.innerHTML = itemPrice;
-                    
+
                     // Create delete button and attach event listener
                     var deleteButton = document.createElement('button');
                     deleteButton.innerHTML = 'Delete';
-                    deleteButton.onclick = function() {
+                    deleteButton.onclick = function () {
                         deleteItemFromBill(newRow); // Pass newRow as parameter
                     };
                     cellDelete.appendChild(deleteButton);
-                    
+
                     // Update total amount in the bill
                     updateTotalAmount(itemQuantity * itemPrice);
                 } else {
@@ -145,9 +145,52 @@ function findItemRow(itemName) {
         var newTotal = currentTotal + amount;
         totalElement.textContent = 'Total: $' + newTotal.toFixed(2);
     }
-
     function submitBill() {
-        // Code to submit the bill to the server
-    }
+    // Get the items from the bill table
+    var tableRows = document.querySelectorAll('#bill_items tr');
+    var items = [];
+    var total = 0; // Initialize total amount
+    
+    tableRows.forEach(function (row) {
+        var item = {
+            name: row.cells[0].textContent,
+            quantity: parseInt(row.cells[1].textContent),
+            price: parseFloat(row.cells[2].textContent)
+        };
+        items.push(item);
+        
+        // Update total amount
+        total += item.quantity * item.price;
+    });
+
+    // Prepare the data to send to the server
+    var data = {
+        items: items,
+        total: total
+    };
+
+    // Make an AJAX request to submit the bill data to the server
+    fetch('/submit_bill', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => {
+        if (response.ok) {
+            // Handle successful submission
+            console.log('Bill submitted successfully');
+        } else {
+            // Handle error response
+            console.error('Failed to submit bill:', response.statusText);
+        }
+    })
+    .catch(error => {
+        // Handle network error
+        console.error('Error submitting bill:', error);
+    });
+}
+
 </script>
 {% endblock %}

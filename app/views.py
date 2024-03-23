@@ -26,23 +26,7 @@ def get_suggestions():
         return jsonify([])
 
 
-@app.route('/add_item_to_bill', methods=['POST'])
-def add_item_to_bill():
-    # Get item details from the request
-    item_name = request.json['item_name']
-    quantity = request.json['quantity']
-    price = request.json['price']
-    
-    # Perform any necessary validation or processing
-    
-    # Add the item to the bill table
-    # For example, you might create a new entry in the BillItem table
-    new_item = BillItem(item_name=item_name, quantity=quantity, price=price)
-    db.session.add(new_item)
-    db.session.commit()
-    
-    # Return a response indicating success
-    return jsonify({'message': 'Item added to bill successfully'}), 200
+
 
 @app.route('/create_bill', methods=['POST'])
 def create_bill():
@@ -68,13 +52,35 @@ def create_bill():
         return redirect(url_for('login'))
 
 
-@app.route('/delete_item/<int:item_id>', methods=['POST'])
-def delete_item(item_id):
-    item = BillItem.query.get(item_id)
-    if item:
-        db.session.delete(item)
-        db.session.commit()
-    return redirect(url_for('index'))
+@app.route('/submit_bill', methods=['POST'])
+def submit_bill():
+    if 'user_id' in session:
+        user_id = session['user_id']  # Retrieve user_id from session
+        data = request.json
+        if data:
+            # Process the bill data here
+            items = data.get('items')
+            total = data.get('total')
+            
+            # Perform database operations or other necessary tasks
+            # Create a new bill instance and associate it with the user
+            new_bill = Bill(user_id=user_id, total=total)
+            db.session.add(new_bill)
+
+            for item in items:
+                # Create a new bill item instance and associate it with the bill
+                bill_item = BillItem(bill=new_bill, item_name=item['name'], quantity=item['quantity'], price=item['price'])
+                db.session.add(bill_item)
+
+            db.session.commit()
+
+            return jsonify({'message': 'Bill submitted successfully'}), 200
+        else:
+            return jsonify({'error': 'No data received'}), 400
+    else:
+        return jsonify({'error': 'User not authenticated'}), 401
+
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
