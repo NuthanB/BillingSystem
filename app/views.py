@@ -3,9 +3,13 @@ from app import app, db
 from app.models import User, Item,Bill, BillItem
 
 @app.route('/')
-@app.route('/index')
 def index():
-    return render_template('index.html')
+    if 'user_id' in session:
+        # User is logged in, proceed to render the index page
+        return render_template('index.html')
+    else:
+        # User is not logged in, redirect to the login page
+        return redirect(url_for('login'))
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
