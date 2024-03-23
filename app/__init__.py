@@ -6,3 +6,5 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///your_database.db'
 db = SQLAlchemy(app)
 
 from app import views, models
+with app.app_context():
+    db.create_all()

@@ -1,0 +1,16 @@
+{% extends 'fresh.html' %}
+
+{% block title %}Sign Up{% endblock %}
+
+{% block content %}
+<section>
+    <h2>Sign Up</h2>
+    <form action="{{ url_for('signup') }}" method="post">
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+        <button type="submit">Sign Up</button>
+    </form>
+</section>
+{% endblock %}
