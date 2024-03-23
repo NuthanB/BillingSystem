@@ -56,8 +56,17 @@ def items():
     items = Item.query.all()
     return render_template('items.html', items=items)
 
-@app.route('/edit_item', methods=['POST'])
-def edit_item():
+@app.route('/edit_item/<int:item_id>', methods=['GET'])
+def edit_item(item_id):
+    item = Item.query.get(item_id)
+    if item:
+        return render_template('edit_item.html', item=item)
+    else:
+        # Item not found, handle appropriately (e.g., redirect to items page)
+        return redirect(url_for('items'))
+
+@app.route('/update_item', methods=['POST'])
+def update_item():
     item_id = request.form['id']
     name = request.form['name']
     group = request.form['group']
