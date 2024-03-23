@@ -59,7 +59,7 @@
     }
 
     function addItemToBill() {
-    // Get the selected item's name and quantity
+    // Get the selected item's name, quantity, and price
     var itemName = document.getElementById('item_name').value;
     var itemQuantity = parseInt(document.getElementById('quantity').value);
     
@@ -89,18 +89,24 @@
                 deleteButton.innerHTML = 'Delete';
                 deleteButton.onclick = function() {
                     table.deleteRow(newRow.rowIndex);
-                    // Optionally, update total amount in the bill after deletion
+                    updateTotalAmount(); // Update total amount after deletion
                 };
                 cellDelete.appendChild(deleteButton);
                 
-                // Update total amount in the bill (if needed)
-                // For example:
-                // updateTotalAmount(itemQuantity * itemPrice);
+                // Update total amount in the bill
+                updateTotalAmount(itemQuantity * itemPrice);
             } else {
                 console.error('Price not found for the selected item.');
             }
         })
         .catch(error => console.error('Error fetching item price:', error));
+}
+
+function updateTotalAmount(amount) {
+    var totalElement = document.getElementById('total');
+    var currentTotal = parseFloat(totalElement.textContent.replace('Total: $', '')) || 0;
+    var newTotal = currentTotal + amount;
+    totalElement.textContent = 'Total: $' + newTotal.toFixed(2);
 }
     function deleteItemFromBill(itemId) {
         // Code to delete an item from the bill and update the table
