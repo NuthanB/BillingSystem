@@ -63,53 +63,87 @@
     var itemName = document.getElementById('item_name').value;
     var itemQuantity = parseInt(document.getElementById('quantity').value);
     
-    // Make AJAX request to fetch the price for the selected item
-    fetch(`/get_item_price?item_name=${itemName}`)
-        .then(response => response.json())
-        .then(data => {
-            var itemPrice = data.price; // Assuming the server returns the price in the response
-            if (itemPrice) {
-                // Create a new row for the bill table
-                var table = document.getElementById('bill_items');
-                var newRow = table.insertRow();
-                
-                // Insert cells for item name, quantity, price, and delete option
-                var cellName = newRow.insertCell(0);
-                var cellQuantity = newRow.insertCell(1);
-                var cellPrice = newRow.insertCell(2);
-                var cellDelete = newRow.insertCell(3);
-                
-                // Populate cells with item details
-                cellName.innerHTML = itemName;
-                cellQuantity.innerHTML = itemQuantity;
-                cellPrice.innerHTML = itemPrice;
-                
-                // Create delete button and attach event listener
-                var deleteButton = document.createElement('button');
-                deleteButton.innerHTML = 'Delete';
-                deleteButton.onclick = function() {
-                    table.deleteRow(newRow.rowIndex);
-                    updateTotalAmount(); // Update total amount after deletion
-                };
-                cellDelete.appendChild(deleteButton);
-                
-                // Update total amount in the bill
-                updateTotalAmount(itemQuantity * itemPrice);
-            } else {
-                console.error('Price not found for the selected item.');
-            }
-        })
-        .catch(error => console.error('Error fetching item price:', error));
+    // Check if the item already exists in the bill
+    var existingRow = findItemRow(itemName);
+    if (existingRow) {
+        // Update quantity of existing item
+        var existingQuantity = parseInt(existingRow.cells[1].innerHTML);
+        existingRow.cells[1].innerHTML = existingQuantity + itemQuantity;
+        
+        // Update total amount in the bill
+        var itemPrice = parseFloat(existingRow.cells[2].innerHTML);
+        updateTotalAmount(itemQuantity * itemPrice);
+    } else {
+        // Make AJAX request to fetch the price for the selected item
+        fetch(`/get_item_price?item_name=${itemName}`)
+            .then(response => response.json())
+            .then(data => {
+                var itemPrice = data.price; // Assuming the server returns the price in the response
+                if (itemPrice) {
+                    // Create a new row for the bill table
+                    var table = document.getElementById('bill_items');
+                    var newRow = table.insertRow();
+                    
+                    // Insert cells for item name, quantity, price, and delete option
+                    var cellName = newRow.insertCell(0);
+                    var cellQuantity = newRow.insertCell(1);
+                    var cellPrice = newRow.insertCell(2);
+                    var cellDelete = newRow.insertCell(3);
+                    
+                    // Populate cells with item details
+                    cellName.innerHTML = itemName;
+                    cellQuantity.innerHTML = itemQuantity;
+                    cellPrice.innerHTML = itemPrice;
+                    
+                    // Create delete button and attach event listener
+                    var deleteButton = document.createElement('button');
+                    deleteButton.innerHTML = 'Delete';
+                    deleteButton.onclick = function() {
+                        deleteItemFromBill(newRow); // Pass newRow as parameter
+                    };
+                    cellDelete.appendChild(deleteButton);
+                    
+                    // Update total amount in the bill
+                    updateTotalAmount(itemQuantity * itemPrice);
+                } else {
+                    console.error('Price not found for the selected item.');
+                }
+            })
+            .catch(error => console.error('Error fetching item price:', error));
+    }
 }
 
-function updateTotalAmount(amount) {
-    var totalElement = document.getElementById('total');
-    var currentTotal = parseFloat(totalElement.textContent.replace('Total: $', '')) || 0;
-    var newTotal = currentTotal + amount;
-    totalElement.textContent = 'Total: $' + newTotal.toFixed(2);
+function findItemRow(itemName) {
+    var table = document.getElementById('bill_items');
+    for (var i = 0; i < table.rows.length; i++) {
+        if (table.rows[i].cells[0].innerHTML === itemName) {
+            return table.rows[i];
+        }
+    }
+    return null;
 }
-    function deleteItemFromBill(itemId) {
-        // Code to delete an item from the bill and update the table
+    function deleteItemFromBill(row) {
+        var table = document.getElementById('bill_items');
+        console.log(table);
+        if (row.rowIndex >= 0 && row.rowIndex < table.rows.length) {
+            // Get the item's price from the row
+            var price = parseFloat(row.cells[2].innerHTML);
+            
+            // Remove the row from the table
+            table.deleteRow(row.rowIndex);
+            
+            // Update total amount in the bill
+            updateTotalAmount(-price); // Subtract the price of the deleted item
+        } else {
+            console.error('Row index is out of range.');
+        }
+    }
+
+    function updateTotalAmount(amount) {
+        var totalElement = document.getElementById('total');
+        var currentTotal = parseFloat(totalElement.textContent.replace('Total: $', '')) || 0;
+        var newTotal = currentTotal + amount;
+        totalElement.textContent = 'Total: $' + newTotal.toFixed(2);
     }
 
     function submitBill() {
