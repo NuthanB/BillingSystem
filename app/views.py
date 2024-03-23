@@ -79,27 +79,3 @@ def update_item():
         db.session.commit()
     return redirect(url_for('items'))
 
-@app.route('/create_bill', methods=['POST'])
-def create_bill():
-    # Extract bill details from the request
-    bill_number = request.form['bill_number']
-    user = request.form['user']
-    total = float(request.form['total'])
-    # Add bill to the database
-    bill = Bill(bill_number=bill_number, user=user, total=total)
-    db.session.add(bill)
-    db.session.commit()
-    return redirect(url_for('view_bill', bill_id=bill.id))
-
-@app.route('/view_bill/<int:bill_id>')
-def view_bill(bill_id):
-    bill = Bill.query.get(bill_id)
-    return render_template('bill.html', bill=bill)
-
-@app.route('/delete_item/<int:item_id>', methods=['POST'])
-def delete_item(item_id):
-    item = BillItem.query.get(item_id)
-    if item:
-        db.session.delete(item)
-        db.session.commit()
-    return redirect(url_for('view_bill', bill_id=item.bill_id))
