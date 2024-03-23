@@ -14,7 +14,8 @@ def login():
         password = request.form['password']
         user = User.query.filter_by(email=email, password=password).first()
         if user:
-            # Authentication successful, redirect to home page or dashboard
+            # Authentication successful, store user ID in session
+            session['user_id'] = user.id
             return redirect(url_for('index'))
         else:
             # Authentication failed, redirect back to login page with an error message
