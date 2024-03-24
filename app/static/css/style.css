@@ -8,7 +8,7 @@ body {
 
 header,
 footer {
-  background-color: rgba(105, 42, 42, 0.8);
+  background-color: rgb(12, 53, 158);
   box-shadow: 0 5px 20px rgba(165, 42, 42, 0.8);
 }
 
@@ -332,10 +332,14 @@ input[type="password"],
 }
 
 .items .item-table tbody tr td a:hover {
-  background-color: rgba(165, 42, 42, 0.8);
+  background-color: rgb(12, 53, 158);
   padding: 8px;
 }
 
 .items .item-table tbody tr:last-child {
   border-bottom: none;
+}
+
+.text-color{
+  color: white;
 }
