@@ -31,7 +31,8 @@ nav ul li {
   letter-spacing: 0.1rem;
 }
 
-nav ul li a {
+nav ul li a,
+.items .item-table tbody tr td a {
   color: #000;
   text-decoration: none;
 }
@@ -49,7 +50,8 @@ footer {
 }
 
 .login-section,
-.signup-section {
+.signup-section,
+.container {
   max-width: 60%;
   width: 400px;
   margin: 20vh auto;
@@ -96,7 +98,8 @@ footer {
 input[type="email"],
 #email,
 input[type="password"],
-.new-bill input {
+.new-bill input,
+.add-items-form input {
   margin: 0;
   max-width: 400px;
   width: 300px;
@@ -156,7 +159,9 @@ input[type="password"],
 }
 
 .new-bill h2,
-.current-bill h2 {
+.current-bill h2,
+.container h2,
+.items h2 {
   font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
   text-align: center;
   font-size: 30px;
@@ -192,7 +197,8 @@ input[type="password"],
   border: none;
 }
 
-.current-bill .table thead tr {
+.current-bill .table thead tr,
+.items .item-table thead tr {
   display: grid;
   grid-template-columns: 3fr 1fr 2fr 2fr;
 }
@@ -202,7 +208,9 @@ input[type="password"],
 }
 
 .current-bill .table thead tr th,
-.current-bill .table tbody tr td {
+.current-bill .table tbody tr td,
+.item-table thead tr th,
+.item-table tbody tr td {
   border-bottom: 1px solid rgba(165, 42, 42, 0.5);
   width: 100%;
   font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
@@ -213,7 +221,8 @@ input[type="password"],
   margin-right: 5px;
 }
 
-.current-bill .table thead tr th {
+.current-bill .table thead tr th,
+.items .item-table thead tr th {
   background-color: rgba(165, 42, 42, 0.4);
 }
 
@@ -231,7 +240,8 @@ input[type="password"],
   text-transform: uppercase;
 }
 
-.current-bill .table tbody tr {
+.current-bill .table tbody tr,
+.items .item-table tbody tr {
   display: grid;
   grid-template-columns: 3fr 1fr 2fr 2fr;
 }
@@ -247,4 +257,79 @@ input[type="password"],
 
 .item-delete {
   font-size: 6px;
+}
+
+/* ----------- ADD ITEMS ----------------- */
+.container {
+  margin-inline: auto;
+  background-color: rgba(165, 42, 42, 0.3);
+  border: 1px solid rgba(165, 42, 42, 0.5);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+
+.add-items-form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.add-items-form input {
+  margin-top: 0.6vh;
+}
+
+.add-items-form > * {
+  margin-top: 1vh;
+}
+
+.container .add-items-form .btn-submit {
+  width: 50%;
+  align-self: center;
+}
+
+/* ----------- VIEW ITEMS --------------- */
+.items {
+  max-width: 800px;
+  border: 1px solid rgba(165, 42, 42, 0.5);
+  border-radius: 10px;
+  background-color: rgba(165, 42, 42, 0.3);
+  padding-top: 20px;
+  padding-bottom: 20px;
+  margin-inline: auto;
+  box-shadow: 0 0 500px rgba(165, 42, 42, 1);
+  margin-top: 20vh;
+}
+
+.item-table {
+  border: 1px solid rgba(165, 42, 42, 0.8);
+  border-radius: 10px;
+  background-color: rgba(165, 42, 42, 0.5);
+  margin-inline: auto;
+}
+
+.items .item-table thead tr th,
+.items .item-table tbody tr td {
+  text-align: center;
+}
+
+.items .item-table tbody tr td a {
+  background-color: red;
+  padding: 5px;
+  border-radius: 5px;
+  transition: padding 0.1s ease;
+  background-color: rgba(165, 42, 42, 0.6);
+  color: #fff;
+}
+
+.items .item-table tbody tr td a:hover {
+  background-color: rgba(165, 42, 42, 0.8);
+  padding: 8px;
+}
+
+.items .item-table tbody tr:last-child {
+  border-bottom: none;
 }
