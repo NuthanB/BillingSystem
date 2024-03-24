@@ -20,6 +20,7 @@ class Bill(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     bill_number = db.Column(db.String(20), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)  # Add user_id column
+    user = db.relationship('User', backref='bills')  # Add relationship with User model
     bill_date_time = db.Column(db.DateTime, default=datetime.utcnow)
     total = db.Column(db.Float, nullable=False)
     items = db.relationship('BillItem', backref='bill', lazy=True)
