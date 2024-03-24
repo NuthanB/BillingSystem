@@ -114,7 +114,7 @@ block content %}
             var deleteButton = document.createElement("button");
             deleteButton.innerHTML = "Delete";
             deleteButton.onclick = function () {
-              deleteItemFromBill(newRow); // Pass newRow as parameter
+              deleteItemFromBill(this); // Pass newRow as parameter
             };
             cellDelete.appendChild(deleteButton);
 
