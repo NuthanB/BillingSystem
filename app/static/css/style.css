@@ -114,9 +114,9 @@ input[type="password"],
 .btn-submit,
 .item-delete {
   padding: 10px;
-  border: none;
+  border: 1px solid white;
   border-radius: 5px;
-  background-color: rgba(165, 42, 42, 0.6);
+  background-color: rgb(12, 53, 158);
   color: #fff;
   font-size: 16px;
   cursor: pointer;
@@ -126,7 +126,7 @@ input[type="password"],
 #login:hover,
 .btn-submit:hover,
 .item-delete:hover {
-  background-color: rgba(165, 42, 42, 0.8);
+  background-color: rgb(12, 53, 158)
 }
 
 .login-section i,
@@ -139,18 +139,18 @@ input[type="password"],
   display: flex;
   flex-flow: wrap;
   justify-content: space-evenly;
-  box-shadow: 0 0 500px rgba(165, 42, 42, 1);
+  box-shadow: 0 0 500px rgb(12, 53, 158);
   width: 80%;
-  background-color: rgba(165, 42, 42, 0.3);
+  background-color: rgb(12, 53, 158);
   border-radius: 20px;
-  margin-top: 10vh;
+  margin-top: 5vh;
   margin-inline: auto;
   padding: 2vw;
 }
 
 .new-bill,
 .current-bill {
-  background-color:white
+  background-color:white;
   border-radius: 10px;
   padding: 20px;
   max-width: 500px;
@@ -261,7 +261,7 @@ input[type="password"],
 .container {
   margin-inline: auto;
   background-color: rgb(12, 53, 158);
-  border: 1px solid rgba(165, 42, 42, 0.5);
+  border: 1px solid rgb(12, 53, 158);
   border-radius: 10px;
   display: flex;
   flex-direction: column;
@@ -293,9 +293,9 @@ input[type="password"],
 /* ----------- VIEW ITEMS --------------- */
 .items {
   max-width: 800px;
-  border: 1px solid rgba(165, 42, 42, 0.5);
+  border: 1px solid rgb(12, 53, 158);
   border-radius: 10px;
-  background-color: rgba(165, 42, 42, 0.3);
+  background-color: rgb(12, 53, 158);
   padding-top: 20px;
   padding-bottom: 20px;
   margin-inline: auto;
