@@ -170,12 +170,14 @@ block content %}
     var items = [];
     var total = 0; // Initialize total amount
 
+    
     tableRows.forEach(function (row) {
       var item = {
         name: row.cells[0].textContent,
         quantity: parseInt(row.cells[1].textContent),
         price: parseFloat(row.cells[2].textContent),
       };
+      console.log(item);
       items.push(item);
 
       // Update total amount
@@ -187,6 +189,8 @@ block content %}
       items: items,
       total: total,
     };
+
+    console.log(data);
 
     // Make an AJAX request to submit the bill data to the server
     fetch("/submit_bill", {
