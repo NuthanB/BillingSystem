@@ -333,3 +333,19 @@ input[type="password"],
 .items .item-table tbody tr:last-child {
   border-bottom: none;
 }
+=======
+.item-table{
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  text-align: center;
+}
+.item-table th{
+  background-color: rgba(165, 42, 42, 0.5);
+  color: #fff;
+  padding: 10px;
+}
+.item-table td{
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+}
