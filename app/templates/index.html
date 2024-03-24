@@ -1,53 +1,55 @@
 <!-- index.html -->
 {% extends 'layout.html' %} {% block title %}Billing System{% endblock %} {%
 block content %}
-<section>
-  <h2>Create a New Bill</h2>
-  <form id="bill-form" action="{{ url_for('create_bill') }}" method="post">
-    <div class="form-group">
-      <label for="item_name">Item Name:</label>
-      <input
-        type="text"
-        id="item_name"
-        name="item_name"
-        class="form-control"
-        autocomplete="off"
-        oninput="getSuggestions(this.value)"
-      />
-      <div id="suggestions"></div>
-    </div>
-    <div class="form-group">
-      <label for="quantity">Quantity:</label>
-      <input
-        type="number"
-        id="quantity"
-        name="quantity"
-        class="form-control"
-        min="1"
-        value="1"
-      />
-    </div>
-    <button type="button" onclick="addItemToBill()" class="btn btn-primary">
-      Add Item
-    </button>
-  </form>
-  <hr />
-  <h2>Current Bill</h2>
-  <table class="table">
-    <thead>
-      <tr>
-        <th>Item Name</th>
-        <th>Quantity</th>
-        <th>Price</th>
-        <th>Action</th>
-      </tr>
-    </thead>
-    <tbody id="bill_items">
-      <!-- This will be populated dynamically with JavaScript -->
-    </tbody>
-  </table>
-  <div id="total">Total: $0</div>
-  <button onclick="submitBill()" class="btn btn-success">Submit Bill</button>
+<section class="billing-home">
+  <div class="new-bill">
+    <h2>Add items to Bill</h2>
+    <form id="bill-form" action="{{ url_for('create_bill') }}" method="post">
+      <div class="form-group">
+        <input
+          type="text"
+          id="item_name"
+          name="item_name"
+          class="form-control"
+          autocomplete="off"
+          oninput="getSuggestions(this.value)"
+          placeholder="Item Name"
+        />
+        <div id="suggestions"></div>
+      </div>
+      <div class="form-group">
+        <input
+          type="number"
+          id="quantity"
+          name="quantity"
+          class="form-control"
+          min="1"
+          placeholder="Quantity"
+        />
+      </div>
+      <button class="btn-submit" type="button" onclick="addItemToBill()">
+        Add Item
+      </button>
+    </form>
+  </div>
+
+  <div class="current-bill">
+    <h2>Billing</h2>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th>Quantity</th>
+          <th>Price</th>
+        </tr>
+      </thead>
+      <tbody id="bill_items">
+        <!-- This will be populated dynamically with JavaScript -->
+      </tbody>
+    </table>
+    <div id="total">Total: $0</div>
+    <button onclick="submitBill()" class="btn-submit">Submit Bill</button>
+  </div>
 </section>
 <script>
   function getSuggestions(keyword) {
@@ -60,6 +62,7 @@ block content %}
         // Populate suggestions div with the received suggestions
         data.forEach((suggestion) => {
           const suggestionElement = document.createElement("div");
+          suggestionElement.classList.add("suggestion");
           suggestionElement.textContent = suggestion;
           suggestionElement.onclick = () => {
             // Set the clicked suggestion as the input value
@@ -106,13 +109,14 @@ block content %}
             var cellDelete = newRow.insertCell(3);
 
             // Populate cells with item details
-            cellName.innerHTML = itemName;
-            cellQuantity.innerHTML = itemQuantity;
-            cellPrice.innerHTML = itemPrice;
+            cellName.textContent = itemName;
+            cellQuantity.textContent = itemQuantity;
+            cellPrice.textContent = itemPrice;
 
             // Create delete button and attach event listener
             var deleteButton = document.createElement("button");
-            deleteButton.innerHTML = "Delete";
+            deleteButton.innerHTML = "&#10006;";
+            deleteButton.classList.add("item-delete");
             deleteButton.onclick = function () {
               deleteItemFromBill(newRow); // Pass newRow as parameter
             };
@@ -131,7 +135,7 @@ block content %}
   function findItemRow(itemName) {
     var table = document.getElementById("bill_items");
     for (var i = 0; i < table.rows.length; i++) {
-      if (table.rows[i].cells[0].innerHTML === itemName) {
+      if (table.rows[i].cells[0].textContent === itemName) {
         return table.rows[i];
       }
     }

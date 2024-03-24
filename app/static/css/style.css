@@ -6,25 +6,33 @@ body {
   background-color: #eee;
 }
 
-header {
-  background-color: #333;
-  color: #fff;
-  padding: 10px;
+header,
+footer {
+  background-color: rgba(105, 42, 42, 0.8);
+  box-shadow: 0 5px 20px rgba(165, 42, 42, 0.8);
 }
 
 nav ul {
   list-style-type: none;
   margin: 0;
   padding: 0;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  flex-flow: wrap;
+  height: 5vh;
 }
 
 nav ul li {
-  display: inline;
-  margin-right: 10px;
+  text-transform: uppercase;
+  font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 0.1rem;
 }
 
 nav ul li a {
-  color: #fff;
+  color: #000;
   text-decoration: none;
 }
 
@@ -33,8 +41,6 @@ main {
 }
 
 footer {
-  background-color: #333;
-  color: #fff;
   padding: 10px;
   position: fixed;
   bottom: 0;
@@ -87,8 +93,10 @@ footer {
   width: 100%;
 }
 
-input[type="email"], #email,
-input[type="password"] {
+input[type="email"],
+#email,
+input[type="password"],
+.new-bill input {
   margin: 0;
   max-width: 400px;
   width: 300px;
@@ -100,7 +108,8 @@ input[type="password"] {
 }
 
 #login,
-.btn-submit {
+.btn-submit,
+.item-delete {
   padding: 10px;
   border: none;
   border-radius: 5px;
@@ -112,11 +121,130 @@ input[type="password"] {
 }
 
 #login:hover,
-.btn-submit:hover {
+.btn-submit:hover,
+.item-delete:hover {
   background-color: rgba(165, 42, 42, 0.8);
 }
 
 .login-section i,
 .signup-section i {
   font-size: 30px;
+}
+
+/* ------------------ HOMEPAGE -------------------------- */
+.billing-home {
+  display: flex;
+  flex-flow: wrap;
+  justify-content: space-evenly;
+  box-shadow: 0 0 500px rgba(165, 42, 42, 1);
+  width: 80%;
+  background-color: rgba(165, 42, 42, 0.3);
+  border-radius: 20px;
+  margin-top: 15vh;
+  margin-inline: auto;
+  padding: 2vw;
+}
+
+.new-bill,
+.current-bill {
+  background-color: rgba(105, 42, 42, 0.3);
+  border-radius: 10px;
+  padding: 20px;
+  max-width: 500px;
+  width: 400px;
+  margin: 2vw;
+}
+
+.new-bill h2,
+.current-bill h2 {
+  font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+  text-align: center;
+  font-size: 30px;
+  width: 100%;
+}
+
+.new-bill input,
+.current-bill input {
+  margin-bottom: 1vh;
+  max-width: 80%;
+  width: 100%;
+}
+
+#suggestions {
+  background-color: rgba(165, 42, 42, 0.2);
+  border-radius: 3px;
+  max-width: 60%;
+  margin-bottom: 2vh;
+  margin-top: 0;
+}
+
+.suggestion {
+  margin: 1vh;
+  padding: 10px;
+  border-bottom: 1px solid rgba(165, 42, 42, 0.8);
+  cursor: pointer;
+  text-transform: capitalize;
+  font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+  font-weight: 600;
+}
+
+.suggestion:last-child {
+  border: none;
+}
+
+.current-bill .table thead tr {
+  display: grid;
+  grid-template-columns: 3fr 1fr 2fr 2fr;
+}
+
+.current-bill .table thead tr th:nth-child(3) {
+  grid-column: span 2;
+}
+
+.current-bill .table thead tr th,
+.current-bill .table tbody tr td {
+  border-bottom: 1px solid rgba(165, 42, 42, 0.5);
+  width: 100%;
+  font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+  text-transform: uppercase;
+  font-size: 15px;
+  padding-top: 1vh;
+  padding-bottom: 1vh;
+  margin-right: 5px;
+}
+
+.current-bill .table thead tr th {
+  background-color: rgba(165, 42, 42, 0.4);
+}
+
+.table {
+  border-radius: 10px;
+  background-color: rgba(165, 42, 42, 0.2);
+  margin-bottom: 2vh;
+}
+
+.current-bill #total {
+  text-align: center;
+  font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.current-bill .table tbody tr {
+  display: grid;
+  grid-template-columns: 3fr 1fr 2fr 2fr;
+}
+
+.current-bill .table thead tr td:nth-child(3) {
+  grid-column: span 2;
+}
+
+.current-bill .table tbody tr td {
+  text-align: center;
+  width: 100%;
+}
+
+.item-delete {
+  font-size: 6px;
 }
