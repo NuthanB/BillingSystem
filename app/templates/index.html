@@ -3,7 +3,7 @@
 block content %}
 <section class="billing-home">
   <div class="new-bill">
-    <h2>Add items to Bill</h2>
+    <h2 style="color: white;">Add items to Bill</h2>
     <form id="bill-form" action="{{ url_for('create_bill') }}" method="post">
       <div class="form-group">
         <input
@@ -34,13 +34,13 @@ block content %}
   </div>
 
   <div class="current-bill">
-    <h2>Billing</h2>
+    <h2 style="color: white;">Billing</h2>
     <table class="table">
       <thead>
         <tr>
-          <th>Item</th>
-          <th>Quantity</th>
-          <th>Price</th>
+          <th style="color: white;">Item</th>
+          <th style="color: white;">Quantity</th>
+          <th style="color: white;">Price</th>
         </tr>
       </thead>
       <tbody id="bill_items">
