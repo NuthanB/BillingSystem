@@ -137,38 +137,20 @@ block content %}
     }
     return null;
   }
-
-  function deleteItemFromBill(button) {
-    var row = button.parentNode.parentNode; // Traverse up the DOM tree to find the parent row
+  function deleteItemFromBill(row) {
     var table = document.getElementById("bill_items");
+    var quantity = parseInt(row.cells[1].textContent);
     var rowIndex = row.rowIndex;
+    var price = parseFloat(row.cells[2].innerHTML);
 
-    if (rowIndex >= 0 && rowIndex < table.rows.length) {
-      var price = parseFloat(row.cells[2].textContent);
-      var quantity = parseInt(row.cells[1].innerHTML);
-
-      console.log(quantity);
-      if (quantity > 1) {
-        row.cells[2].textContent -= 1;
-      } else {
-        table.deleteRow(rowIndex - 1);
-      }
-
-      updateTotalAmount(-price);
-    } else if (rowIndex == table.rows.length) {
-      var price = parseFloat(row.cells[2].textContent);
-      var quantity = parseInt(row.cells[1].innerHTML);
-
-      console.log(price, quantity);
-      if (quantity > 1) {
-        row.cells[2].textContent -= 1;
-      } else {
-        table.deleteRow(-1);
-      }
-      updateTotalAmount(-price);
-    } else {
-      console.error("Row index is out of range.");
+    if (quantity > 1) row.cells[1].textContent -= 1;
+    else {
+      if (rowIndex >= 0 && rowIndex < table.rows.length)
+        table.deleteRow(rowIndex);
+      else if (rowIndex == table.rows.length) table.deleteRow(-1);
+      else console.error("Row index is out of range.");
     }
+    updateTotalAmount(-price);
   }
 
   function updateTotalAmount(amount) {
@@ -216,11 +198,7 @@ block content %}
           console.log("Bill submitted successfully");
         } else {
           // Handle error response
-          console.error(
-            "Failed to submit bill:",
-            response.statusText,
-            response
-          );
+          console.error("Failed to submit bill:", response.statusText);
         }
       })
       .catch((error) => {
