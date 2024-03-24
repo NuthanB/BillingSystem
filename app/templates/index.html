@@ -132,6 +132,7 @@ block content %}
     }
   }
 
+
   function findItemRow(itemName) {
     var table = document.getElementById("bill_items");
     for (var i = 0; i < table.rows.length; i++) {
@@ -204,6 +205,7 @@ block content %}
         if (response.ok) {
           // Handle successful submission
           console.log("Bill submitted successfully");
+          updateInventory(items);
         } else {
           // Handle error response
           console.error("Failed to submit bill:", response.statusText);

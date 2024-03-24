@@ -9,7 +9,6 @@ from flask import jsonify, request
 def index():
     return render_template('index.html')
 
-BILL_COUNT = 0
 
 @app.route('/get_suggestions')
 def get_suggestions():
@@ -54,8 +53,6 @@ def create_bill():
 
 @app.route('/submit_bill', methods=['POST'])
 def submit_bill():
-    global BILL_COUNT
-    BILL_COUNT += 1
     if 'user_id' in session:
         user_id = session['user_id']  # Retrieve user_id from session
         data = request.json
@@ -66,10 +63,27 @@ def submit_bill():
             db.session.add(new_bill)
 
             for item in items:
-                # Create a new bill item instance and associate it with the bill
-                bill_item = BillItem(
-                    bill=new_bill, item_name=item['name'], quantity=item['quantity'], price=item['price'])
-                db.session.add(bill_item)
+                # Query the item from the database
+                item_db = Item.query.filter_by(name=item['name']).first()
+
+                if item_db:
+                    # Calculate the new quantity by subtracting the quantity from the bill
+                    new_quantity = item_db.quantity - item['quantity']
+                    if new_quantity >= 0:
+                        # Update the item quantity
+                        item_db.quantity = new_quantity
+                        # Create a new bill item instance and associate it with the bill
+                        bill_item = BillItem(
+                            bill=new_bill, item_name=item['name'], quantity=item['quantity'], price=item['price'])
+                        db.session.add(bill_item)
+                    else:
+                        # Rollback the transaction and return an error message if the quantity would go negative
+                        db.session.rollback()
+                        return jsonify({'error': f'Insufficient quantity available for {item["name"]}'})
+                else:
+                    # Rollback the transaction and return an error message if the item is not found
+                    db.session.rollback()
+                    return jsonify({'error': f'Item {item["name"]} not found'})
 
             db.session.commit()
 

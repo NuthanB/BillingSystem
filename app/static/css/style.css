@@ -197,8 +197,7 @@ input[type="password"],
   border: none;
 }
 
-.current-bill .table thead tr,
-.items .item-table thead tr {
+.current-bill .table thead tr{
   display: grid;
   grid-template-columns: 3fr 1fr 2fr 2fr;
 }
@@ -240,8 +239,7 @@ input[type="password"],
   text-transform: uppercase;
 }
 
-.current-bill .table tbody tr,
-.items .item-table tbody tr {
+.current-bill .table tbody tr {
   display: grid;
   grid-template-columns: 3fr 1fr 2fr 2fr;
 }
@@ -310,6 +308,14 @@ input[type="password"],
   background-color: rgba(165, 42, 42, 0.5);
   margin-inline: auto;
 }
+
+.items .item-table thead tr ,
+.items .item-table tbody tr {
+  display: grid;
+  grid-template-columns: 3fr 1fr 1fr 1fr 2fr;
+}
+
+
 
 .items .item-table thead tr th,
 .items .item-table tbody tr td {
