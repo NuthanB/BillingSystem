@@ -120,3 +120,15 @@ input[type="password"] {
 .signup-section i {
   font-size: 30px;
 }
+
+.item-table{
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  text-align: center;
+}
+.item-table th{
+  background-color: rgba(165, 42, 42, 0.5);
+  color: #fff;
+  padding: 10px;
+}
