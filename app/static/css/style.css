@@ -59,7 +59,7 @@ footer {
   border: 3px solid rgba(165, 42, 42, 0.3);
   border-radius: 5px;
   background-color: #fff;
-  box-shadow: 2px 2px 500px rgba(165, 42, 42, 0.8);
+  box-shadow: 2px 2px 500px rgb(12, 53, 158);
 }
 
 .login-section p,
@@ -77,7 +77,7 @@ footer {
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  background-color: rgba(165, 42, 42, 0.5);
+  background-color: rgb(12, 53, 158);
   border-bottom: 3px solid rgba(165, 42, 42, 0.5);
   padding: 10px;
   border-radius: 5px;
