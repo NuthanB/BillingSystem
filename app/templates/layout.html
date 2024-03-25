@@ -12,25 +12,35 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
     />
+    <script
+      src="https://kit.fontawesome.com/3e21889ad9.js"
+      crossorigin="anonymous"
+    ></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
   </head>
   <body>
     <header>
-      <div style="text-align: center; color: white;" id="heading-of-the-website">CANTEEN APP</div>
+      <div style="text-align: center; color: white" id="brand">CANTEEN APP</div>
       <nav>
         <ul>
-          <li><a href="/" class="text-color">Home</a></li>
-          <li><a href="#" class="text-color">Report</a></li>
-          <li><a href="/add_item" class="text-color">Add Items</a></li>
-          <li><a href="/items" class="text-color">View Items</a></li>
+          <li><a href="/">Home</a></li>
+          <li><a href="#">Report</a></li>
+          <li><a href="/add_item">Add Items</a></li>
+          <li><a href="/items">View Items</a></li>
         </ul>
       </nav>
     </header>
     <main>{% block content %}{% endblock %}</main>
     <footer>
       <p>&copy; Developed By:-</p>
-      <p>Dayananda Sagar University - Department of Computer Science Engineering</p>
+      <p>
+        Dayananda Sagar University - Department of Computer Science Engineering
+      </p>
       <p>Faculty Guided:- Mohammed Khurram</p>
-      <p>Executed By:- Nuthan, Pavan Bhat, Mohammed Kaifulla Kazim, Mohammed Saad Fazal</p>
+      <p>
+        Executed By:- Nuthan, Pavan Bhat, Mohammed Kaifulla Kazim, Mohammed Saad
+        Fazal
+      </p>
     </footer>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
   </body>

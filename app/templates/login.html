@@ -3,7 +3,7 @@
 <section class="login-section">
   <div class="login-header">
     <i class="fa-solid fa-right-to-bracket"></i>
-    <p style="color: white;">LOGIN</p>
+    <p style="color: white">LOGIN</p>
   </div>
   <form action="{{ url_for('login') }}" method="post" class="login-form">
     <div class="form-group">
@@ -24,7 +24,21 @@
         required
       />
     </div>
+    <button
+      onclick="new_user()"
+      type="button"
+      class="btn-submit"
+      formnovalidate
+    >
+      Sign Up
+    </button>
     <button type="submit" class="btn-submit" id="login">Login</button>
   </form>
 </section>
+<script>
+  const new_user = () => {
+    window.location.href = "/signup";
+    console.log("Signing up...");
+  };
+</script>
 {% endblock %}

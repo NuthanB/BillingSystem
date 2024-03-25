@@ -7,7 +7,10 @@ from flask import jsonify, request
 @app.route('/')
 @app.route('/index')
 def index():
-    return render_template('index.html')
+    uid = session['user_id']
+    if uid:
+        return render_template('index.html')
+    return render_template('login.html')
 
 
 @app.route('/get_suggestions')
@@ -185,3 +188,28 @@ def get_item_price():
         return jsonify({'price': item.price})
     else:
         return jsonify({'error': 'Item not found'})
+
+
+@app.route('/reports')
+def show_reports():
+    bill = Bill.query.all()
+    bill_items = BillItem.query.all()
+    return render_template('report.html', bill=bill, bill_items=bill_items)
+
+@app.route('/delete-item', methods=['GET', 'POST'])
+def delete_item():
+    if request.method == 'GET':
+        item_id = request.args.get('item_id')
+        if item_id:
+            # Query the item from the database
+            item = Item.query.get(item_id)
+            if item:
+                db.session.delete(item)
+                db.session.commit()
+                return jsonify({'message': 'Item deleted successfully'}), 200
+            else:
+                return jsonify({'error': 'Item not found'}), 404
+        else:
+            return jsonify({'error': 'Missing item_id parameter'}), 400
+    else:
+        return jsonify({'error': 'Method not allowed'}), 405

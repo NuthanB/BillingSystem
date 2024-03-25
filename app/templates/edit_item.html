@@ -4,17 +4,14 @@
 {% block title %}Edit Item{% endblock %}
 
 {% block content %}
-<section>
+<section class="edit-item">
     <h2>Edit Item</h2>
     <form action="{{ url_for('update_item') }}" method="post">
         <input type="hidden" name="id" value="{{ item.id }}">
-        <label for="name">Name:</label>
-        <input type="text" id="name" name="name" value="{{ item.name }}" required>
-        <label for="group">Group:</label>
-        <input type="text" id="group" name="group" value="{{ item.group }}" required>
-        <label for="price">Price:</label>
-        <input type="number" id="price" name="price" value="{{ item.price }}" step="0.01" required>
-        <button type="submit">Update</button>
+        <input placeholder="Item Name" type="text" id="name" name="name" value="{{ item.name }}" required>
+        <input placeholder="Item Group" type="text" id="group" name="group" value="{{ item.group }}" required>
+        <input placeholder="Item Price" type="number" id="price" name="price" value="{{ item.price }}" step="0.01" required>
+        <button class="btn-submit" type="submit">Update</button>
     </form>
 </section>
 {% endblock %}
