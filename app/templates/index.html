@@ -209,6 +209,7 @@ block content %}
           // Handle successful submission
           console.log("Bill submitted successfully");
           updateInventory(items);
+          window.location.reload();
         } else {
           // Handle error response
           console.error("Failed to submit bill:", response.statusText);

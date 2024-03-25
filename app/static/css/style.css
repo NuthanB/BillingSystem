@@ -12,7 +12,7 @@
   --headings-col: rgba(0, 0, 0, 1);
   --inp-fields-border: rgb(204, 204, 204);
   --inp-fields-bg: rgb(238, 238, 238);
-  --accent-font-col: rgb(211, 223, 255);
+  --accent-font-col: rgb(215, 225, 255);
   --buttons-col: rgba(20, 50, 150, 1);
 }
 
@@ -31,6 +31,7 @@ footer {
   background-color: var(--main-col);
   box-shadow: 0 0 10px var(--main-col);
   color: var(--accent-font-col);
+  font-family: var(--body-font);
 }
 
 nav ul {
@@ -309,8 +310,8 @@ input[type="password"],
   width: 100%;
 }
 
-
 .item-delete {
+  width: 2vw;
   font-size: 15px;
   padding: 0;
   margin: 0;
@@ -378,6 +379,7 @@ input[type="password"],
   font-size: var(--heading-f-size);
   font-weight: 600;
   text-transform: uppercase;
+  font-family: var(--body-font);
 }
 
 .item-table {
@@ -432,6 +434,13 @@ input[type="password"],
   padding: 0.8vw;
   border-radius: var(--border-rad);
   cursor: pointer;
+}
+
+#del-item {
+  width: 2vw;
+  text-align: center;
+  padding: 5px;
+  margin: 0;
 }
 
 /* ------------- EDIT ITEM ---------------- */
