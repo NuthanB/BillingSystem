@@ -1,32 +1,49 @@
 <!-- templates/items.html -->
-{% extends 'layout.html' %}
-
-{% block title %}Items{% endblock %}
-
-{% block content %}
+{% extends 'layout.html' %} {% block title %}Items{% endblock %} {% block
+content %}
 <section class="items">
-    <h2>Items</h2>
-    <table class="item-table">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Group</th>
-                <th>Available</th>
-                <th>Price</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in items %}
-            <tr>
-                <td>{{ item.name }}</td>
-                <td>{{ item.group }}</td>
-                <td>{{ item.quantity }}</td>
-                <td>{{ item.price }}</td>
-                <td><a href="{{ url_for('edit_item', item_id=item.id) }}">Edit</a></td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+  <h2>Items</h2>
+  <table class="item-table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Group</th>
+        <th>Available</th>
+        <th>Price</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in items %}
+      <tr>
+        <td>{{ item.name }}</td>
+        <td>{{ item.group }}</td>
+        <td>{{ item.quantity }}</td>
+        <td>{{ item.price }}</td>
+        <td class="options">
+          <a href="{{ url_for('edit_item', item_id=item.id) }}">Edit</a>
+          <i
+            data-item-id="{{ item.id }}"
+            id="del-item"
+            class="fa-solid fa-trash-can"
+          ></i>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 </section>
+<script type="text/javascript">
+  $(function () {
+    $("i#del-item").on("click", function (e) {
+      e.preventDefault();
+      var itemId = $(this).data("item-id");
+      $.getJSON("/delete-item", { item_id: itemId }, function (data) {
+        console.log(data);
+        window.location.reload();
+      });
+      return false;
+    });
+  });
+</script>
 {% endblock %}

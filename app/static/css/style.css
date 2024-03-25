@@ -1,48 +1,88 @@
 /* Basic styling */
+:root {
+  --brand-font: Georgia, "Times New Roman", Times, serif;
+  --body-font: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+  --main-col: rgba(11, 73, 231, 0.8);
+  --accent-col: rgba(12, 53, 158, 0.2);
+  --heading-f-size: 2rem;
+  --default-f-size: 1.2rem;
+  --border-rad: 10px;
+  --container-border-rad: 20px;
+  --main-header-f-col: rgba(255, 255, 255, 1);
+  --headings-col: rgba(0, 0, 0, 1);
+  --inp-fields-border: rgb(204, 204, 204);
+  --inp-fields-bg: rgb(238, 238, 238);
+  --accent-font-col: rgb(215, 225, 255);
+  --buttons-col: rgba(20, 50, 150, 1);
+}
+
+* {
+  box-sizing: border-box;
+}
+
 body {
-  font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
-  background-color: #eee;
+  background-color: var(--inp-fields-bg);
 }
 
 header,
 footer {
-  background-color: rgba(105, 42, 42, 0.8);
-  box-shadow: 0 5px 20px rgba(165, 42, 42, 0.8);
+  background-color: var(--main-col);
+  box-shadow: 0 0 10px var(--main-col);
+  color: var(--accent-font-col);
+  font-family: var(--body-font);
 }
 
 nav ul {
   list-style-type: none;
   margin: 0;
-  padding: 0;
   display: flex;
   justify-content: space-evenly;
   align-items: center;
   flex-flow: wrap;
-  height: 5vh;
+  height: 6vh;
 }
 
 nav ul li {
   text-transform: uppercase;
-  font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
-  font-size: 20px;
+  font-family: var(--body-font);
+  font-size: var(--default-f-size);
   font-weight: 600;
   letter-spacing: 0.1rem;
+  text-shadow: 2px 2px 0 black;
+  padding: 10px 0;
+  color: var(--accent-font-col);
+}
+
+nav ul li a:hover {
+  font-size: 1.3rem;
+  font-weight: 800;
 }
 
 nav ul li a,
 .items .item-table tbody tr td a {
-  color: #000;
+  color: rgb(255, 255, 255);
   text-decoration: none;
+  font-size: var(--default-f-size);
+  transition: font-size 0.2s ease-in-out;
 }
 
-main {
-  padding: 20px;
+#brand {
+  font-weight: 800;
+  font-family: var(--brand-font);
+  text-shadow: 2px 2px 2px black;
+  font-size: 2.2rem;
+  padding: 1vh 0;
+  border-bottom: 3px solid white;
+  border-radius: var(--border-rad);
+  width: 80%;
+  text-align: center;
+  margin-inline: auto;
 }
 
 footer {
-  padding: 10px;
+  padding: 1vh;
   position: fixed;
   bottom: 0;
   width: 100%;
@@ -50,23 +90,21 @@ footer {
 }
 
 .login-section,
-.signup-section,
-.container {
-  max-width: 60%;
-  width: 400px;
+.signup-section {
+  max-width: 50%;
+  width: 50%;
   margin: 20vh auto;
   padding: 5vw;
-  border: 3px solid rgba(165, 42, 42, 0.3);
-  border-radius: 5px;
-  background-color: #fff;
-  box-shadow: 2px 2px 500px rgba(165, 42, 42, 0.8);
+  border: 3px solid var(--accent-col);
+  border-radius: var(--border-rad);
+  background-color: rgba(211, 223, 255, 0.3);
 }
 
 .login-section p,
 .signup-section p {
-  font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+  font-family: var(--body-font);
   letter-spacing: 2px;
-  font-size: 30px;
+  font-size: var(--heading-f-size);
   padding: 10px;
   border-radius: 5px;
   width: auto;
@@ -77,10 +115,10 @@ footer {
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  background-color: rgba(165, 42, 42, 0.5);
-  border-bottom: 3px solid rgba(165, 42, 42, 0.5);
+  background-color: var(--main-col);
+  border-bottom: 5px solid rgba(12, 53, 158, 1);
   padding: 10px;
-  border-radius: 5px;
+  border-radius: var(--border-rad);
   height: 5vh;
 }
 
@@ -99,34 +137,38 @@ input[type="email"],
 #email,
 input[type="password"],
 .new-bill input,
-.add-items-form input {
+.add-items-form input,
+.edit-item form input {
   margin: 0;
-  max-width: 400px;
-  width: 300px;
+  max-width: 60%;
+  width: 60%;
   padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  outline-color: brown;
-  background-color: #eee;
+  border: 1px solid var(--inp-fields-border);
+  border-radius: var(--border-rad);
+  outline-color: var(--main-col);
+  background-color: var(--inp-fields-bg);
+  font-size: var(--default-f-size);
 }
 
 #login,
 .btn-submit,
 .item-delete {
+  width: 10vw;
   padding: 10px;
-  border: none;
-  border-radius: 5px;
-  background-color: rgba(165, 42, 42, 0.6);
-  color: #fff;
-  font-size: 16px;
+  border: 1px solid rgba(12, 53, 158, 0.1);
+  border-radius: var(--border-rad);
+  background-color: var(--buttons-col);
+  color: var(--accent-font-col);
+  font-size: var(--default-f-size);
   cursor: pointer;
   transition: background-color 0.5s ease;
+  font-weight: 600;
 }
 
 #login:hover,
 .btn-submit:hover,
 .item-delete:hover {
-  background-color: rgba(165, 42, 42, 0.8);
+  background-color: rgba(12, 53, 158, 0.7);
 }
 
 .login-section i,
@@ -138,34 +180,44 @@ input[type="password"],
 .billing-home {
   display: flex;
   flex-flow: wrap;
-  justify-content: space-evenly;
-  box-shadow: 0 0 500px rgba(165, 42, 42, 1);
+  justify-content: space-between;
   width: 80%;
-  background-color: rgba(165, 42, 42, 0.3);
-  border-radius: 20px;
-  margin-top: 15vh;
+  margin-top: 3vh;
   margin-inline: auto;
-  padding: 2vw;
 }
 
 .new-bill,
 .current-bill {
-  background-color: rgba(105, 42, 42, 0.3);
-  border-radius: 10px;
+  border: 2px solid var(--headings-col);
+  border-radius: var(--border-rad);
   padding: 20px;
-  max-width: 500px;
-  width: 400px;
-  margin: 2vw;
+  max-width: 40%;
+  width: 40%;
+  height: 50vh;
+  margin: 8vh 8px;
+}
+
+.billing-actions {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background-color: var(--accent-col);
+  border-radius: var(--container-border-rad);
+  margin-bottom: 1vh;
+}
+
+.billing-actions .btn-submit {
+  margin: 1vh;
 }
 
 .new-bill h2,
 .current-bill h2,
 .container h2,
-.items h2 {
-  font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+.edit-item h2 {
+  font-family: var(--body-font);
   text-align: center;
-  font-size: 30px;
-  width: 100%;
+  font-size: var(--heading-f-size);
+  text-transform: uppercase;
 }
 
 .new-bill input,
@@ -173,11 +225,12 @@ input[type="password"],
   margin-bottom: 1vh;
   max-width: 80%;
   width: 100%;
+  font-size: 1.1rem;
 }
 
 #suggestions {
-  background-color: rgba(165, 42, 42, 0.2);
-  border-radius: 3px;
+  background-color: var(--accent-col);
+  border-radius: var(--border-rad);
   max-width: 60%;
   margin-bottom: 2vh;
   margin-top: 0;
@@ -185,11 +238,12 @@ input[type="password"],
 
 .suggestion {
   margin: 1vh;
+  font-size: var(--default-f-size);
   padding: 10px;
-  border-bottom: 1px solid rgba(165, 42, 42, 0.8);
+  border-bottom: 1px solid var(--headings-col);
   cursor: pointer;
   text-transform: capitalize;
-  font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+  font-family: var(--body-font);
   font-weight: 600;
 }
 
@@ -197,9 +251,12 @@ input[type="password"],
   border: none;
 }
 
-.current-bill .table thead tr{
+.current-bill .table thead tr {
+  border-radius: var(--border-rad);
+  background-color: var(--main-col);
   display: grid;
   grid-template-columns: 3fr 1fr 2fr 2fr;
+  border-bottom: 3px solid black;
 }
 
 .current-bill .table thead tr th:nth-child(3) {
@@ -210,30 +267,30 @@ input[type="password"],
 .current-bill .table tbody tr td,
 .item-table thead tr th,
 .item-table tbody tr td {
-  border-bottom: 1px solid rgba(165, 42, 42, 0.5);
   width: 100%;
-  font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
-  text-transform: uppercase;
-  font-size: 15px;
+  font-family: var(--body-font);
+  font-size: var(--default-f-size);
   padding-top: 1vh;
   padding-bottom: 1vh;
   margin-right: 5px;
+  text-transform: capitalize;
 }
 
 .current-bill .table thead tr th,
 .items .item-table thead tr th {
-  background-color: rgba(165, 42, 42, 0.4);
+  font-size: var(--default-f-size);
+  letter-spacing: 0.1rem;
+  color: var(--accent-font-col);
+  text-transform: uppercase;
 }
 
 .table {
-  border-radius: 10px;
-  background-color: rgba(165, 42, 42, 0.2);
   margin-bottom: 2vh;
 }
 
 .current-bill #total {
   text-align: center;
-  font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+  font-family: var(--body-font);
   font-size: 20px;
   font-weight: 600;
   text-transform: uppercase;
@@ -241,7 +298,7 @@ input[type="password"],
 
 .current-bill .table tbody tr {
   display: grid;
-  grid-template-columns: 3fr 1fr 2fr 2fr;
+  grid-template-columns: 4fr 2fr 2fr 3fr;
 }
 
 .current-bill .table thead tr td:nth-child(3) {
@@ -254,21 +311,33 @@ input[type="password"],
 }
 
 .item-delete {
-  font-size: 6px;
+  width: 2vw;
+  font-size: 15px;
+  padding: 0;
+  margin: 0;
+  width: 20%;
+  height: 1.2vw;
+  background-color: var(--buttons-col);
 }
 
 /* ----------- ADD ITEMS ----------------- */
-.container {
+.container,
+.edit-item {
   margin-inline: auto;
-  background-color: rgba(165, 42, 42, 0.3);
-  border: 1px solid rgba(165, 42, 42, 0.5);
-  border-radius: 10px;
+  border-radius: var(--border-rad);
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
   align-items: center;
+  margin-top: 10vh;
+  width: 40%;
+  border: 2px solid black;
+  padding: 2vw;
 }
 
+.conatiner h2 {
+  color: black;
+}
 
 .add-items-form {
   display: flex;
@@ -276,66 +345,123 @@ input[type="password"],
   justify-content: center;
 }
 
-.add-items-form input {
-  margin-top: 0.6vh;
+.add-items-form input,
+.edit-item form input {
+  margin-top: 1vh;
+  margin-inline: auto;
+  max-width: 100%;
+  width: 100%;
 }
 
 .add-items-form > * {
   margin-top: 1vh;
 }
 
-.container .add-items-form .btn-submit {
-  width: 50%;
+.container .add-items-form .btn-submit,
+.edit-item form .btn-submit {
+  width: 80%;
   align-self: center;
+  margin-top: 4vh;
 }
 
 /* ----------- VIEW ITEMS --------------- */
 .items {
-  max-width: 800px;
-  border: 1px solid rgba(165, 42, 42, 0.5);
-  border-radius: 10px;
-  background-color: rgba(165, 42, 42, 0.3);
-  padding-top: 20px;
-  padding-bottom: 20px;
+  max-width: 80%;
+  border: 1px solid var(--headings-col);
+  border-radius: var(--border-rad);
+  padding: 2vw;
   margin-inline: auto;
-  box-shadow: 0 0 500px rgba(165, 42, 42, 1);
-  margin-top: 20vh;
+  margin-top: 2vh;
+}
+
+.items h2 {
+  text-align: center;
+  font-size: var(--heading-f-size);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-family: var(--body-font);
 }
 
 .item-table {
-  border: 1px solid rgba(165, 42, 42, 0.8);
-  border-radius: 10px;
-  background-color: rgba(165, 42, 42, 0.5);
+  border-radius: var(--border-rad);
   margin-inline: auto;
+  border: 2px solid black;
+  border-radius: var(--border-rad);
 }
 
-.items .item-table thead tr ,
+.item-table thead tr {
+  border-radius: var(--border-rad);
+  background-color: var(--main-col);
+}
+
+.items .item-table thead tr,
 .items .item-table tbody tr {
   display: grid;
   grid-template-columns: 3fr 1fr 1fr 1fr 2fr;
 }
-
-
 
 .items .item-table thead tr th,
 .items .item-table tbody tr td {
   text-align: center;
 }
 
+.items .item-table tbody tr td {
+  font-size: var(--default-f-size);
+}
+
 .items .item-table tbody tr td a {
-  background-color: red;
   padding: 5px;
-  border-radius: 5px;
+  border-radius: var(--border-rad);
   transition: padding 0.1s ease;
-  background-color: rgba(165, 42, 42, 0.6);
+  background-color: rgba(12, 53, 158, 0.8);
   color: #fff;
+  font-size: 1.1rem;
+  text-transform: capitalize;
 }
 
 .items .item-table tbody tr td a:hover {
-  background-color: rgba(165, 42, 42, 0.8);
-  padding: 8px;
+  background-color: rgba(12, 53, 158, 1);
 }
 
-.items .item-table tbody tr:last-child {
-  border-bottom: none;
+.items .item-table tbody .options {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.items .item-table tbody tr td i {
+  background-color: rgba(12, 53, 158, 0.5);
+  padding: 0.8vw;
+  border-radius: var(--border-rad);
+  cursor: pointer;
+}
+
+#del-item {
+  width: 2vw;
+  text-align: center;
+  padding: 5px;
+  margin: 0;
+}
+
+/* ------------- EDIT ITEM ---------------- */
+.edit-item {
+  max-width: 80%;
+  width: auto;
+}
+
+.edit-item form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.edit-item form input {
+  border-radius: var(--border-rad);
+  margin-bottom: 1vh;
+}
+
+.edit-item form .btn-submit {
+  margin: 1vh auto;
+  border-radius: var(--border-rad);
 }
