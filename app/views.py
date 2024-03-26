@@ -2,45 +2,44 @@ from flask import render_template, request, redirect, session, url_for
 from app import app, db
 from app.models import User, Item, Bill, BillItem
 from flask import jsonify, request
+from datetime import datetime
+from sqlalchemy import func
 
 
 @app.route('/')
 @app.route('/index')
 def index():
-    uid = session['user_id']
-    if uid:
-        return render_template('index.html')
-    return render_template('login.html')
+    try:
+        uid = session['user_id']
+    except KeyError:
+        return render_template('login.html')
+    return render_template('index.html')
 
 
 @app.route('/get_suggestions')
 def get_suggestions():
     keyword = request.args.get('keyword')
-    if keyword:  # Check if keyword is not empty
-        # Query the Item table to get suggestions based on the keyword
+    if keyword:
         suggestions = Item.query.filter(
             Item.name.ilike(f'%{keyword}%')).limit(10).all()
-        # Extract names from suggestions
+
         suggestion_names = [item.name for item in suggestions]
-        # Return suggestion names as JSON response
         return jsonify(suggestion_names)
     else:
-        # Return an empty list if keyword is empty
         return jsonify([])
 
 
 @app.route('/create_bill', methods=['POST'])
 def create_bill():
-    # Extract bill details from the request
     bill_number = request.form['bill_number']
     user_id = session.get('user_id')
+
     if user_id:
         user = User.query.get(user_id)
         bill = Bill(bill_number=bill_number, user=user)
         db.session.add(bill)
         db.session.commit()
 
-        # Extract item details from the form and add them to the bill
         item_name = request.form['item_name']
         quantity = int(request.form['quantity'])
         price = float(request.form['price'])
@@ -57,8 +56,9 @@ def create_bill():
 @app.route('/submit_bill', methods=['POST'])
 def submit_bill():
     if 'user_id' in session:
-        user_id = session['user_id']  # Retrieve user_id from session
+        user_id = session['user_id']
         data = request.json
+
         if data:
             items = data.get('items')
             total = data.get('total')
@@ -66,25 +66,20 @@ def submit_bill():
             db.session.add(new_bill)
 
             for item in items:
-                # Query the item from the database
-                item_db = Item.query.filter_by(name=item['name']).first()
+                item_db = Item.query.filter_by(
+                    name=item['name']).first()
 
                 if item_db:
-                    # Calculate the new quantity by subtracting the quantity from the bill
                     new_quantity = item_db.quantity - item['quantity']
                     if new_quantity >= 0:
-                        # Update the item quantity
                         item_db.quantity = new_quantity
-                        # Create a new bill item instance and associate it with the bill
                         bill_item = BillItem(
                             bill=new_bill, item_name=item['name'], quantity=item['quantity'], price=item['price'])
                         db.session.add(bill_item)
                     else:
-                        # Rollback the transaction and return an error message if the quantity would go negative
                         db.session.rollback()
                         return jsonify({'error': f'Insufficient quantity available for {item["name"]}'})
                 else:
-                    # Rollback the transaction and return an error message if the item is not found
                     db.session.rollback()
                     return jsonify({'error': f'Item {item["name"]} not found'})
 
@@ -103,12 +98,11 @@ def login():
         email = request.form['email']
         password = request.form['password']
         user = User.query.filter_by(email=email, password=password).first()
+
         if user:
-            # Authentication successful, store user ID in session
             session['user_id'] = user.id
             return redirect(url_for('index'))
         else:
-            # Authentication failed, redirect back to login page with an error message
             return render_template('login.html', error='Invalid email or password.')
     return render_template('login.html')
 
@@ -121,7 +115,7 @@ def signup():
         user = User(email=email, password=password)
         db.session.add(user)
         db.session.commit()
-        # Redirect to login page after successful signup
+
         return redirect(url_for('login'))
     return render_template('signup.html')
 
@@ -133,17 +127,15 @@ def add_item():
         group = request.form['group']
         quantity = int(request.form['quantity'])
         price = float(request.form['price'])
-        # Assuming user is logged in and session contains user ID
+
         user_id = session.get('user_id')
         if user_id:
             item = Item(name=name, group=group, quantity=quantity,
                         price=price, user_id=user_id)
             db.session.add(item)
             db.session.commit()
-            # Redirect to home page after adding item
             return redirect(url_for('index'))
         else:
-            # Redirect to login page if user is not logged in
             return redirect(url_for('login'))
     return render_template('add_item.html')
 
@@ -160,7 +152,6 @@ def edit_item(item_id):
     if item:
         return render_template('edit_item.html', item=item)
     else:
-        # Item not found, handle appropriately (e.g., redirect to items page)
         return redirect(url_for('items'))
 
 
@@ -182,7 +173,6 @@ def update_item():
 @app.route('/get_item_price')
 def get_item_price():
     item_name = request.args.get('item_name')
-    # Query the database to retrieve the price for the selected item
     item = Item.query.filter_by(name=item_name).first()
     if item:
         return jsonify({'price': item.price})
@@ -190,18 +180,41 @@ def get_item_price():
         return jsonify({'error': 'Item not found'})
 
 
-@app.route('/reports')
+@app.route('/filter-bills', methods=['GET', 'POST'])
+def filter_bills():
+    if request.method == 'POST':
+        from_date_str = request.form['from_date']
+        to_date_str = request.form['to_date']
+        from_date = datetime.strptime(from_date_str, '%Y-%m-%d').date()
+        to_date = datetime.strptime(to_date_str, '%Y-%m-%d').date()
+
+        print(from_date, to_date)
+
+        filtered_bills = Bill.query.filter(
+            func.date(Bill.bill_date_time) >= from_date,
+            func.date(Bill.bill_date_time) <= to_date
+        ).all()
+        
+        print(filtered_bills)
+
+        return render_template("filtered_bills.html", bills=filtered_bills, from_date=from_date_str, to_date=to_date_str)
+    else:
+        return redirect("/report")
+
+
+@app.route('/report')
 def show_reports():
     bill = Bill.query.all()
     bill_items = BillItem.query.all()
-    return render_template('report.html', bill=bill, bill_items=bill_items)
+    return render_template('report.html', bills=bill, bill_items=bill_items)
+
 
 @app.route('/delete-item', methods=['GET', 'POST'])
 def delete_item():
     if request.method == 'GET':
         item_id = request.args.get('item_id')
+
         if item_id:
-            # Query the item from the database
             item = Item.query.get(item_id)
             if item:
                 db.session.delete(item)
