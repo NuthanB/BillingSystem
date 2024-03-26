@@ -152,7 +152,8 @@ input[type="password"],
 
 #login,
 .btn-submit,
-.item-delete {
+.item-delete,
+.btn-logout {
   width: 10vw;
   padding: 10px;
   border: 1px solid rgba(12, 53, 158, 0.1);
@@ -174,6 +175,10 @@ input[type="password"],
 .login-section i,
 .signup-section i {
   font-size: 30px;
+}
+
+.btn-logout {
+  background-color: var(--main-col);
 }
 
 /* ------------------ HOMEPAGE -------------------------- */
