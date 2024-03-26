@@ -208,8 +208,8 @@ block content %}
         if (response.ok) {
           // Handle successful submission
           console.log("Bill submitted successfully");
-          updateInventory(items);
           window.location.reload();
+          updateInventory(items);
         } else {
           // Handle error response
           console.error("Failed to submit bill:", response.statusText);
