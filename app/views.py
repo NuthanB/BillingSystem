@@ -112,6 +112,12 @@ def signup():
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
+
+        existing_user = User.query.filter_by(email=email).first()
+        if existing_user:
+            # Email already exists, refresh the page or perform any desired action
+            return redirect(url_for('signup'))
+
         user = User(email=email, password=password)
         db.session.add(user)
         db.session.commit()
@@ -194,7 +200,7 @@ def filter_bills():
             func.date(Bill.bill_date_time) >= from_date,
             func.date(Bill.bill_date_time) <= to_date
         ).all()
-        
+
         print(filtered_bills)
 
         return render_template("filtered_bills.html", bills=filtered_bills, from_date=from_date_str, to_date=to_date_str)
@@ -226,3 +232,11 @@ def delete_item():
             return jsonify({'error': 'Missing item_id parameter'}), 400
     else:
         return jsonify({'error': 'Method not allowed'}), 405
+
+
+@app.route('/logout', methods=['POST'])
+def logout():
+    # Perform logout actions here, such as clearing session
+    # For example:
+    session.clear()  # Clear session data
+    return redirect(url_for('login'))
