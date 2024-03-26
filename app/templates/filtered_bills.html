@@ -2,24 +2,14 @@
 block content %}
 
 <section class="bill-report">
-  <h2>SEARCH BILLS</h2>
-  <form action="{{ url_for('filter_bills') }}" method="post">
-    <input
-      placeholder="From date"
-      type="date"
-      id="from_date"
-      name="from_date"
-    />
-    <input placeholder="To date" type="date" id="to_date" name="to_date" />
-    <button type="submit" class="btn-submit">Search</button>
-  </form>
-
+  <h2>BILLS</h2>
+  <h3>from {{ from_date }} to {{ to_date }}</h3>
   <div class="bills">
     <table class="bills-item-table">
       <thead>
         <tr>
           <th>Bill ID</th>
-          <th>Billing Date</th>
+          <th>Date & Time</th>
           <th>Bill Total</th>
         </tr>
       </thead>

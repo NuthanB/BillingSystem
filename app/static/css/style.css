@@ -213,7 +213,9 @@ input[type="password"],
 .new-bill h2,
 .current-bill h2,
 .container h2,
-.edit-item h2 {
+.edit-item h2,
+.bill-report h2,
+h3 {
   font-family: var(--body-font);
   text-align: center;
   font-size: var(--heading-f-size);
@@ -251,7 +253,8 @@ input[type="password"],
   border: none;
 }
 
-.current-bill .table thead tr {
+.current-bill .table thead tr,
+.bills-item-table thead tr {
   border-radius: var(--border-rad);
   background-color: var(--main-col);
   display: grid;
@@ -266,7 +269,9 @@ input[type="password"],
 .current-bill .table thead tr th,
 .current-bill .table tbody tr td,
 .item-table thead tr th,
-.item-table tbody tr td {
+.item-table tbody tr td,
+.bills-item-table thead tr th,
+.bills-item-table tbody tr td {
   width: 100%;
   font-family: var(--body-font);
   font-size: var(--default-f-size);
@@ -277,7 +282,8 @@ input[type="password"],
 }
 
 .current-bill .table thead tr th,
-.items .item-table thead tr th {
+.items .item-table thead tr th,
+.bills-item-table thead tr th {
   font-size: var(--default-f-size);
   letter-spacing: 0.1rem;
   color: var(--accent-font-col);
@@ -305,7 +311,8 @@ input[type="password"],
   grid-column: span 2;
 }
 
-.current-bill .table tbody tr td {
+.current-bill .table tbody tr td,
+.bills-item-table tbody tr td {
   text-align: center;
   width: 100%;
 }
@@ -382,14 +389,16 @@ input[type="password"],
   font-family: var(--body-font);
 }
 
-.item-table {
+.item-table,
+.bills-item-table {
   border-radius: var(--border-rad);
   margin-inline: auto;
   border: 2px solid black;
   border-radius: var(--border-rad);
 }
 
-.item-table thead tr {
+.item-table thead tr,
+.bills-item-table thead tr {
   border-radius: var(--border-rad);
   background-color: var(--main-col);
 }
@@ -405,7 +414,8 @@ input[type="password"],
   text-align: center;
 }
 
-.items .item-table tbody tr td {
+.items .item-table tbody tr td,
+.bills-item-table tbody tr td {
   font-size: var(--default-f-size);
 }
 
@@ -429,7 +439,8 @@ input[type="password"],
   align-items: center;
 }
 
-.items .item-table tbody tr td i {
+.items .item-table tbody tr td i,
+.bills-item-table tbody tr td i {
   background-color: rgba(12, 53, 158, 0.5);
   padding: 0.8vw;
   border-radius: var(--border-rad);
@@ -464,4 +475,32 @@ input[type="password"],
 .edit-item form .btn-submit {
   margin: 1vh auto;
   border-radius: var(--border-rad);
+}
+
+/* ------------------- REPORT -------------------------- */
+.bills-item-table thead tr,
+.bills-item-table tbody tr {
+  display: grid;
+  grid-template-columns: 1fr 3fr 3fr 1fr;
+  text-align: center;
+}
+
+.bill-report form {
+  display: flex;
+  flex-flow: wrap;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+.bill-report form input {
+  border: 2px solid var(--main-col);
+  padding: 10px;
+  margin: 1vh;
+  border-radius: var(--border-rad);
+  font-family: var(--body-font);
+  font-size: var(--default-f-size);
+}
+
+.bill-report h3 {
+  font-size: 1.1rem;
 }
