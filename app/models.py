@@ -27,12 +27,13 @@ class Bill(db.Model):
     bill_date_time = db.Column(
         db.DateTime, default=lambda: datetime.now(timezone("Asia/Kolkata")))
     total = db.Column(db.Float, nullable=False)
-    items = db.relationship('BillItem', backref='bill', lazy=True)
+    items = db.relationship('BillItem', backref='bill',
+                            lazy=True, cascade='all, delete-orphan')
 
 
 class BillItem(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    bill_id = db.Column(db.Integer, db.ForeignKey('bill.id'), nullable=False)
+    bill_id = db.Column(db.Integer, db.ForeignKey('bill.id', ondelete='CASCADE'), nullable=False)
     item_name = db.Column(db.String(100), nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
     price = db.Column(db.Float, nullable=False)

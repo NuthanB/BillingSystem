@@ -1,9 +1,6 @@
-from flask import render_template, request, redirect, session, url_for
+from flask import render_template, request, redirect, session, url_for, jsonify
 from app import app, db
 from app.models import User, Item, Bill, BillItem
-from flask import jsonify, request
-from datetime import datetime
-from sqlalchemy import func
 from datetime import datetime
 from sqlalchemy import func
 
@@ -25,7 +22,6 @@ def get_suggestions():
         suggestions = Item.query.filter(
             Item.name.ilike(f'%{keyword}%')).limit(10).all()
 
-
         suggestion_names = [item.name for item in suggestions]
         return jsonify(suggestion_names)
     else:
@@ -36,7 +32,6 @@ def get_suggestions():
 def create_bill():
     bill_number = request.form['bill_number']
     user_id = session.get('user_id')
-
 
     if user_id:
         user = User.query.get(user_id)
@@ -63,7 +58,6 @@ def submit_bill():
         user_id = session['user_id']
         user_id = session['user_id']
         data = request.json
-
 
         if data:
             items = data.get('items')
@@ -246,3 +240,50 @@ def delete_item():
 def logout():
     session.clear()  # Clear session data
     return redirect(url_for('login'))
+
+
+@app.route('/bill-details/<int:bill_id>')
+def get_bill_details(bill_id):
+    bill = Bill.query.get(bill_id)
+    if bill:
+        bill_details = {
+            'id': bill.id,
+            'bill_date_time': bill.bill_date_time.strftime('%d-%m-%Y | %H:%M'),
+            'total': bill.total,
+            'items': []  # Initialize an empty list for storing bill items
+        }
+
+        # Query related BillItems
+        bill_items = BillItem.query.filter_by(bill_id=bill_id).all()
+
+        # Populate the 'items' list in bill_details with data from BillItems
+        for item in bill_items:
+            bill_details['items'].append({
+                'item_name': item.item_name,
+                'quantity': item.quantity,
+                'price': item.price
+                # Add more item details here as needed
+            })
+
+        return jsonify(bill_details)
+    else:
+        return jsonify({'error': 'Bill not found'}), 404
+    
+@app.route('/delete-bill/<int:bill_id>', methods=['DELETE'])
+def delete_bill(bill_id):
+    try:
+        # Query the bill by its ID
+        bill = Bill.query.get(bill_id)
+        if bill:
+            # Delete the bill from the database
+            db.session.delete(bill)
+            db.session.commit()
+            return jsonify({'message': 'Bill deleted successfully'}), 200
+        else:
+            return jsonify({'error': 'Bill not found'}), 404
+    except Exception as e:
+        # Rollback the transaction in case of error
+        db.session.rollback()
+        # Log or print the error for debugging
+        print("Error deleting bill:", e)
+        return jsonify({'error': 'Failed to delete bill'}), 500
