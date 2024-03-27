@@ -6,8 +6,8 @@
   --accent-col: rgba(12, 53, 158, 0.2);
   --heading-f-size: 2rem;
   --default-f-size: 1.2rem;
-  --border-rad: 10px;
-  --container-border-rad: 20px;
+  --border-rad: 3px;
+  --container-border-rad: 5px;
   --main-header-f-col: rgba(255, 255, 255, 1);
   --headings-col: rgba(0, 0, 0, 1);
   --inp-fields-border: rgb(204, 204, 204);
@@ -193,13 +193,16 @@ input[type="password"],
 
 .new-bill,
 .current-bill {
-  border: 2px solid var(--headings-col);
-  border-radius: var(--border-rad);
-  padding: 20px;
   max-width: 40%;
   width: 40%;
   height: 50vh;
   margin: 8vh 8px;
+  overflow: scroll;
+}
+
+::-webkit-scrollbar {
+  width: 0px;
+  background: transparent;
 }
 
 .billing-actions {
@@ -208,7 +211,7 @@ input[type="password"],
   align-items: center;
   background-color: var(--accent-col);
   border-radius: var(--container-border-rad);
-  margin-bottom: 1vh;
+  width: 100%;
 }
 
 .billing-actions .btn-submit {
@@ -411,7 +414,7 @@ h3 {
 .items .item-table thead tr,
 .items .item-table tbody tr {
   display: grid;
-  grid-template-columns: 3fr 1fr 1fr 1fr 2fr;
+  grid-template-columns: 1fr 3fr 1fr 1fr 1fr 2fr;
 }
 
 .items .item-table thead tr th,

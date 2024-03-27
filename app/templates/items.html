@@ -6,6 +6,7 @@ content %}
   <table class="item-table">
     <thead>
       <tr>
+        <th>Item ID</th>
         <th>Name</th>
         <th>Group</th>
         <th>Available</th>
@@ -16,6 +17,7 @@ content %}
     <tbody>
       {% for item in items %}
       <tr>
+        <td>{{ item.id }}
         <td>{{ item.name }}</td>
         <td>{{ item.group }}</td>
         <td>{{ item.quantity }}</td>
