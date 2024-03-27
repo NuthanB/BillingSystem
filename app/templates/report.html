@@ -19,7 +19,7 @@ block content %}
       <thead>
         <tr>
           <th>Bill ID</th>
-          <th>Billing Date</th>
+          <th>Date & Time</th>
           <th>Bill Total</th>
         </tr>
       </thead>
@@ -27,7 +27,7 @@ block content %}
         {% for bill in bills %}
         <tr>
           <td>{{ bill.id }}</td>
-          <td>{{ bill.bill_date_time.strftime('%d-%m-%Y') }}</td>
+          <td>{{ bill.bill_date_time.strftime('%d-%m-%Y | %H:%M ') }}</td>
           <td>{{ bill.total }}</td>
           <td>
             <i
