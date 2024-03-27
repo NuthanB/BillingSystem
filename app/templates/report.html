@@ -1,6 +1,6 @@
+<!-- report.html -->
 {% extends 'layout.html' %} {% block title %}Billing System{% endblock %} {%
 block content %}
-
 <section class="bill-report">
   <h2>SEARCH BILLS</h2>
   <form action="{{ url_for('filter_bills') }}" method="post">
@@ -25,23 +25,111 @@ block content %}
       </thead>
       <tbody>
         {% for bill in bills %}
-        <tr>
+        <tr class="bill-row" data-item-id="{{ bill.id }}">
           <td>{{ bill.id }}</td>
           <td>{{ bill.bill_date_time.strftime('%d-%m-%Y | %H:%M ') }}</td>
           <td>{{ bill.total }}</td>
-          <td>
+          <td class="actions">
             <i
               data-item-id="{{ bill.id }}"
-              id="del-item"
-              class="fa-solid fa-trash-can"
+              class="fa-solid fa-trash-can delete-bill"
             ></i>
+            <button id="expand-report" class="expand-bill">+</button>
           </td>
+          <td
+            class="bill-details"
+            id="details-{{ bill.id }}"
+            style="display: none"
+          ></td>
         </tr>
         {% endfor %}
       </tbody>
     </table>
   </div>
-  <div class="bill-items"></div>
 </section>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const deleteIcons = document.querySelectorAll(".fa-trash-can");
+    deleteIcons.forEach(function (icon) {
+      icon.addEventListener("click", function () {
+        console.log(icon.closest(".bill-row").dataset);
+        const billId = icon.closest(".bill-row").dataset.itemId;
+        if (billId) {
+          deleteBill(billId);
+        } else {
+          console.error("Unable to retrieve bill ID");
+        }
+      });
+    });
 
+    function deleteBill(billId) {
+      // Perform deletion here or make an AJAX request to delete the bill
+      console.log("Deleting bill with ID:", billId);
+      fetch(`/delete-bill/${billId}`, {
+        method: "DELETE",
+      })
+        .then((response) => {
+          if (response.ok) {
+            // Reload the page after successful deletion
+            window.location.reload();
+          } else {
+            console.error("Failed to delete bill");
+          }
+        })
+        .catch((error) => {
+          console.error("Error deleting bill:", error);
+        });
+    }
+
+    const expandButtons = document.querySelectorAll(".expand-bill");
+    expandButtons.forEach(function (button) {
+      button.addEventListener("click", function () {
+        const billId = button.closest(".bill-row").dataset.itemId;
+        const details = document.getElementById("details-" + billId);
+        console.log(billId, details);
+        if (details.style.display === "none") {
+          fetchBillDetails(billId, details); // Fetch and display details
+          document.getElementById("expand-report").textContent = "-";
+        } else {
+          details.style.display = "none"; // Hide details
+          document.getElementById("expand-report").textContent = "+";
+        }
+      });
+    });
+
+    function fetchBillDetails(billId, detailsElement) {
+      fetch(`/bill-details/${billId}`)
+        .then((response) => response.json())
+        .then((data) => {
+          const tableHTML = `
+          <table>
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Quantity</th>
+                <th>Price</th>
+              </tr>
+            </thead>
+            <tbody> 
+              ${data.items
+                .map(
+                  (item) => `
+                  <tr>
+                    <td>${item.item_name}</td> 
+                    <td>${item.quantity}</td>
+                    <td>${item.price}</td>
+                  </tr>
+                `
+                )
+                .join("")}
+            </tbody>
+          </table>
+        `;
+          detailsElement.innerHTML = tableHTML;
+          detailsElement.style.display = "table-cell"; // Show details
+        })
+        .catch((error) => console.error("Error fetching bill details:", error));
+    }
+  });
+</script>
 {% endblock %}

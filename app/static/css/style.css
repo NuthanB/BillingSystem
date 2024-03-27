@@ -448,7 +448,9 @@ h3 {
 }
 
 .items .item-table tbody tr td i,
-.bills-item-table tbody tr td i {
+.bills-item-table tbody tr td i,
+#expand-report,
+#expand-filter {
   background-color: rgba(12, 53, 158, 0.5);
   padding: 0.8vw;
   border-radius: var(--border-rad);
@@ -493,6 +495,24 @@ h3 {
   text-align: center;
 }
 
+.bills .bills-item-table tbody .actions {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  padding: 0;
+}
+
+.bill-row {
+  margin-bottom: 0.8vh;
+}
+
+#expand-report,
+#expand-filter {
+  font-weight: 900;
+  padding: 0.75vw;
+  margin-left: 2px;
+}
+
 .bill-report form {
   display: flex;
   flex-flow: wrap;
@@ -511,4 +531,8 @@ h3 {
 
 .bill-report h3 {
   font-size: 1.1rem;
+}
+
+.bills .bills-item-table tbody .bill-details {
+  grid-column: span 4;
 }
