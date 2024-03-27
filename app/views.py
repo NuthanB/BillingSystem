@@ -4,6 +4,8 @@ from app.models import User, Item, Bill, BillItem
 from flask import jsonify, request
 from datetime import datetime
 from sqlalchemy import func
+from datetime import datetime
+from sqlalchemy import func
 
 
 @app.route('/')
@@ -23,6 +25,7 @@ def get_suggestions():
         suggestions = Item.query.filter(
             Item.name.ilike(f'%{keyword}%')).limit(10).all()
 
+
         suggestion_names = [item.name for item in suggestions]
         return jsonify(suggestion_names)
     else:
@@ -33,6 +36,7 @@ def get_suggestions():
 def create_bill():
     bill_number = request.form['bill_number']
     user_id = session.get('user_id')
+
 
     if user_id:
         user = User.query.get(user_id)
@@ -57,7 +61,9 @@ def create_bill():
 def submit_bill():
     if 'user_id' in session:
         user_id = session['user_id']
+        user_id = session['user_id']
         data = request.json
+
 
         if data:
             items = data.get('items')
@@ -66,6 +72,8 @@ def submit_bill():
             db.session.add(new_bill)
 
             for item in items:
+                item_db = Item.query.filter_by(
+                    name=item['name']).first()
                 item_db = Item.query.filter_by(
                     name=item['name']).first()
 
@@ -236,7 +244,5 @@ def delete_item():
 
 @app.route('/logout', methods=['POST'])
 def logout():
-    # Perform logout actions here, such as clearing session
-    # For example:
     session.clear()  # Clear session data
     return redirect(url_for('login'))
