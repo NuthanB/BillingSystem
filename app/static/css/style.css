@@ -536,3 +536,45 @@ h3 {
 .bills .bills-item-table tbody .bill-details {
   grid-column: span 4;
 }
+
+/* ------------ PRINT BILL ---------------- */
+.print-bill{
+  max-width: 50vw;
+  text-align: center;
+  font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+  border: 1px solid black;
+}
+
+.print-bill .bill-slip .billing-details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 0;
+}
+.print-bill h2,
+.print-bill h3,
+.print-bill p {
+  margin: 0.5vw;
+}
+
+.print-bill h2 {
+  font-size: 1.5rem;
+}
+
+.print-bill h3 {
+  font-size: 1.3rem;
+}
+
+.print-bill table {
+  margin-inline: auto;
+}
+
+.print-bill table .bill-item-details-header {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+}
+
+.print-bill table .bill-item-details,
+.print-bill table .totalling {
+  display: grid;
+  grid-template-columns: 3fr 2fr 2fr 2fr;
+}
