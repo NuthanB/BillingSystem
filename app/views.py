@@ -94,6 +94,34 @@ def submit_bill():
         return jsonify({'error': 'User not authenticated'}), 401
 
 
+def get_bill(bill_id):
+    bill = Bill.query.get(bill_id)
+    if bill:
+        bill_details = {
+            'id': bill.id,
+            'bill_date_time': bill.bill_date_time.strftime('%d-%m-%Y | %H:%M'),
+            'total': bill.total,
+            'bill_items': []  # Initialize an empty list for storing bill items
+        }
+
+        # Query related BillItems
+        bill_items = BillItem.query.filter_by(bill_id=bill_id).all()
+
+        # Populate the 'items' list in bill_details with data from BillItems
+        for item in bill_items:
+            bill_details['bill_items'].append({
+                'item_name': item.item_name,
+                'quantity': item.quantity,
+                'price': item.price
+                # Add more item details here as needed
+            })
+
+        return bill_details
+
+    else:
+        return jsonify({'error': 'Bill not found'}), 404
+
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -268,7 +296,8 @@ def get_bill_details(bill_id):
         return jsonify(bill_details)
     else:
         return jsonify({'error': 'Bill not found'}), 404
-    
+
+
 @app.route('/delete-bill/<int:bill_id>', methods=['DELETE'])
 def delete_bill(bill_id):
     try:
@@ -287,3 +316,28 @@ def delete_bill(bill_id):
         # Log or print the error for debugging
         print("Error deleting bill:", e)
         return jsonify({'error': 'Failed to delete bill'}), 500
+
+
+@app.route("/print-bill")
+def print_bill():
+    print("Printing...")
+    try:
+        bill = Bill.query.order_by(Bill.id.desc()).first()
+        print(bill)
+        if bill:
+            bill_id = bill.id
+            bill_details = get_bill(bill_id)
+            print(bill_id, bill_details)
+            [bill_date, bill_time] = bill_details["bill_date_time"].split(" | ")
+            return render_template("print_preview.html", 
+                                   bill_id=bill_id, 
+                                   bill_date=bill_date, 
+                                   bill_time=bill_time,
+                                   total=bill_details["total"],
+                                   items=bill_details["bill_items"]
+                                )
+        else:
+            return jsonify({'error': 'No bills found'}), 404
+    except Exception as e:
+        print("Error fetching latest bill:", e)
+        return jsonify({'error': 'Failed to fetch latest bill'}), 500

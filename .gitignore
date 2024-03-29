@@ -23,4 +23,6 @@ __pycache__/
 #DS
 .DS_store
 
-your_database.db
+# database
+instance/
+instance/your_database.db
