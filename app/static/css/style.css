@@ -539,7 +539,7 @@ h3 {
 
 /* ------------ PRINT BILL ---------------- */
 .print-bill{
-  max-width: 50vw;
+  max-width: 25vw;
   text-align: center;
   font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
   border: 1px solid black;
