@@ -10,9 +10,10 @@ from sqlalchemy import func
 def index():
     try:
         uid = session['user_id']
+        items = Item.query.all()        
     except KeyError:
         return render_template('login.html')
-    return render_template('index.html')
+    return render_template('index.html', items=items)
 
 
 @app.route('/get_suggestions')
@@ -176,10 +177,10 @@ def add_item():
     return render_template('add_item.html')
 
 
-@app.route('/items')
-def items():
-    items = Item.query.all()
-    return render_template('items.html', items=items)
+# @app.route('/items')
+# def items():
+#     items = Item.query.all()
+#     return render_template('items.html', items=items)
 
 
 @app.route('/edit_item/<int:item_id>', methods=['GET'])
@@ -341,3 +342,7 @@ def print_bill():
     except Exception as e:
         print("Error fetching latest bill:", e)
         return jsonify({'error': 'Failed to fetch latest bill'}), 500
+    
+@app.route("/contact")
+def contact():
+    return render_template("contact.html")

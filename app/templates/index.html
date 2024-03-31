@@ -2,58 +2,105 @@
 {% extends 'layout.html' %} {% block title %}Billing System{% endblock %} {%
 block content %}
 <section class="billing-home">
-  <div class="new-bill">
-    <h2 style="color: black">Add items to Bill</h2>
-    <form id="bill-form" action="{{ url_for('create_bill') }}" method="post">
-      <div class="form-group">
-        <input
-          type="text"
-          id="item_name"
-          name="item_name"
-          class="form-control"
-          autocomplete="off"
-          oninput="getSuggestions(this.value)"
-          placeholder="Item Name"
-        />
-        <div id="suggestions"></div>
-      </div>
-      <div class="form-group">
-        <input
-          type="number"
-          id="quantity"
-          name="quantity"
-          class="form-control"
-          min="1"
-          placeholder="Quantity"
-        />
-      </div>
-      <button class="btn-submit" type="button" onclick="addItemToBill()">
-        Add Item
-      </button>
-    </form>
-  </div>
-
-  <div class="current-bill">
-    <h2 style="color: black">Billing</h2>
-    <div class="billing-actions">
-      <div id="total">Total: ₹ 0</div>
-      <button onclick="submitBill()" class="btn-submit">Print Bill</button>
+  <div class="billing">
+    <div class="new-bill">
+      <h2>Add items to Bill</h2>
+      <form id="bill-form" action="{{ url_for('create_bill') }}" method="post">
+        <div class="form-group">
+          <input
+            type="text"
+            id="item_name"
+            name="item_name"
+            class="form-control"
+            autocomplete="off"
+            oninput="getSuggestions(this.value)"
+            placeholder="Item Name"
+          />
+          <div id="suggestions"></div>
+        </div>
+        <div class="form-group">
+          <input
+            type="number"
+            id="quantity"
+            name="quantity"
+            class="form-control"
+            min="1"
+            placeholder="Quantity"
+          />
+        </div>
+        <button class="btn-submit" type="button" onclick="addItemToBill()">
+          Add Item
+        </button>
+      </form>
     </div>
-    <table class="table">
+
+    <div class="current-bill">
+      <div class="billing-actions">
+        <div id="total">Total: ₹ 0</div>
+        <button onclick="submitBill()" class="btn-submit">Print Bill</button>
+      </div>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Quantity</th>
+            <th>Price</th>
+          </tr>
+        </thead>
+        <tbody id="bill_items">
+          <!-- This will be populated dynamically with JavaScript -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="items">
+    <h2>Items</h2>
+    <table class="item-table">
       <thead>
         <tr>
-          <th>Item</th>
-          <th>Quantity</th>
+          <th>Item ID</th>
+          <th>Name</th>
+          <th>Group</th>
+          <th>Available</th>
           <th>Price</th>
+          <th>Actions</th>
         </tr>
       </thead>
-      <tbody id="bill_items">
-        <!-- This will be populated dynamically with JavaScript -->
+      <tbody>
+        {% for item in items %}
+        <tr>
+          <td>{{ item.id }}
+          <td>{{ item.name }}</td>
+          <td>{{ item.group }}</td>
+          <td>{{ item.quantity }}</td>
+          <td>{{ item.price }}</td>
+          <td class="options">
+            <a href="{{ url_for('edit_item', item_id=item.id) }}">Edit</a>
+            <i
+              data-item-id="{{ item.id }}"
+              id="del-item"
+              class="fa-solid fa-trash-can"
+            ></i>
+          </td>
+        </tr>
+        {% endfor %}
       </tbody>
     </table>
   </div>
 </section>
 <script>
+  $(function () {
+    $("i#del-item").on("click", function (e) {
+      e.preventDefault();
+      var itemId = $(this).data("item-id");
+      $.getJSON("/delete-item", { item_id: itemId }, function (data) {
+        console.log(data);
+        window.location.reload();
+      });
+      return false;
+    });
+  });
+
   function printBill(billId) {
     window.location.href = "/print-bill/" + billId;
   }

@@ -34,6 +34,12 @@ footer {
   font-family: var(--body-font);
 }
 
+header .heading {
+  display: flex;
+  justify-content: space-evenly;
+  color: white;
+}
+
 nav ul {
   list-style-type: none;
   margin: 0;
@@ -82,11 +88,13 @@ nav ul li a,
 }
 
 footer {
-  padding: 1vh;
   position: fixed;
+  padding: 0.6vh;
+  left: 0;
   bottom: 0;
   width: 100%;
   text-align: center;
+  margin-top: 1vh;
 }
 
 .login-section,
@@ -166,9 +174,25 @@ input[type="password"],
   font-weight: 600;
 }
 
+header .heading .btn-logout {
+  width: 6vw;
+  padding: 0;
+  font-size: var(--default-f-size);
+  background-color: var(--main-col);
+  height: 4vh;
+  color: white;
+  margin: 5px;
+  text-transform: uppercase;
+  font-family: var(--body-font);
+  font-weight: 600;
+  letter-spacing: 0.1rem;
+  text-shadow: 2px 2px 0 black;
+}
+
 #login:hover,
 .btn-submit:hover,
-.item-delete:hover {
+.item-delete:hover,
+.btn-logout:hover {
   background-color: rgba(12, 53, 158, 0.7);
 }
 
@@ -177,27 +201,22 @@ input[type="password"],
   font-size: 30px;
 }
 
-.btn-logout {
-  background-color: var(--main-col);
-}
-
 /* ------------------ HOMEPAGE -------------------------- */
 .billing-home {
   display: flex;
-  flex-flow: wrap;
-  justify-content: space-between;
-  width: 80%;
+  justify-content: space-evenly;
+  width: 90%;
   margin-top: 3vh;
   margin-inline: auto;
 }
 
 .new-bill,
 .current-bill {
-  max-width: 40%;
-  width: 40%;
-  height: 50vh;
-  margin: 8vh 8px;
+  max-width: 60%;
+  width: 60%;
   overflow: scroll;
+  margin-inline: auto;
+  text-align: center;
 }
 
 ::-webkit-scrollbar {
@@ -244,6 +263,8 @@ h3 {
   max-width: 60%;
   margin-bottom: 2vh;
   margin-top: 0;
+  margin-inline: auto;
+  text-align: center;
 }
 
 .suggestion {
@@ -381,12 +402,9 @@ h3 {
 
 /* ----------- VIEW ITEMS --------------- */
 .items {
-  max-width: 80%;
-  border: 1px solid var(--headings-col);
+  max-width: 50%;
   border-radius: var(--border-rad);
-  padding: 2vw;
   margin-inline: auto;
-  margin-top: 2vh;
 }
 
 .items h2 {
