@@ -50,7 +50,9 @@ nav ul {
   height: 6vh;
 }
 
-nav ul li {
+nav ul li,
+.contact .team p,
+.contact .guide h2 {
   text-transform: uppercase;
   font-family: var(--body-font);
   font-size: var(--default-f-size);
@@ -596,3 +598,36 @@ h3 {
   display: grid;
   grid-template-columns: 3fr 2fr 2fr 2fr;
 }
+
+/* --------------- CONTACT ---------------------------- */
+.contact {
+  font-family: var(--body-font);
+  margin-inline: auto;
+  width: 30%;
+  max-width: 50%;
+  text-align: center;
+  margin-top: 10vh;
+}
+
+.contact .guide,
+.contact .team {
+  padding: 5px;
+  border-radius: 5px;
+  background-color: var(--accent-font-col);
+  margin: 1vh;
+}
+
+.contact .team p,
+.contact .guide h2 {
+  width: 80%;
+  background-color: var(--main-col);
+  color: white;
+  padding: 3px;
+  text-align: center;
+  margin-inline: auto;
+  border-radius: 5px;
+  text-transform: uppercase;
+  letter-spacing: 0.2rem;
+  font-weight: 900;
+}
+
