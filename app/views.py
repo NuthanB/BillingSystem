@@ -21,7 +21,9 @@ def get_suggestions():
     keyword = request.args.get('keyword')
     if keyword:
         suggestions = Item.query.filter(
-            Item.name.ilike(f'%{keyword}%')).limit(10).all()
+            (Item.name.ilike(f'%{keyword}%')) & (Item.quantity > 0)
+        ).limit(10).all()
+
 
         suggestion_names = [item.name for item in suggestions]
         return jsonify(suggestion_names)
