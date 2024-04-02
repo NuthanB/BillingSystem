@@ -1,3 +1,4 @@
+from sqlalchemy.sql import func
 from flask import render_template, request, redirect, session, url_for, jsonify
 from app import app, db
 from app.models import User, Item, Bill, BillItem
@@ -10,7 +11,7 @@ from sqlalchemy import func
 def index():
     try:
         uid = session['user_id']
-        items = Item.query.all()        
+        items = Item.query.all()
     except KeyError:
         return render_template('login.html')
     return render_template('index.html', items=items)
@@ -23,7 +24,6 @@ def get_suggestions():
         suggestions = Item.query.filter(
             (Item.name.ilike(f'%{keyword}%')) & (Item.quantity > 0)
         ).limit(10).all()
-
 
         suggestion_names = [item.name for item in suggestions]
         return jsonify(suggestion_names)
@@ -59,7 +59,6 @@ def create_bill():
 def submit_bill():
     if 'user_id' in session:
         user_id = session['user_id']
-        user_id = session['user_id']
         data = request.json
 
         if data:
@@ -71,15 +70,13 @@ def submit_bill():
             for item in items:
                 item_db = Item.query.filter_by(
                     name=item['name']).first()
-                item_db = Item.query.filter_by(
-                    name=item['name']).first()
 
                 if item_db:
                     new_quantity = item_db.quantity - item['quantity']
                     if new_quantity >= 0:
                         item_db.quantity = new_quantity
                         bill_item = BillItem(
-                            bill=new_bill, item_name=item['name'], quantity=item['quantity'], price=item['price'])
+                            bill=new_bill, item_id=item_db.id, item_name=item['name'], quantity=item['quantity'], price=item['price'])
                         db.session.add(bill_item)
                     else:
                         db.session.rollback()
@@ -235,10 +232,10 @@ def filter_bills():
         print(filtered_bills)
 
         return render_template("filtered_bills.html",
-                               bills=filtered_bills, 
-                               from_date=from_date, 
+                               bills=filtered_bills,
+                               from_date=from_date,
                                to_date=to_date
-                            )
+                               )
     else:
         return redirect("/report")
 
@@ -303,57 +300,89 @@ def get_bill_details(bill_id):
         return jsonify({'error': 'Bill not found'}), 404
 
 
-@app.route('/delete-bill/<int:bill_id>', methods=['DELETE'])
-def delete_bill(bill_id):
-    try:
-        # Query the bill by its ID
-        bill = Bill.query.get(bill_id)
-        if bill:
-            # Delete the bill from the database
-            db.session.delete(bill)
-            db.session.commit()
-            return jsonify({'message': 'Bill deleted successfully'}), 200
-        else:
-            return jsonify({'error': 'Bill not found'}), 404
-    except Exception as e:
-        # Rollback the transaction in case of error
-        db.session.rollback()
-        # Log or print the error for debugging
-        print("Error deleting bill:", e)
-        return jsonify({'error': 'Failed to delete bill'}), 500
+@app.route("/print-bill/<int:bill_id>")
+def print_bill(bill_id):
+    print(bill_id)
+    if bill_id:
+        print("HI")
+        try:
+            bill = Bill.query.filter_by(id=bill_id).first()
+        except Exception as e:
+            print("Error fetching latest bill:", e)
+            return jsonify({'error': 'Failed to fetch latest bill'}), 500
+    else:
+        print("HELLO")
+        try:
+            bill = Bill.query.order_by(Bill.id.desc()).first()
+        except Exception as e:
+            print("Error fetching latest bill:", e)
+            return jsonify({'error': 'Failed to fetch latest bill'}), 500
+
+    print(bill)
+    if bill:
+        bill_id = bill.id
+        bill_details = get_bill(bill_id)
+        print(bill_id, bill_details)
+        [bill_date, bill_time] = bill_details["bill_date_time"].split(
+            " | ")
+
+        return render_template("token_print.html",
+                               bill_id=bill_id,
+                               bill_date=bill_date,
+                               bill_time=bill_time,
+                               total=bill_details["total"],
+                               items=bill_details["bill_items"]
+                               )
+    else:
+        return jsonify({'error': 'No bills found'}), 404
 
 
-@app.route("/print-bill")
-def print_bill():
-    print("Printing...")
-    try:
-        bill = Bill.query.order_by(Bill.id.desc()).first()
-        if bill:
-            bill_id = bill.id
-            bill_details = get_bill(bill_id)
-            print(bill_id, bill_details)
-            [bill_date, bill_time] = bill_details["bill_date_time"].split(" | ")
-            return render_template("print_preview.html", 
-                                   bill_id=bill_id, 
-                                   bill_date=bill_date, 
-                                   bill_time=bill_time,
-                                   total=bill_details["total"],
-                                   items=bill_details["bill_items"]
-                                )
-        else:
-            return jsonify({'error': 'No bills found'}), 404
-    except Exception as e:
-        print("Error fetching latest bill:", e)
-        return jsonify({'error': 'Failed to fetch latest bill'}), 500
-    
 @app.route("/print-report")
 def print_report():
-    print("Printing...")    
+    print("Printing...")
     bill = Bill.query.all()
-    bill_items = BillItem.query.all()
-    return render_template('report_print.html', bills=bill, bill_items=bill_items)
-    
-    
+    return render_template('billwise_report.html', bills=bill)
+
+
+@app.route("/print-item-report/<from_date>/<to_date>")
+def print_item_report(from_date, to_date):
+    print("Printing...")
+
+    # Query to group items by their group and item name, and get the sum of quantity and total price
+    grouped_items = db.session.query(
+        Item.group,
+        BillItem.item_name,
+        func.sum(BillItem.quantity).label('total_quantity'),
+        func.sum(BillItem.quantity * BillItem.price).label('total_price')
+    ).join(Item, Item.id == BillItem.item_id).group_by(Item.group, BillItem.item_name).all()
+
+    # Create a dictionary to store grouped items
+    grouped_items_dict = {}
+    for group, item_name, total_quantity, total_price in grouped_items:
+        if group not in grouped_items_dict:
+            grouped_items_dict[group] = {
+                'total_quantity': 0, 'total_price': 0, 'items': {}}
+        grouped_items_dict[group]['total_quantity'] += total_quantity
+        grouped_items_dict[group]['total_price'] += total_price
+        if item_name not in grouped_items_dict[group]['items']:
+            grouped_items_dict[group]['items'][item_name] = {
+                'quantity': total_quantity, 'price': total_price}
+        else:
+            grouped_items_dict[group]['items'][item_name]['quantity'] += total_quantity
+            grouped_items_dict[group]['items'][item_name]['price'] += total_price
+
+    # Calculate grand total
+    grand_total = sum(group['total_price']
+                      for group in grouped_items_dict.values())
+
+    print(grouped_items_dict)
+    return render_template('itemwise_report.html',
+                           grouped_items=grouped_items_dict,
+                           grand_total=grand_total,
+                           from_date=from_date,
+                           to_date=to_date)
+
+
 @app.route("/contact")
 def contact():
     return render_template("contact.html")

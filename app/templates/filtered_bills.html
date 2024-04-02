@@ -20,7 +20,7 @@ block content %}
           <td>{{ bill.bill_date_time.strftime('%d-%m-%Y | %H:%M ') }}</td>
           <td>{{ bill.total }}</td>
           <td>
-            <button id="expand-filter" class="expand-bill">+</button>
+            <button class="expand-bill">+</button>
           </td>
           <td
             class="bill-details"
@@ -31,10 +31,18 @@ block content %}
         {% endfor %}
       </tbody>
     </table>
+    <button onclick="print_item_reports('{{ from_date }}', '{{ to_date }}')">
+      Print Item-wise Report
+    </button>
   </div>
   <div class="bill-items"></div>
 </section>
 <script>
+  function print_item_reports(fd, td) {
+    console.log(fd, td);
+    window.location.href = `/print-item-report/${fd}/${td}`;
+  }
+
   document.addEventListener("DOMContentLoaded", function () {
     const expandButtons = document.querySelectorAll(".expand-bill");
     expandButtons.forEach(function (button) {
@@ -44,10 +52,10 @@ block content %}
         console.log(billId, details);
         if (details.style.display === "none") {
           fetchBillDetails(billId, details); // Fetch and display details
-          document.getElementById("expand-filter").textContent = "-";
+          button.textContent = "-";
         } else {
           details.style.display = "none"; // Hide details
-          document.getElementById("expand-filter").textContent = "+";
+          button.textContent = "+";
         }
       });
     });

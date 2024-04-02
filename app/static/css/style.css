@@ -110,7 +110,7 @@ footer {
   padding: 5vw;
   border: 3px solid var(--accent-col);
   border-radius: var(--border-rad);
-  background-color: rgba(211, 223, 255, 0.3);
+  background-color: var(--accent-col);
 }
 
 .login-section p,
@@ -129,7 +129,7 @@ footer {
   justify-content: flex-start;
   align-items: center;
   background-color: var(--main-col);
-  border-bottom: 5px solid rgba(12, 53, 158, 1);
+  border-bottom: 5px solid var(--buttons-col);
   padding: 10px;
   border-radius: var(--border-rad);
   height: 5vh;
@@ -536,13 +536,13 @@ h3 {
   margin-bottom: 0.8vh;
 }
 
-#expand-report,
-#expand-filter {
+.expand-bill {
   font-size: 1.2rem;
   font-weight: 900;
   padding: 5px;
   margin-left: 2px;
   border: none;
+  cursor: pointer;
 }
 
 .bill-report form {
@@ -578,7 +578,8 @@ h3 {
 }
 
 /* ------------ PRINT BILL ---------------- */
-.print-bill {
+.print-bill,
+.itemwise-report {
   max-width: 25vw;
   text-align: center;
   font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
@@ -617,6 +618,33 @@ h3 {
 .print-bill table .totalling {
   display: grid;
   grid-template-columns: 3fr 2fr 2fr 2fr;
+}
+
+.itemwise-report-header {
+  width: 50%;
+  border: 1px solid black;
+  margin-inline: auto;
+  box-shadow: 5px 5px 0 black;
+}
+
+.itemwise-report-body table thead tr,
+.itemwise-report-body table tbody tr {
+  display: grid;
+  grid-template-columns: 3fr 1fr 2fr;
+}
+
+.itemwise-report-body table thead tr th {
+  border-bottom: 1px solid black;
+}
+
+.group-title {
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.subtotal-row {
+  font-weight: 700;
+  margin-bottom: 10px;
 }
 
 /* --------------- CONTACT ---------------------------- */
