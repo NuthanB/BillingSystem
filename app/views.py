@@ -1,3 +1,4 @@
+from sqlalchemy.sql import func
 from flask import render_template, request, redirect, session, url_for, jsonify
 from app import app, db
 from app.models import User, Item, Bill, BillItem
@@ -58,7 +59,6 @@ def create_bill():
 def submit_bill():
     if 'user_id' in session:
         user_id = session['user_id']
-        user_id = session['user_id']
         data = request.json
 
         if data:
@@ -70,15 +70,13 @@ def submit_bill():
             for item in items:
                 item_db = Item.query.filter_by(
                     name=item['name']).first()
-                item_db = Item.query.filter_by(
-                    name=item['name']).first()
 
                 if item_db:
                     new_quantity = item_db.quantity - item['quantity']
                     if new_quantity >= 0:
                         item_db.quantity = new_quantity
                         bill_item = BillItem(
-                            bill=new_bill, item_name=item['name'], quantity=item['quantity'], price=item['price'])
+                            bill=new_bill, item_id=item_db.id, item_name=item['name'], quantity=item['quantity'], price=item['price'])
                         db.session.add(bill_item)
                     else:
                         db.session.rollback()
@@ -313,7 +311,7 @@ def print_bill(bill_id):
             print("Error fetching latest bill:", e)
             return jsonify({'error': 'Failed to fetch latest bill'}), 500
     else:
-        print("HELLO")        
+        print("HELLO")
         try:
             bill = Bill.query.order_by(Bill.id.desc()).first()
         except Exception as e:
@@ -327,14 +325,14 @@ def print_bill(bill_id):
         print(bill_id, bill_details)
         [bill_date, bill_time] = bill_details["bill_date_time"].split(
             " | ")
-            
-        return render_template("print_preview.html",
-                                bill_id=bill_id,
-                                bill_date=bill_date,
-                                bill_time=bill_time,
-                                total=bill_details["total"],
-                                items=bill_details["bill_items"]
-                                )
+
+        return render_template("token_print.html",
+                               bill_id=bill_id,
+                               bill_date=bill_date,
+                               bill_time=bill_time,
+                               total=bill_details["total"],
+                               items=bill_details["bill_items"]
+                               )
     else:
         return jsonify({'error': 'No bills found'}), 404
 
@@ -343,13 +341,46 @@ def print_bill(bill_id):
 def print_report():
     print("Printing...")
     bill = Bill.query.all()
-    return render_template('report_print.html', bills=bill, items=[])
+    return render_template('billwise_report.html', bills=bill)
 
-@app.route("/print-item-report")
-def print_item_report():
+
+@app.route("/print-item-report/<from_date>/<to_date>")
+def print_item_report(from_date, to_date):
     print("Printing...")
-    bill_items = BillItem.query.all()
-    return render_template('report_print.html', bills=[], items=bill_items)
+
+    # Query to group items by their group and item name, and get the sum of quantity and total price
+    grouped_items = db.session.query(
+        Item.group,
+        BillItem.item_name,
+        func.sum(BillItem.quantity).label('total_quantity'),
+        func.sum(BillItem.quantity * BillItem.price).label('total_price')
+    ).join(Item, Item.id == BillItem.item_id).group_by(Item.group, BillItem.item_name).all()
+
+    # Create a dictionary to store grouped items
+    grouped_items_dict = {}
+    for group, item_name, total_quantity, total_price in grouped_items:
+        if group not in grouped_items_dict:
+            grouped_items_dict[group] = {
+                'total_quantity': 0, 'total_price': 0, 'items': {}}
+        grouped_items_dict[group]['total_quantity'] += total_quantity
+        grouped_items_dict[group]['total_price'] += total_price
+        if item_name not in grouped_items_dict[group]['items']:
+            grouped_items_dict[group]['items'][item_name] = {
+                'quantity': total_quantity, 'price': total_price}
+        else:
+            grouped_items_dict[group]['items'][item_name]['quantity'] += total_quantity
+            grouped_items_dict[group]['items'][item_name]['price'] += total_price
+
+    # Calculate grand total
+    grand_total = sum(group['total_price']
+                      for group in grouped_items_dict.values())
+
+    print(grouped_items_dict)
+    return render_template('itemwise_report.html',
+                           grouped_items=grouped_items_dict,
+                           grand_total=grand_total,
+                           from_date=from_date,
+                           to_date=to_date)
 
 
 @app.route("/contact")

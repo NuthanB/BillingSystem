@@ -578,7 +578,8 @@ h3 {
 }
 
 /* ------------ PRINT BILL ---------------- */
-.print-bill {
+.print-bill,
+.itemwise-report {
   max-width: 25vw;
   text-align: center;
   font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
@@ -617,6 +618,33 @@ h3 {
 .print-bill table .totalling {
   display: grid;
   grid-template-columns: 3fr 2fr 2fr 2fr;
+}
+
+.itemwise-report-header {
+  width: 50%;
+  border: 1px solid black;
+  margin-inline: auto;
+  box-shadow: 5px 5px 0 black;
+}
+
+.itemwise-report-body table thead tr,
+.itemwise-report-body table tbody tr {
+  display: grid;
+  grid-template-columns: 3fr 1fr 2fr;
+}
+
+.itemwise-report-body table thead tr th {
+  border-bottom: 1px solid black;
+}
+
+.group-title {
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.subtotal-row {
+  font-weight: 700;
+  margin-bottom: 10px;
 }
 
 /* --------------- CONTACT ---------------------------- */

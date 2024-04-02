@@ -47,7 +47,6 @@ block content %}
     </table>
   </div>
   <button onclick="print_reports()">Print Report</button>
-  <button onclick="print_item_reports()">Print Item-wise Report</button>
 </section>
 <script>
   function sendToPrint(billId) {
@@ -57,10 +56,6 @@ block content %}
 
   function print_reports() {
     window.location.href = "/print-report";
-  }
-
-  function print_item_reports() {
-    window.location.href = "/print-item-report";
   }
 
   document.addEventListener("DOMContentLoaded", function () {

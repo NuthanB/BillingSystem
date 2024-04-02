@@ -19,6 +19,8 @@ class Item(db.Model):
     quantity = db.Column(db.Integer, nullable=False)
     price = db.Column(db.Float, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    items = db.relationship('BillItem', backref='item',
+                            lazy=True, cascade='all, delete-orphan')
 
 
 class Bill(db.Model):
@@ -33,7 +35,10 @@ class Bill(db.Model):
 
 class BillItem(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    bill_id = db.Column(db.Integer, db.ForeignKey('bill.id', ondelete='CASCADE'), nullable=False)
+    bill_id = db.Column(db.Integer, db.ForeignKey(
+        'bill.id', ondelete='CASCADE'), nullable=False)
+    item_id = db.Column(db.Integer, db.ForeignKey(
+        'item.id', ondelete='CASCADE'), nullable=False)
     item_name = db.Column(db.String(100), nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
     price = db.Column(db.Float, nullable=False)

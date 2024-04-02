@@ -31,10 +31,18 @@ block content %}
         {% endfor %}
       </tbody>
     </table>
+    <button onclick="print_item_reports('{{ from_date }}', '{{ to_date }}')">
+      Print Item-wise Report
+    </button>
   </div>
   <div class="bill-items"></div>
 </section>
 <script>
+  function print_item_reports(fd, td) {
+    console.log(fd, td);
+    window.location.href = `/print-item-report/${fd}/${td}`;
+  }
+
   document.addEventListener("DOMContentLoaded", function () {
     const expandButtons = document.querySelectorAll(".expand-bill");
     expandButtons.forEach(function (button) {
