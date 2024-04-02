@@ -222,10 +222,8 @@ def get_item_price():
 @app.route('/filter-bills', methods=['GET', 'POST'])
 def filter_bills():
     if request.method == 'POST':
-        from_date_str = request.form['from_date']
-        to_date_str = request.form['to_date']
-        from_date = datetime.strptime(from_date_str, '%Y-%m-%d').date()
-        to_date = datetime.strptime(to_date_str, '%Y-%m-%d').date()
+        from_date = request.form['from_date']
+        to_date = request.form['to_date']
 
         print(from_date, to_date)
 
@@ -236,7 +234,11 @@ def filter_bills():
 
         print(filtered_bills)
 
-        return render_template("filtered_bills.html", bills=filtered_bills, from_date=from_date_str, to_date=to_date_str)
+        return render_template("filtered_bills.html",
+                               bills=filtered_bills, 
+                               from_date=from_date, 
+                               to_date=to_date
+                            )
     else:
         return redirect("/report")
 
@@ -326,7 +328,6 @@ def print_bill():
     print("Printing...")
     try:
         bill = Bill.query.order_by(Bill.id.desc()).first()
-        print(bill)
         if bill:
             bill_id = bill.id
             bill_details = get_bill(bill_id)
@@ -344,6 +345,14 @@ def print_bill():
     except Exception as e:
         print("Error fetching latest bill:", e)
         return jsonify({'error': 'Failed to fetch latest bill'}), 500
+    
+@app.route("/print-report")
+def print_report():
+    print("Printing...")    
+    bill = Bill.query.all()
+    bill_items = BillItem.query.all()
+    return render_template('report_print.html', bills=bill, bill_items=bill_items)
+    
     
 @app.route("/contact")
 def contact():

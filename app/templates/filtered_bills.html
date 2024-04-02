@@ -20,10 +20,6 @@ block content %}
           <td>{{ bill.bill_date_time.strftime('%d-%m-%Y | %H:%M ') }}</td>
           <td>{{ bill.total }}</td>
           <td>
-            <i
-              data-item-id="{{ bill.id }}"
-              class="fa-solid fa-trash-can delete-bill"
-            ></i>
             <button id="expand-filter" class="expand-bill">+</button>
           </td>
           <td
@@ -40,38 +36,6 @@ block content %}
 </section>
 <script>
   document.addEventListener("DOMContentLoaded", function () {
-    const deleteIcons = document.querySelectorAll(".fa-trash-can");
-    deleteIcons.forEach(function (icon) {
-      icon.addEventListener("click", function () {
-        console.log(icon.closest(".bill-row").dataset);
-        const billId = icon.closest(".bill-row").dataset.itemId;
-        if (billId) {
-          deleteBill(billId);
-        } else {
-          console.error("Unable to retrieve bill ID");
-        }
-      });
-    });
-
-    function deleteBill(billId) {
-      // Perform deletion here or make an AJAX request to delete the bill
-      console.log("Deleting bill with ID:", billId);
-      fetch(`/delete-bill/${billId}`, {
-        method: "DELETE",
-      })
-        .then((response) => {
-          if (response.ok) {
-            // Reload the page after successful deletion
-            window.location.reload();
-          } else {
-            console.error("Failed to delete bill");
-          }
-        })
-        .catch((error) => {
-          console.error("Error deleting bill:", error);
-        });
-    }
-
     const expandButtons = document.querySelectorAll(".expand-bill");
     expandButtons.forEach(function (button) {
       button.addEventListener("click", function () {

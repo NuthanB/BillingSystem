@@ -421,9 +421,8 @@ h3 {
 }
 
 .bills-item-table {
-  border-radius: var(--border-rad);
   margin-inline: auto;
-  border: 2px solid black;
+  width: 100%;
 }
 
 .items {
@@ -509,10 +508,20 @@ h3 {
 }
 
 /* ------------------- REPORT -------------------------- */
+.bills {
+  max-height: 50vh;
+  height: 50vh;
+  overflow: scroll;
+  margin-top: 2vh;
+  border: 2px solid black;
+  width: 50%;
+  margin-inline: auto;
+}
+
 .bills-item-table thead tr,
 .bills-item-table tbody tr {
   display: grid;
-  grid-template-columns: 1fr 3fr 3fr 1fr;
+  grid-template-columns: 1fr 3fr 2fr 1fr;
   text-align: center;
 }
 
@@ -529,9 +538,11 @@ h3 {
 
 #expand-report,
 #expand-filter {
+  font-size: 1.2rem;
   font-weight: 900;
-  padding: 0.75vw;
+  padding: 5px;
   margin-left: 2px;
+  border: none;
 }
 
 .bill-report form {
@@ -556,6 +567,14 @@ h3 {
 
 .bills .bills-item-table tbody .bill-details {
   grid-column: span 4;
+  width: 100%;
+}
+
+.bills .bills-item-table tbody .bill-details table {
+  margin-inline: auto;
+  width: 80%;
+  border: 2px solid black;
+  box-shadow: 5px 5px 0 black;
 }
 
 /* ------------ PRINT BILL ---------------- */
