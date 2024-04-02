@@ -343,8 +343,13 @@ def print_bill(bill_id):
 def print_report():
     print("Printing...")
     bill = Bill.query.all()
+    return render_template('report_print.html', bills=bill, items=[])
+
+@app.route("/print-item-report")
+def print_item_report():
+    print("Printing...")
     bill_items = BillItem.query.all()
-    return render_template('report_print.html', bills=bill, bill_items=bill_items)
+    return render_template('report_print.html', bills=[], items=bill_items)
 
 
 @app.route("/contact")

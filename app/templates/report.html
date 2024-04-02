@@ -34,7 +34,7 @@ block content %}
               class="fa-solid fa-print"
               onclick="sendToPrint({{ bill.id }})"
             ></i>
-            <button id="expand-report" class="expand-bill">+</button>
+            <button class="expand-bill">+</button>
           </td>
           <td
             class="bill-details"
@@ -47,6 +47,7 @@ block content %}
     </table>
   </div>
   <button onclick="print_reports()">Print Report</button>
+  <button onclick="print_item_reports()">Print Item-wise Report</button>
 </section>
 <script>
   function sendToPrint(billId) {
@@ -58,6 +59,10 @@ block content %}
     window.location.href = "/print-report";
   }
 
+  function print_item_reports() {
+    window.location.href = "/print-item-report";
+  }
+
   document.addEventListener("DOMContentLoaded", function () {
     const expandButtons = document.querySelectorAll(".expand-bill");
     expandButtons.forEach(function (button) {
@@ -67,10 +72,10 @@ block content %}
         console.log(billId, details);
         if (details.style.display === "none") {
           fetchBillDetails(billId, details); // Fetch and display details
-          document.getElementById("expand-report").textContent = "-";
+          button.textContent = "-";
         } else {
           details.style.display = "none"; // Hide details
-          document.getElementById("expand-report").textContent = "+";
+          button.textContent = "+";
         }
       });
     });

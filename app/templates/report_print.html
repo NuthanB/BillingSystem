@@ -8,20 +8,35 @@ block content %}
     <hr />
     <table>
       <thead>
+        {% if bills|length > 0 %}
         <tr class="bill-report-header">
           <th>Bill ID</th>
           <th>Date & Time</th>
           <th>Bill Total</th>
         </tr>
+        {% endif %} {% if items|length > 0 %}
+        <tr class="item-report-header">
+          <th>Name</th>
+          <th>Qty</th>
+          <th>Price</th>
+        </tr>
+        {% endif %}
       </thead>
       <tbody>
-        {% for bill in bills %}
+        {% if bills|length > 0 %} {% for bill in bills %}
         <tr class="bill-report-row">
           <td>{{ bill.id }}</td>
           <td>{{ bill.bill_date_time.strftime('%d-%m-%Y | %H:%M ') }}</td>
           <td>{{ bill.total }}</td>
-          {% endfor %}
         </tr>
+        {% endfor %} {% endif %} {% if items|length > 0 %} {% for item in items
+        %}
+        <tr class="item-report-row">
+          <td>{{ item.item_name|capitalize }}</td>
+          <td>{{ item.quantity }}</td>
+          <td>{{ item.price }}</td>
+        </tr>
+        {% endfor %} {% endif %}
       </tbody>
     </table>
   </div>

@@ -20,7 +20,7 @@ block content %}
           <td>{{ bill.bill_date_time.strftime('%d-%m-%Y | %H:%M ') }}</td>
           <td>{{ bill.total }}</td>
           <td>
-            <button id="expand-filter" class="expand-bill">+</button>
+            <button class="expand-bill">+</button>
           </td>
           <td
             class="bill-details"
@@ -44,10 +44,10 @@ block content %}
         console.log(billId, details);
         if (details.style.display === "none") {
           fetchBillDetails(billId, details); // Fetch and display details
-          document.getElementById("expand-filter").textContent = "-";
+          button.textContent = "-";
         } else {
           details.style.display = "none"; // Hide details
-          document.getElementById("expand-filter").textContent = "+";
+          button.textContent = "+";
         }
       });
     });

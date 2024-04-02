@@ -536,13 +536,13 @@ h3 {
   margin-bottom: 0.8vh;
 }
 
-#expand-report,
-#expand-filter {
+.expand-bill {
   font-size: 1.2rem;
   font-weight: 900;
   padding: 5px;
   margin-left: 2px;
   border: none;
+  cursor: pointer;
 }
 
 .bill-report form {
