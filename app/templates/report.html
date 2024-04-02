@@ -30,6 +30,10 @@ block content %}
           <td>{{ bill.bill_date_time.strftime('%d-%m-%Y | %H:%M ') }}</td>
           <td>{{ bill.total }}</td>
           <td class="actions">
+            <i
+              class="fa-solid fa-print"
+              onclick="sendToPrint({{ bill.id }})"
+            ></i>
             <button id="expand-report" class="expand-bill">+</button>
           </td>
           <td
@@ -45,6 +49,11 @@ block content %}
   <button onclick="print_reports()">Print Report</button>
 </section>
 <script>
+  function sendToPrint(billId) {
+    console.log(billId);
+    window.location.href = `/print-bill/${billId}`;
+  }
+
   function print_reports() {
     window.location.href = "/print-report";
   }

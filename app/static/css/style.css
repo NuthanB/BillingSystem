@@ -110,7 +110,7 @@ footer {
   padding: 5vw;
   border: 3px solid var(--accent-col);
   border-radius: var(--border-rad);
-  background-color: rgba(211, 223, 255, 0.3);
+  background-color: var(--accent-col);
 }
 
 .login-section p,
@@ -129,7 +129,7 @@ footer {
   justify-content: flex-start;
   align-items: center;
   background-color: var(--main-col);
-  border-bottom: 5px solid rgba(12, 53, 158, 1);
+  border-bottom: 5px solid var(--buttons-col);
   padding: 10px;
   border-radius: var(--border-rad);
   height: 5vh;

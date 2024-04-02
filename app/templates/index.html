@@ -102,10 +102,6 @@ block content %}
     });
   });
 
-  function printBill(billId) {
-    window.location.href = "/print-bill/" + billId;
-  }
-
   function getSuggestions(keyword) {
     // Clear previous suggestions
     document.getElementById("suggestions").innerHTML = "";
@@ -260,7 +256,7 @@ block content %}
           // Handle successful submission
           console.log("Bill submitted successfully");
           window.location.reload();
-          window.location.href = "/print-bill";
+          window.location.href = "/print-bill/0";
         } else {
           // Handle error response
           console.error("Failed to submit bill:", response.statusText);

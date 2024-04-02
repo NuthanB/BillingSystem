@@ -10,7 +10,7 @@ from sqlalchemy import func
 def index():
     try:
         uid = session['user_id']
-        items = Item.query.all()        
+        items = Item.query.all()
     except KeyError:
         return render_template('login.html')
     return render_template('index.html', items=items)
@@ -23,7 +23,6 @@ def get_suggestions():
         suggestions = Item.query.filter(
             (Item.name.ilike(f'%{keyword}%')) & (Item.quantity > 0)
         ).limit(10).all()
-
 
         suggestion_names = [item.name for item in suggestions]
         return jsonify(suggestion_names)
@@ -235,10 +234,10 @@ def filter_bills():
         print(filtered_bills)
 
         return render_template("filtered_bills.html",
-                               bills=filtered_bills, 
-                               from_date=from_date, 
+                               bills=filtered_bills,
+                               from_date=from_date,
                                to_date=to_date
-                            )
+                               )
     else:
         return redirect("/report")
 
@@ -303,57 +302,51 @@ def get_bill_details(bill_id):
         return jsonify({'error': 'Bill not found'}), 404
 
 
-@app.route('/delete-bill/<int:bill_id>', methods=['DELETE'])
-def delete_bill(bill_id):
-    try:
-        # Query the bill by its ID
-        bill = Bill.query.get(bill_id)
-        if bill:
-            # Delete the bill from the database
-            db.session.delete(bill)
-            db.session.commit()
-            return jsonify({'message': 'Bill deleted successfully'}), 200
-        else:
-            return jsonify({'error': 'Bill not found'}), 404
-    except Exception as e:
-        # Rollback the transaction in case of error
-        db.session.rollback()
-        # Log or print the error for debugging
-        print("Error deleting bill:", e)
-        return jsonify({'error': 'Failed to delete bill'}), 500
+@app.route("/print-bill/<int:bill_id>")
+def print_bill(bill_id):
+    print(bill_id)
+    if bill_id:
+        print("HI")
+        try:
+            bill = Bill.query.filter_by(id=bill_id).first()
+        except Exception as e:
+            print("Error fetching latest bill:", e)
+            return jsonify({'error': 'Failed to fetch latest bill'}), 500
+    else:
+        print("HELLO")        
+        try:
+            bill = Bill.query.order_by(Bill.id.desc()).first()
+        except Exception as e:
+            print("Error fetching latest bill:", e)
+            return jsonify({'error': 'Failed to fetch latest bill'}), 500
 
-
-@app.route("/print-bill")
-def print_bill():
-    print("Printing...")
-    try:
-        bill = Bill.query.order_by(Bill.id.desc()).first()
-        if bill:
-            bill_id = bill.id
-            bill_details = get_bill(bill_id)
-            print(bill_id, bill_details)
-            [bill_date, bill_time] = bill_details["bill_date_time"].split(" | ")
-            return render_template("print_preview.html", 
-                                   bill_id=bill_id, 
-                                   bill_date=bill_date, 
-                                   bill_time=bill_time,
-                                   total=bill_details["total"],
-                                   items=bill_details["bill_items"]
+    print(bill)
+    if bill:
+        bill_id = bill.id
+        bill_details = get_bill(bill_id)
+        print(bill_id, bill_details)
+        [bill_date, bill_time] = bill_details["bill_date_time"].split(
+            " | ")
+            
+        return render_template("print_preview.html",
+                                bill_id=bill_id,
+                                bill_date=bill_date,
+                                bill_time=bill_time,
+                                total=bill_details["total"],
+                                items=bill_details["bill_items"]
                                 )
-        else:
-            return jsonify({'error': 'No bills found'}), 404
-    except Exception as e:
-        print("Error fetching latest bill:", e)
-        return jsonify({'error': 'Failed to fetch latest bill'}), 500
-    
+    else:
+        return jsonify({'error': 'No bills found'}), 404
+
+
 @app.route("/print-report")
 def print_report():
-    print("Printing...")    
+    print("Printing...")
     bill = Bill.query.all()
     bill_items = BillItem.query.all()
     return render_template('report_print.html', bills=bill, bill_items=bill_items)
-    
-    
+
+
 @app.route("/contact")
 def contact():
     return render_template("contact.html")
