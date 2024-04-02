@@ -20,28 +20,24 @@
   </head>
   <body>
     <header>
-      <div style="text-align: center; color: white" id="brand">CANTEEN APP</div>
+      <div class="heading">
+        <div id="brand">DSU FOOD COURT</div>
+        <button onclick="logout()" class="btn-logout">Logout</button>
+      </div>
       <nav>
         <ul>
           <li><a href="/">Home</a></li>
           <li><a href="/report">Report</a></li>
           <li><a href="/add_item">Add Items</a></li>
-          <li><a href="/items">View Items</a></li>
+          <li><a href="/contact">Contact</a></li>
         </ul>
       </nav>
     </header>
     <main>{% block content %}{% endblock %}</main>
     <footer>
-      <p>&copy; Developed By:-</p>
       <p>
-        Dayananda Sagar University - Department of Computer Science Engineering
+        &copy; Dayananda Sagar University - Department of Computer Science Engineering
       </p>
-      <p>Faculty Guided:- Mohammed Khurram</p>
-      <p>
-        Executed By:- Nuthan, Pavan Bhat, Mohammed Kaifulla Kazim, Mohammed Saad
-        Fazal
-      </p>
-      <button onclick="logout()" class="btn-logout">Logout</button>
     </footer>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
   </body>

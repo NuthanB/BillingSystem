@@ -2,8 +2,8 @@
 :root {
   --brand-font: Georgia, "Times New Roman", Times, serif;
   --body-font: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
-  --main-col: rgba(11, 73, 231, 0.8);
-  --accent-col: rgba(12, 53, 158, 0.2);
+  --main-col: #6b5849;
+  --accent-col: rgba(108, 85, 74, 0.3);
   --heading-f-size: 2rem;
   --default-f-size: 1.2rem;
   --border-rad: 3px;
@@ -12,8 +12,7 @@
   --headings-col: rgba(0, 0, 0, 1);
   --inp-fields-border: rgb(204, 204, 204);
   --inp-fields-bg: rgb(238, 238, 238);
-  --accent-font-col: rgb(215, 225, 255);
-  --buttons-col: rgba(20, 50, 150, 1);
+  --buttons-col: rgb(76, 55, 45);
 }
 
 * {
@@ -30,8 +29,19 @@ header,
 footer {
   background-color: var(--main-col);
   box-shadow: 0 0 10px var(--main-col);
-  color: var(--accent-font-col);
+  color: var(--main-header-f-col);
   font-family: var(--body-font);
+}
+
+header .heading {
+  display: flex;
+  justify-content: space-evenly;
+  color: white;
+}
+
+.heading {
+  background-color: rgba(13, 13, 13, 0.8);
+  box-shadow: 0 3px 10px var(--main-col);
 }
 
 nav ul {
@@ -44,7 +54,9 @@ nav ul {
   height: 6vh;
 }
 
-nav ul li {
+nav ul li,
+.contact .team p,
+.contact .guide h2 {
   text-transform: uppercase;
   font-family: var(--body-font);
   font-size: var(--default-f-size);
@@ -52,7 +64,7 @@ nav ul li {
   letter-spacing: 0.1rem;
   text-shadow: 2px 2px 0 black;
   padding: 10px 0;
-  color: var(--accent-font-col);
+  color: var(--main-header-f-col);
 }
 
 nav ul li a:hover {
@@ -74,7 +86,6 @@ nav ul li a,
   text-shadow: 2px 2px 2px black;
   font-size: 2.2rem;
   padding: 1vh 0;
-  border-bottom: 3px solid white;
   border-radius: var(--border-rad);
   width: 80%;
   text-align: center;
@@ -82,11 +93,13 @@ nav ul li a,
 }
 
 footer {
-  padding: 1vh;
   position: fixed;
+  padding: 0.6vh;
+  left: 0;
   bottom: 0;
   width: 100%;
   text-align: center;
+  margin-top: 1vh;
 }
 
 .login-section,
@@ -159,16 +172,32 @@ input[type="password"],
   border: 1px solid rgba(12, 53, 158, 0.1);
   border-radius: var(--border-rad);
   background-color: var(--buttons-col);
-  color: var(--accent-font-col);
+  color: var(--main-header-f-col);
   font-size: var(--default-f-size);
   cursor: pointer;
   transition: background-color 0.5s ease;
   font-weight: 600;
 }
 
+header .heading .btn-logout {
+  width: 6vw;
+  padding: 0;
+  font-size: var(--default-f-size);
+  background-color: var(--main-col);
+  height: 4vh;
+  color: white;
+  margin: 10px;
+  text-transform: uppercase;
+  font-family: var(--body-font);
+  font-weight: 600;
+  letter-spacing: 0.1rem;
+  text-shadow: 2px 2px 0 black;
+}
+
 #login:hover,
 .btn-submit:hover,
-.item-delete:hover {
+.item-delete:hover,
+.btn-logout:hover {
   background-color: rgba(12, 53, 158, 0.7);
 }
 
@@ -177,27 +206,22 @@ input[type="password"],
   font-size: 30px;
 }
 
-.btn-logout {
-  background-color: var(--main-col);
-}
-
 /* ------------------ HOMEPAGE -------------------------- */
 .billing-home {
   display: flex;
-  flex-flow: wrap;
-  justify-content: space-between;
-  width: 80%;
+  justify-content: space-evenly;
+  width: 90%;
   margin-top: 3vh;
   margin-inline: auto;
 }
 
 .new-bill,
 .current-bill {
-  max-width: 40%;
-  width: 40%;
-  height: 50vh;
-  margin: 8vh 8px;
+  max-width: 70%;
+  width: 70%;
   overflow: scroll;
+  margin-inline: auto;
+  text-align: center;
 }
 
 ::-webkit-scrollbar {
@@ -244,6 +268,8 @@ h3 {
   max-width: 60%;
   margin-bottom: 2vh;
   margin-top: 0;
+  margin-inline: auto;
+  text-align: center;
 }
 
 .suggestion {
@@ -294,7 +320,7 @@ h3 {
 .bills-item-table thead tr th {
   font-size: var(--default-f-size);
   letter-spacing: 0.1rem;
-  color: var(--accent-font-col);
+  color: var(--main-header-f-col);
   text-transform: uppercase;
 }
 
@@ -350,7 +376,7 @@ h3 {
   padding: 2vw;
 }
 
-.conatiner h2 {
+.container h2 {
   color: black;
 }
 
@@ -381,12 +407,9 @@ h3 {
 
 /* ----------- VIEW ITEMS --------------- */
 .items {
-  max-width: 80%;
-  border: 1px solid var(--headings-col);
+  max-width: 45%;
   border-radius: var(--border-rad);
-  padding: 2vw;
   margin-inline: auto;
-  margin-top: 2vh;
 }
 
 .items h2 {
@@ -397,12 +420,15 @@ h3 {
   font-family: var(--body-font);
 }
 
-.item-table,
 .bills-item-table {
-  border-radius: var(--border-rad);
   margin-inline: auto;
-  border: 2px solid black;
-  border-radius: var(--border-rad);
+  width: 100%;
+}
+
+.items {
+  height: auto;
+  max-height: 60vh;
+  overflow-y: auto;
 }
 
 .item-table thead tr,
@@ -431,14 +457,10 @@ h3 {
   padding: 5px;
   border-radius: var(--border-rad);
   transition: padding 0.1s ease;
-  background-color: rgba(12, 53, 158, 0.8);
+  background-color: var(--buttons-col);
   color: #fff;
   font-size: 1.1rem;
   text-transform: capitalize;
-}
-
-.items .item-table tbody tr td a:hover {
-  background-color: rgba(12, 53, 158, 1);
 }
 
 .items .item-table tbody .options {
@@ -451,9 +473,7 @@ h3 {
 .bills-item-table tbody tr td i,
 #expand-report,
 #expand-filter {
-  background-color: rgba(12, 53, 158, 0.5);
   padding: 0.8vw;
-  border-radius: var(--border-rad);
   cursor: pointer;
 }
 
@@ -488,10 +508,20 @@ h3 {
 }
 
 /* ------------------- REPORT -------------------------- */
+.bills {
+  max-height: 50vh;
+  height: 50vh;
+  overflow: scroll;
+  margin-top: 2vh;
+  border: 2px solid black;
+  width: 50%;
+  margin-inline: auto;
+}
+
 .bills-item-table thead tr,
 .bills-item-table tbody tr {
   display: grid;
-  grid-template-columns: 1fr 3fr 3fr 1fr;
+  grid-template-columns: 1fr 3fr 2fr 1fr;
   text-align: center;
 }
 
@@ -508,9 +538,11 @@ h3 {
 
 #expand-report,
 #expand-filter {
+  font-size: 1.2rem;
   font-weight: 900;
-  padding: 0.75vw;
+  padding: 5px;
   margin-left: 2px;
+  border: none;
 }
 
 .bill-report form {
@@ -535,13 +567,21 @@ h3 {
 
 .bills .bills-item-table tbody .bill-details {
   grid-column: span 4;
+  width: 100%;
+}
+
+.bills .bills-item-table tbody .bill-details table {
+  margin-inline: auto;
+  width: 80%;
+  border: 2px solid black;
+  box-shadow: 5px 5px 0 black;
 }
 
 /* ------------ PRINT BILL ---------------- */
-.print-bill{
+.print-bill {
   max-width: 25vw;
   text-align: center;
-  font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+  font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
   border: 1px solid black;
 }
 
@@ -577,4 +617,36 @@ h3 {
 .print-bill table .totalling {
   display: grid;
   grid-template-columns: 3fr 2fr 2fr 2fr;
+}
+
+/* --------------- CONTACT ---------------------------- */
+.contact {
+  font-family: var(--body-font);
+  margin-inline: auto;
+  width: 30%;
+  max-width: 50%;
+  text-align: center;
+  margin-top: 10vh;
+}
+
+.contact .guide,
+.contact .team {
+  padding: 5px;
+  border-radius: 5px;
+  background-color: var(--accent-font-col);
+  margin: 1vh;
+}
+
+.contact .team p,
+.contact .guide h2 {
+  width: 80%;
+  background-color: var(--main-col);
+  color: white;
+  padding: 3px;
+  text-align: center;
+  margin-inline: auto;
+  border-radius: 5px;
+  text-transform: uppercase;
+  letter-spacing: 0.2rem;
+  font-weight: 900;
 }
