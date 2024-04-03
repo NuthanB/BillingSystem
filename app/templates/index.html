@@ -9,6 +9,16 @@ block content %}
         <div class="form-group">
           <input
             type="text"
+            id="code"
+            name="code"
+            class="form-control"
+            placeholder="Code"
+            onBlur="fillItemName()"
+          />
+        </div>
+        <div class="form-group">
+          <input
+            type="text"
             id="item_name"
             name="item_name"
             class="form-control"
@@ -53,9 +63,10 @@ block content %}
       </table>
     </div>
   </div>
-  <div class="items">
+  <div class="items items-home">
     <div class="resizable-item-table">
-      <table class="item-table">
+      <h2> LEGEND </h2>
+      <table class="item-table item-table-home">
         <thead>
           <tr>
             <th>Code</th>
@@ -89,6 +100,20 @@ block content %}
     });
   });
 
+  function fillItemName() {
+    const codeField = document.getElementById("code");
+    const nameField = document.getElementById("item_name");
+
+    code = codeField.value;
+    fetch(`/get_item_name/${code}`)
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        nameField.value = data.name;
+      })
+      .catch((error) => console.error("Error fetching item:", error));
+  }
+
   function getSuggestions(keyword) {
     // Clear previous suggestions
     document.getElementById("suggestions").innerHTML = "";
@@ -115,11 +140,12 @@ block content %}
 
   function addItemToBill() {
     // Get the selected item's name, quantity, and price
+    var itemCode = document.getElementById("code").value;
     var itemName = document.getElementById("item_name").value;
     var itemQuantity = parseInt(document.getElementById("quantity").value);
 
     // Check if the item already exists in the bill
-    var existingRow = findItemRow(itemName);
+    var existingRow = findItemRow(itemCode);
     if (existingRow) {
       // Update quantity of existing item
       var existingQuantity = parseInt(existingRow.cells[1].innerHTML);
@@ -130,7 +156,7 @@ block content %}
       updateTotalAmount(itemQuantity * itemPrice);
     } else {
       // Make AJAX request to fetch the price for the selected item
-      fetch(`/get_item_price?item_name=${itemName}`)
+      fetch(`/get_item_price?item_code=${itemCode}`)
         .then((response) => response.json())
         .then((data) => {
           var itemPrice = data.price; // Assuming the server returns the price in the response
@@ -170,12 +196,16 @@ block content %}
     }
   }
 
-  function findItemRow(itemName) {
+  function findItemRow(itemCode) {
     var table = document.getElementById("bill_items");
     for (var i = 0; i < table.rows.length; i++) {
-      if (table.rows[i].cells[0].textContent === itemName) {
-        return table.rows[i];
-      }
+      fetch(`/check_match?item1=${table.rows[i].cells[0].textContent}&item2=${itemCode}`)
+        .then((response) => response.json())
+        .then((data) => {
+          if(data.match == 'Y')
+            return table.rows[i];
+        })
+        .catch((error) => console.error("Error fetching item:", error));
     }
     return null;
   }

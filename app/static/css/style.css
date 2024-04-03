@@ -463,6 +463,19 @@ h3 {
   grid-template-columns: 1fr 3fr 3fr 1fr 2fr 2fr;
 }
 
+.items-home {
+  margin: 0;
+  border: 2px solid var(--main-col);
+  height: 50vh;
+  padding: 10px;
+  background-color: var(--accent-col);
+}
+
+.items-home .item-table-home thead tr,
+.items-home .item-table-home tbody tr {
+  grid-template-columns: 2fr 6fr 2fr;
+}
+
 .items .item-table thead tr th,
 .items .item-table tbody tr td {
   text-align: center;
@@ -536,6 +549,7 @@ h3 {
   border: 2px solid black;
   width: 50%;
   margin-inline: auto;
+  background-color: var(--accent-col);
 }
 
 .bills-item-table thead tr,
@@ -564,10 +578,12 @@ h3 {
 .expand-bill {
   font-size: 1.2rem;
   font-weight: 900;
-  padding: 5px;
+  padding: 0 10px;
   margin-left: 2px;
   border: none;
   cursor: pointer;
+  background-color: var(--accent-col);
+  border-radius: var(--border-rad);
 }
 
 .bill-report form {

@@ -144,15 +144,17 @@ def login():
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
+        uname = request.form['uname']
         email = request.form['email']
-        password = request.form['password']
+        pwd = request.form['pwd']
+        re_pwd = request.form['rpwd']
 
-        existing_user = User.query.filter_by(email=email).first()
-        if existing_user:
-            # Email already exists, refresh the page or perform any desired action
+        existing_user_email = User.query.filter_by(email=email).first()
+        existing_user_uname = User.query.filter_by(username=uname).first()
+        if existing_user_email or existing_user_uname or pwd != re_pwd :
             return redirect(url_for('signup'))
 
-        user = User(email=email, password=password)
+        user = User(username=uname, email=email, password=pwd)
         db.session.add(user)
         db.session.commit()
 
@@ -165,12 +167,13 @@ def add_item():
     if request.method == 'POST':
         name = request.form['name']
         group = request.form['group']
+        code = request.form['code']
         quantity = int(request.form['quantity'])
         price = float(request.form['price'])
 
         user_id = session.get('user_id')
         if user_id:
-            item = Item(name=name, group=group, quantity=quantity,
+            item = Item(name=name, group=group, code=code, quantity=quantity,
                         price=price, user_id=user_id)
             activity = UserActivity(user_id=session['user_id'], 
                                     activity_performed=f"Added item {name}, quantity {quantity}, price {price}")
@@ -206,6 +209,15 @@ def update_item_stock():
         db.session.commit()
 
         return redirect(url_for('items'))
+    
+@app.route("/get_item_name/<code>")
+def get_item_name(code):
+    try:
+        item_name = Item.query.filter_by(code=code).first().name
+        if item_name:
+            return jsonify({'name': item_name})
+    except:
+        return jsonify({'error': 'Item not found'})
 
 
 @app.route('/edit_item/<int:item_id>')
@@ -238,11 +250,24 @@ def update_item():
 
 @app.route('/get_item_price')
 def get_item_price():
-    item_name = request.args.get('item_name')
-    item = Item.query.filter_by(name=item_name).first()
+    code = request.args.get('item_code')
+    item = Item.query.filter_by(code=code).first()
     if item:
         return jsonify({'price': item.price})
     else:
+        return jsonify({'error': 'Item not found'})
+    
+
+@app.route('/check_match')
+def check_match():
+    item1Name = request.args.get('item1')
+    item2Code = request.args.get('item2')
+
+    try:
+        item2Name = Item.query.filter_by(code=item2Code).first()
+        if item1Name.lower() == item2Name.lower():
+            return jsonify({'match': 'Y'})
+    except:
         return jsonify({'error': 'Item not found'})
 
 

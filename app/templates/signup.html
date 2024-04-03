@@ -8,6 +8,15 @@ content %}
   <form action="{{ url_for('signup') }}" method="post" class="signup-form">
     <div class="form-group">
       <input
+        placeholder="Username" 
+        type="text"
+        id="uname"
+        name="uname"
+        required
+      />
+    </div>
+    <div class="form-group">
+      <input
         placeholder="Email" 
         type="email"
         id="email"
@@ -19,8 +28,17 @@ content %}
       <input
         placeholder="Password"
         type="password"
-        id="password"
-        name="password"
+        id="pwd"
+        name="pwd"
+        required
+      />
+    </div>
+    <div class="form-group">
+      <input
+        placeholder="Retype Password"
+        type="password"
+        id="rpwd"
+        name="rpwd"
         required
       />
     </div>
