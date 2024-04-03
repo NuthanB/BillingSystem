@@ -13,7 +13,6 @@ block content %}
     <input placeholder="To date" type="date" id="to_date" name="to_date" />
     <button type="submit" class="btn-submit">Search</button>
   </form>
-
   <div class="bills">
     <table class="bills-item-table">
       <thead>
@@ -21,6 +20,11 @@ block content %}
           <th>Bill ID</th>
           <th>Date & Time</th>
           <th>Bill Total</th>
+          <th>
+            <button class="btn-submit btn-print" onclick="print_reports()">
+              Print Report
+            </button>
+          </th>
         </tr>
       </thead>
       <tbody>
@@ -46,7 +50,6 @@ block content %}
       </tbody>
     </table>
   </div>
-  <button onclick="print_reports()">Print Report</button>
 </section>
 <script>
   function sendToPrint(billId) {
@@ -55,7 +58,7 @@ block content %}
   }
 
   function print_reports() {
-    window.location.href = "/print-report";
+    window.location.href = "/print-report/0/0";
   }
 
   document.addEventListener("DOMContentLoaded", function () {

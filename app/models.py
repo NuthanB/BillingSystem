@@ -10,6 +10,7 @@ class User(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(120), nullable=False)
     items = db.relationship('Item', backref='user', lazy=True)
+    activity = db.relationship('UserActivity', backref='user', lazy=True)
 
 
 class Item(db.Model):
@@ -42,3 +43,11 @@ class BillItem(db.Model):
     item_name = db.Column(db.String(100), nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
     price = db.Column(db.Float, nullable=False)
+
+class UserActivity(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    timestamp = db.Column(
+        db.DateTime, default=lambda: datetime.now(timezone("Asia/Kolkata")))
+    activity_performed = db.Column(db.String(200), nullable=False)
+    

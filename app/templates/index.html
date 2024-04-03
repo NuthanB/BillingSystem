@@ -58,30 +58,17 @@ block content %}
       <table class="item-table">
         <thead>
           <tr>
-            <th>ID</th>
+            <th>Code</th>
             <th>Name</th>
-            <th>Group</th>
-            <th>Available</th>
             <th>Price</th>
-            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
           {% for item in items %}
           <tr>
-            <td>{{ item.id }}</td>
+            <td>{{ item.code }}</td>
             <td>{{ item.name }}</td>
-            <td>{{ item.group }}</td>
-            <td>{{ item.quantity }}</td>
             <td>{{ item.price }}</td>
-            <td class="options">
-              <a href="{{ url_for('edit_item', item_id=item.id) }}">Edit</a>
-              <i
-                data-item-id="{{ item.id }}"
-                id="del-item"
-                class="fa-solid fa-trash-can"
-              ></i>
-            </td>
           </tr>
           {% endfor %}
         </tbody>
@@ -192,6 +179,7 @@ block content %}
     }
     return null;
   }
+
   function deleteItemFromBill(row) {
     var table = document.getElementById("bill_items");
     var quantity = parseInt(row.cells[1].textContent);

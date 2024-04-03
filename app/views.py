@@ -1,10 +1,10 @@
 from sqlalchemy.sql import func
 from flask import render_template, request, redirect, session, url_for, jsonify
 from app import app, db
-from app.models import User, Item, Bill, BillItem
+from app.models import User, Item, Bill, BillItem, UserActivity
 from datetime import datetime
 from sqlalchemy import func
-
+from collections import defaultdict
 
 @app.route('/')
 @app.route('/index')
@@ -130,6 +130,10 @@ def login():
         user = User.query.filter_by(email=email, password=password).first()
 
         if user:
+            activity = UserActivity(user_id=user.id, activity_performed="Logged in")
+            db.session.add(activity)
+            db.session.commit()
+            
             session['user_id'] = user.id
             return redirect(url_for('index'))
         else:
@@ -156,7 +160,7 @@ def signup():
     return render_template('signup.html')
 
 
-@app.route('/add_item', methods=['GET', 'POST'])
+@app.route('/add-item', methods=['GET', 'POST'])
 def add_item():
     if request.method == 'POST':
         name = request.form['name']
@@ -168,21 +172,43 @@ def add_item():
         if user_id:
             item = Item(name=name, group=group, quantity=quantity,
                         price=price, user_id=user_id)
+            activity = UserActivity(user_id=session['user_id'], 
+                                    activity_performed=f"Added item {name}, quantity {quantity}, price {price}")
             db.session.add(item)
+            db.session.add(activity)
             db.session.commit()
+            
             return redirect(url_for('index'))
         else:
             return redirect(url_for('login'))
     return render_template('add_item.html')
 
 
-# @app.route('/items')
-# def items():
-#     items = Item.query.all()
-#     return render_template('items.html', items=items)
+@app.route('/items')
+def items():
+    items = Item.query.all()
+    return render_template('items.html', items=items)
+
+@app.route('/update-stock', methods=['GET', 'POST'])
+def update_item_stock():
+    if request.method == 'GET':
+        items = Item.query.all()
+        return render_template('stock_update.html', items=items)
+    else:
+        item_id = request.form.get('item-id')
+        stock_update = int(request.form.get('add-stock'))
+
+        item = Item.query.get(item_id)
+        item.quantity += stock_update
+        activity = UserActivity(user_id=session['user_id'], 
+                                activity_performed=f"Updated stock of {item.name} to {item.quantity}")
+        db.session.add(activity)
+        db.session.commit()
+
+        return redirect(url_for('items'))
 
 
-@app.route('/edit_item/<int:item_id>', methods=['GET'])
+@app.route('/edit_item/<int:item_id>')
 def edit_item(item_id):
     item = Item.query.get(item_id)
     if item:
@@ -197,11 +223,15 @@ def update_item():
     name = request.form['name']
     group = request.form['group']
     price = float(request.form['price'])
+    
     item = Item.query.get(item_id)
     if item:
         item.name = name
         item.group = group
         item.price = price
+        activity = UserActivity(user_id=session['user_id'], 
+                                activity_performed=f"Edited item {name}, {group}, {price}")
+        db.session.add(activity)
         db.session.commit()
     return redirect(url_for('items'))
 
@@ -337,10 +367,16 @@ def print_bill(bill_id):
         return jsonify({'error': 'No bills found'}), 404
 
 
-@app.route("/print-report")
-def print_report():
-    print("Printing...")
-    bill = Bill.query.all()
+@app.route("/print-report/<from_date>/<to_date>")
+def print_report(from_date, to_date):
+    if from_date != 0 and to_date != 0:
+        bill = Bill.query.filter(
+            func.date(Bill.bill_date_time) >= from_date,
+            func.date(Bill.bill_date_time) <= to_date
+        ).all()
+    else:
+        bill = Bill.query.all()
+    
     return render_template('billwise_report.html', bills=bill)
 
 
@@ -382,6 +418,19 @@ def print_item_report(from_date, to_date):
                            from_date=from_date,
                            to_date=to_date)
 
+
+@app.route("/user-activity")
+def user_activity():
+    activities = UserActivity.query.all()
+    
+    # Group activities by user
+    user_activities = defaultdict(list)
+    for activity in activities:
+        user_activities[activity.user].append(activity)
+        
+    print(user_activities)
+
+    return render_template("user_activity.html", user_activities=user_activities)
 
 @app.route("/contact")
 def contact():

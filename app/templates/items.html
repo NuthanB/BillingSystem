@@ -2,11 +2,14 @@
 {% extends 'layout.html' %} {% block title %}Items{% endblock %} {% block
 content %}
 <section class="items">
-  <h2>Items</h2>
+  <div class="item-view-header">
+    <h2>Items</h2>
+    <button class="btn-add-items" onclick="sendToAddItem()">Add new Item</button>
+  </div>
   <table class="item-table">
     <thead>
       <tr>
-        <th>Item ID</th>
+        <th>ID</th>
         <th>Name</th>
         <th>Group</th>
         <th>Available</th>
@@ -17,7 +20,7 @@ content %}
     <tbody>
       {% for item in items %}
       <tr>
-        <td>{{ item.id }}
+        <td>{{ item.id }}</td>
         <td>{{ item.name }}</td>
         <td>{{ item.group }}</td>
         <td>{{ item.quantity }}</td>
@@ -36,6 +39,11 @@ content %}
   </table>
 </section>
 <script type="text/javascript">
+  function sendToAddItem() {
+    console.log("Hi");
+    window.location.href = "/add-item";
+  }
+
   $(function () {
     $("i#del-item").on("click", function (e) {
       e.preventDefault();
