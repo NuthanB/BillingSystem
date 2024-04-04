@@ -24,3 +24,25 @@ function logout() {
       console.error("Error logging out:", error);
     });
 }
+
+const modal = document.querySelector(".modal");
+const overlay = document.querySelector(".overlay");
+
+const closeModal = function () {
+  modal.classList.add("hidden");
+  overlay.classList.add("hidden");
+  window.location.reload();
+};
+
+overlay.addEventListener("click", closeModal);
+document.addEventListener("keydown", function (e) {
+  if (e.key === "Enter" && !modal.classList.contains("hidden")) {
+    closeModal();
+  }
+});
+
+const openModal = function () {
+  console.log("Hi");
+  modal.classList.remove("hidden");
+  overlay.classList.remove("hidden");
+};
