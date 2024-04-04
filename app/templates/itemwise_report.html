@@ -40,4 +40,11 @@ block content %}
     <p class="grand-total"><strong>Grand Total:</strong> {{ grand_total }}</p>
   </div>
 </section>
+<script>
+  function redirectAfterPrint() {
+    window.location.href = "/";
+  }
+  window.addEventListener("afterprint", redirectAfterPrint);
+  window.print();
+</script>
 {% endblock %}
