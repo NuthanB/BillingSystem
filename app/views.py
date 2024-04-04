@@ -6,6 +6,7 @@ from datetime import datetime
 from sqlalchemy import func
 from collections import defaultdict
 
+
 @app.route('/')
 @app.route('/index')
 def index():
@@ -73,17 +74,19 @@ def submit_bill():
 
                 if item_db:
                     new_quantity = item_db.quantity - item['quantity']
+                    print(new_quantity)
                     if new_quantity >= 0:
                         item_db.quantity = new_quantity
                         bill_item = BillItem(
                             bill=new_bill, item_id=item_db.id, item_name=item['name'], quantity=item['quantity'], price=item['price'])
                         db.session.add(bill_item)
                     else:
+                        print("Hi")
                         db.session.rollback()
-                        return jsonify({'error': f'Insufficient quantity available for {item["name"]}'})
+                        return jsonify({'error': f'Insufficient quantity available for {item["name"]}'}), 500
                 else:
                     db.session.rollback()
-                    return jsonify({'error': f'Item {item["name"]} not found'})
+                    return jsonify({'error': f'Item {item["name"]} not found'}), 500
 
             db.session.commit()
 
@@ -130,10 +133,11 @@ def login():
         user = User.query.filter_by(email=email, password=password).first()
 
         if user:
-            activity = UserActivity(user_id=user.id, activity_performed="Logged in")
+            activity = UserActivity(
+                user_id=user.id, activity_performed="Logged in")
             db.session.add(activity)
             db.session.commit()
-            
+
             session['user_id'] = user.id
             return redirect(url_for('index'))
         else:
@@ -151,7 +155,7 @@ def signup():
 
         existing_user_email = User.query.filter_by(email=email).first()
         existing_user_uname = User.query.filter_by(username=uname).first()
-        if existing_user_email or existing_user_uname or pwd != re_pwd :
+        if existing_user_email or existing_user_uname or pwd != re_pwd:
             return redirect(url_for('signup'))
 
         user = User(username=uname, email=email, password=pwd)
@@ -175,12 +179,12 @@ def add_item():
         if user_id:
             item = Item(name=name, group=group, code=code, quantity=quantity,
                         price=price, user_id=user_id)
-            activity = UserActivity(user_id=session['user_id'], 
+            activity = UserActivity(user_id=session['user_id'],
                                     activity_performed=f"Added item {name}, quantity {quantity}, price {price}")
             db.session.add(item)
             db.session.add(activity)
             db.session.commit()
-            
+
             return redirect(url_for('index'))
         else:
             return redirect(url_for('login'))
@@ -191,6 +195,7 @@ def add_item():
 def items():
     items = Item.query.all()
     return render_template('items.html', items=items)
+
 
 @app.route('/update-stock', methods=['GET', 'POST'])
 def update_item_stock():
@@ -203,21 +208,32 @@ def update_item_stock():
 
         item = Item.query.get(item_id)
         item.quantity += stock_update
-        activity = UserActivity(user_id=session['user_id'], 
+        activity = UserActivity(user_id=session['user_id'],
                                 activity_performed=f"Updated stock of {item.name} to {item.quantity}")
         db.session.add(activity)
         db.session.commit()
 
         return redirect(url_for('items'))
-    
+
+
 @app.route("/get_item_name/<code>")
 def get_item_name(code):
     try:
         item_name = Item.query.filter_by(code=code).first().name
         if item_name:
-            return jsonify({'name': item_name})
+            return jsonify({'name': item_name}), 200
     except:
-        return jsonify({'error': 'Item not found'})
+        return jsonify({'error': 'Item not found'}), 404
+    
+
+@app.route("/get_item_code/<name>")
+def get_item_code(name):
+    try:
+        item_code = Item.query.filter_by(name=name).first().code
+        if item_code:
+            return jsonify({'code': item_code}), 200
+    except:
+        return jsonify({'error': 'Item not found'}), 404
 
 
 @app.route('/edit_item/<int:item_id>')
@@ -235,13 +251,13 @@ def update_item():
     name = request.form['name']
     group = request.form['group']
     price = float(request.form['price'])
-    
+
     item = Item.query.get(item_id)
     if item:
         item.name = name
         item.group = group
         item.price = price
-        activity = UserActivity(user_id=session['user_id'], 
+        activity = UserActivity(user_id=session['user_id'],
                                 activity_performed=f"Edited item {name}, {group}, {price}")
         db.session.add(activity)
         db.session.commit()
@@ -256,7 +272,7 @@ def get_item_price():
         return jsonify({'price': item.price})
     else:
         return jsonify({'error': 'Item not found'})
-    
+
 
 @app.route('/check_match')
 def check_match():
@@ -401,7 +417,7 @@ def print_report(from_date, to_date):
         ).all()
     else:
         bill = Bill.query.all()
-    
+
     return render_template('billwise_report.html', bills=bill)
 
 
@@ -447,15 +463,16 @@ def print_item_report(from_date, to_date):
 @app.route("/user-activity")
 def user_activity():
     activities = UserActivity.query.all()
-    
+
     # Group activities by user
     user_activities = defaultdict(list)
     for activity in activities:
         user_activities[activity.user].append(activity)
-        
+
     print(user_activities)
 
     return render_template("user_activity.html", user_activities=user_activities)
+
 
 @app.route("/contact")
 def contact():
