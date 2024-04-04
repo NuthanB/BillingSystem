@@ -4,7 +4,7 @@ block content %}
 <section class="container user-activity">
   <h2>User Activity</h2>
   {% for user, activities in user_activities.items() %}
-  <h3 class="user-email">{{ user.email }}</h3>
+  <h3 class="user-email">{{ user.username }}</h3>
   <div class="user-activity-logs">
     <table>
       <thead>

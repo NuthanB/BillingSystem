@@ -128,8 +128,10 @@ def get_bill(bill_id):
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
+        uname = request.form['uname']
         email = request.form['email']
         password = request.form['password']
+        
         user = User.query.filter_by(email=email, password=password).first()
 
         if user:
