@@ -147,6 +147,7 @@ footer {
 }
 
 input[type="email"],
+input[type="text"],
 #email,
 input[type="password"],
 .new-bill input,
