@@ -46,10 +46,10 @@ class BillItem(db.Model):
     quantity = db.Column(db.Integer, nullable=False)
     price = db.Column(db.Float, nullable=False)
 
+
 class UserActivity(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     timestamp = db.Column(
         db.DateTime, default=lambda: datetime.now(timezone("Asia/Kolkata")))
     activity_performed = db.Column(db.String(200), nullable=False)
-    

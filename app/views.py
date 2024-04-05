@@ -131,7 +131,7 @@ def login():
         uname = request.form['uname']
         email = request.form['email']
         password = request.form['password']
-        
+
         user = User.query.filter_by(email=email, password=password).first()
 
         if user:
@@ -149,6 +149,7 @@ def login():
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
+    modal_message = None
     if request.method == 'POST':
         uname = request.form['uname']
         email = request.form['email']
@@ -157,16 +158,26 @@ def signup():
 
         existing_user_email = User.query.filter_by(email=email).first()
         existing_user_uname = User.query.filter_by(username=uname).first()
-        if existing_user_email or existing_user_uname or pwd != re_pwd:
-            return redirect(url_for('signup'))
+        if existing_user_email:
+            modal_message = 'Email already exists.'
+        elif existing_user_uname:
+            modal_message = 'Username already exists.'
+        elif pwd != re_pwd:
+            modal_message = 'Passwords do not match.'
+        else:
+            user = User(username=uname, email=email, password=pwd)
+            db.session.add(user)
+            db.session.commit()
+            return redirect(url_for('login'))
 
-        user = User(username=uname, email=email, password=pwd)
-        db.session.add(user)
-        db.session.commit()
+    return render_template('signup.html', modal_message=modal_message)
 
-        return redirect(url_for('login'))
-    return render_template('signup.html')
-
+@app.route('/get-emails-unames', methods=['GET'])
+def get_emails_unames():
+    emails = [user.email for user in User.query.all()]
+    unames = [user.username for user in User.query.all()]
+    print(emails, unames)
+    return jsonify({'emails': emails, 'unames': unames})
 
 @app.route('/add-item', methods=['GET', 'POST'])
 def add_item():
@@ -226,7 +237,7 @@ def get_item_name(code):
             return jsonify({'name': item_name}), 200
     except:
         return jsonify({'error': 'Item not found'}), 404
-    
+
 
 @app.route("/get_item_code/<name>")
 def get_item_code(name):

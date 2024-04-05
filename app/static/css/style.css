@@ -594,7 +594,8 @@ h3 {
   align-items: center;
 }
 
-.bill-report form input {
+.bill-report form input,
+.user-activity form input {
   border: 2px solid var(--main-col);
   padding: 10px;
   margin: 1vh;
@@ -726,10 +727,24 @@ h3 {
   border: none;
 }
 
+.user-activity {
+  width: 100%;
+}
+
+.all-users {
+  display: grid;
+  grid-template-columns: 5fr 5fr;
+}
+
 .container .user-activity-logs {
-  max-height: 50vh;
-  height: 50vh;
+  max-height: 30vh;
   overflow: scroll;
+}
+
+.user {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .container .user-activity-logs table thead tr,
@@ -743,6 +758,10 @@ h3 {
 .container .user-activity-logs table thead tr th:last-child,
 .container .user-activity-logs table tbody tr td:last-child {
   text-align: left;
+}
+
+.user-activity form input {
+  width: 20%;
 }
 
 /* --------------- CONTACT ---------------------------- */
@@ -783,25 +802,13 @@ h3 {
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  padding: 1rem;
+  padding: 20px;
   position: absolute;
   z-index: 2;
-  max-height: 150px;
-  background-color: rgb(255, 120, 120);
-  border: 2px solid rgb(85, 0, 0);
+  background-color: rgb(255, 85, 85);
   border-radius: var(--border-rad);
   left: 1vw;
   bottom: 8vh;
-}
-
-.modal h3 {
-  margin: 0;
-  color: rgb(35, 0, 0);
-  text-shadow: 1px 1px 0 white;
-}
-
-.modal .text {
-  padding: 5px 5px;
 }
 
 .modal {
@@ -810,15 +817,15 @@ h3 {
   justify-content: space-between;
 }
 
-
-.modal p {
-  font-size: 1.2rem;
-  margin: 0.4rem 0 0.2rem;
-  color: rgb(35, 0, 0);
+.modal .text p,
+#errmsg {
+  font-size: 1.1rem;
+  color: rgb(255, 219, 219);
   text-transform: uppercase;
   font-weight: 800;
   letter-spacing: 0.1em;
   font-family: var(--body-font);
+  margin: 0;
 }
 
 .overlay {

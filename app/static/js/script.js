@@ -34,15 +34,15 @@ const closeModal = function () {
   window.location.reload();
 };
 
-overlay.addEventListener("click", closeModal);
 document.addEventListener("keydown", function (e) {
   if (e.key === "Enter" && !modal.classList.contains("hidden")) {
     closeModal();
   }
 });
 
-const openModal = function () {
-  console.log("Hi");
+const openModal = function (message) {
+  document.getElementById("errmsg").textContent = message;
   modal.classList.remove("hidden");
   overlay.classList.remove("hidden");
+  console.log(message);
 };
