@@ -176,7 +176,6 @@ def signup():
 def get_emails_unames():
     emails = [user.email for user in User.query.all()]
     unames = [user.username for user in User.query.all()]
-    print(emails, unames)
     return jsonify({'emails': emails, 'unames': unames})
 
 @app.route('/add-item', methods=['GET', 'POST'])
@@ -203,6 +202,10 @@ def add_item():
             return redirect(url_for('login'))
     return render_template('add_item.html')
 
+@app.route('/get-obj-codes', methods=['GET'])
+def get_obj_codes():
+    codes = [item.code for item in Item.query.all()]
+    return jsonify({'codes': codes})
 
 @app.route('/items')
 def items():
