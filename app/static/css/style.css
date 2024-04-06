@@ -19,6 +19,16 @@
   box-sizing: border-box;
 }
 
+.icon {
+  width: 30px;
+  height: 30px;
+}
+
+.print-icon {
+  width: 20px;
+  height: 20px;
+}
+
 body {
   margin: 0;
   padding: 0;
@@ -204,12 +214,8 @@ header .heading .btn-logout {
 .btn-submit:hover,
 .item-delete:hover,
 .btn-logout:hover {
-  background-color: rgba(12, 53, 158, 0.7);
-}
-
-.login-section i,
-.signup-section i {
-  font-size: 30px;
+  background-color: var(--accent-col);
+  color: rgba(13, 13, 13, 0.8);
 }
 
 /* ------------------ HOMEPAGE -------------------------- */
@@ -235,6 +241,7 @@ header .heading .btn-logout {
   margin-inline: auto;
   text-align: center;
 }
+
 
 ::-webkit-scrollbar {
   width: 0px;
@@ -788,13 +795,26 @@ h3 {
   text-align: center;
   margin-inline: auto;
   border-radius: 5px;
-  letter-spacing: 0.2rem;
   font-weight: 900;
   text-shadow: none;
   text-transform: none;
 }
 
-.member {
+.details {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.details h2 {
+  margin: 5px;
+}
+
+.details p {
+  margin: 2px;
+}
+
+.member, .guide {
   display: grid;
   grid-template-columns: 1fr 1fr;
   background-color: var(--accent-col);

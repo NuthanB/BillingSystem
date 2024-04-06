@@ -1,5 +1,5 @@
-{% extends 'layout.html' %} {% block title %}Dashboard{% endblock %} {%
-block content %}
+{% extends 'layout.html' %} {% block title %}Dashboard{% endblock %} {% block
+content %}
 <section class="billing-home">
   <div class="billing">
     <div class="new-bill">
@@ -46,7 +46,9 @@ block content %}
     <div class="current-bill">
       <div class="billing-actions">
         <div id="total">Total: ₹ 0</div>
-        <button onclick="submitBill()" class="btn-submit">Print Bill</button>
+        <button onclick="submitBill()" class="btn-submit">
+          <img class="icon print-icon" src="../static/svg/print-solid-white.svg"/>
+        </button>
       </div>
       <table class="table">
         <thead>
@@ -96,6 +98,10 @@ block content %}
 <div class="overlay hidden"></div>
 
 <script>
+  document.addEventListener("contextmenu", function (e) {
+    e.preventDefault();
+  });
+
   $(function () {
     $("i#del-item").on("click", function (e) {
       e.preventDefault();
@@ -185,7 +191,9 @@ block content %}
             var existingQuantity = parseInt(existingRow.cells[1].innerHTML);
             var newQuantity = existingQuantity + itemQuantity;
             existingRow.cells[1].innerHTML = newQuantity;
-            existingRow.cells[2].innerHTML = (itemPrice * newQuantity).toFixed(2);
+            existingRow.cells[2].innerHTML = (itemPrice * newQuantity).toFixed(
+              2
+            );
 
             updateTotalAmount(itemQuantity * itemPrice);
           } else {
@@ -283,7 +291,7 @@ block content %}
     var currentTotal =
       parseFloat(totalElement.textContent.replace("Total: ₹", "")) || 0;
 
-      var newTotal = currentTotal + amount;
+    var newTotal = currentTotal + amount;
     totalElement.textContent = "Total: ₹" + newTotal.toFixed(2);
   }
 
