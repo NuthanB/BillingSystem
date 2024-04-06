@@ -33,10 +33,7 @@ block content %}
           <td>{{ bill.bill_date_time.strftime('%d-%m-%Y | %H:%M ') }}</td>
           <td>{{ bill.total }}</td>
           <td class="actions">
-            <i
-              class="fa-solid fa-print"
-              onclick="sendToPrint({{ bill.id }})"
-            ></i>
+            <img class="icon print-icon" src="../static/svg/print-solid.svg"/>
             <button class="expand-bill">+</button>
           </td>
           <td

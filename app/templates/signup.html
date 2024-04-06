@@ -2,7 +2,7 @@
 content %}
 <section class="signup-section">
   <div class="signup-header">
-    <i class="fa-solid fa-user-plus"></i>
+    <img class="icon signup-icon" src="../static/svg/user-plus-solid.svg">
     <p style="color: white">SIGNUP</p>
   </div>
   <form
@@ -48,6 +48,14 @@ content %}
       />
     </div>
     <button class="btn-submit" type="submit">Sign Up</button>
+    <button
+      onclick="existing_user()"
+      type="button"
+      class="btn-submit"
+      formnovalidate
+    >
+      Log In
+    </button>
   </form>
 </section>
 
@@ -60,6 +68,10 @@ content %}
 <div class="overlay hidden"></div>
 
 <script>
+  const existing_user = () => {
+    window.location.href = "/login";
+  };
+
   const modal = document.querySelector(".modal");
   const overlay = document.querySelector(".overlay");
 

@@ -2,7 +2,7 @@
 %}
 <section class="login-section">
   <div class="login-header">
-    <i class="fa-solid fa-right-to-bracket"></i>
+    <img class="icon login-icon" src="../static/svg/right-to-bracket-solid.svg">
     <p style="color: white">LOGIN</p>
   </div>
   <form action="{{ url_for('login') }}" method="post" class="login-form">
@@ -46,7 +46,6 @@
 <script>
   const new_user = () => {
     window.location.href = "/signup";
-    console.log("Signing up...");
   };
 </script>
 {% endblock %}
