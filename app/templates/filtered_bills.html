@@ -1,4 +1,4 @@
-{% extends 'layout.html' %} {% block title %}Billing System{% endblock %} {%
+{% extends 'layout.html' %} {% block title %}Bills{% endblock %} {%
 block content %}
 
 <section class="bill-report">
@@ -55,16 +55,15 @@ block content %}
 <script>
   function sendToPrint(billId) {
     console.log(billId);
-    window.location.href = `/print-bill/${billId}`;
+    window.location.href = `/print-bill?bill_id=${billId}`;
   }
 
   function print_reports(fd, td) {
-    window.location.href = `/print-report/${fd}/${td}`;
+    window.location.href = `/print-report?from_date=${fd}&to_date=${td}`;
   }
 
   function print_item_reports(fd, td) {
-    console.log(fd, td);
-    window.location.href = `/print-item-report/${fd}/${td}`;
+    window.location.href = `/print-item-report?from_date=${fd}&to_date=${td}`;
   }
 
   document.addEventListener("DOMContentLoaded", function () {
@@ -75,17 +74,17 @@ block content %}
         const details = document.getElementById("details-" + billId);
         console.log(billId, details);
         if (details.style.display === "none") {
-          fetchBillDetails(billId, details); // Fetch and display details
+          fetchBillDetails(billId, details);
           button.textContent = "-";
         } else {
-          details.style.display = "none"; // Hide details
+          details.style.display = "none";
           button.textContent = "+";
         }
       });
     });
 
     function fetchBillDetails(billId, detailsElement) {
-      fetch(`/bill-details/${billId}`)
+      fetch(`/get-bill-details?bill_id=${billId}`)
         .then((response) => response.json())
         .then((data) => {
           const tableHTML = `
@@ -113,7 +112,7 @@ block content %}
           </table>
         `;
           detailsElement.innerHTML = tableHTML;
-          detailsElement.style.display = "table-cell"; // Show details
+          detailsElement.style.display = "table-cell";
         })
         .catch((error) => console.error("Error fetching bill details:", error));
     }

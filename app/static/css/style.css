@@ -768,7 +768,7 @@ h3 {
 .contact {
   font-family: var(--body-font);
   margin-inline: auto;
-  width: 30%;
+  width: 40%;
   max-width: 50%;
   text-align: center;
   margin-top: 10vh;
@@ -778,22 +778,36 @@ h3 {
 .contact .team {
   padding: 5px;
   border-radius: 5px;
-  background-color: var(--accent-col);
   margin-top: 1vh;
 }
 
 .contact .team p,
 .contact .guide h2 {
-  width: 80%;
   color: black;
   padding: 3px;
   text-align: center;
   margin-inline: auto;
   border-radius: 5px;
-  text-transform: uppercase;
   letter-spacing: 0.2rem;
   font-weight: 900;
-  text-shadow: 0 0 10px var(--main-col);
+  text-shadow: none;
+  text-transform: none;
+}
+
+.member {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background-color: var(--accent-col);
+  padding: 0;
+  margin: 1px;
+  border-radius: var(--border-rad);
+}
+
+.member p:last-child {
+  background-color: var(--buttons-col);
+  color: #fff;
+  font-weight: 400;
+  letter-spacing: normal;
 }
 
 /* ----------- POPUP ------------------------- */

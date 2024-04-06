@@ -1,5 +1,4 @@
-<!-- report.html -->
-{% extends 'layout.html' %} {% block title %}Billing System{% endblock %} {%
+{% extends 'layout.html' %} {% block title %}Bills{% endblock %} {%
 block content %}
 <section class="bill-report">
   <h2>SEARCH BILLS</h2>
@@ -53,12 +52,11 @@ block content %}
 </section>
 <script>
   function sendToPrint(billId) {
-    console.log(billId);
-    window.location.href = `/print-bill/${billId}`;
+    window.location.href = `/print-bill?bill_id=${billId}`;
   }
 
   function print_reports() {
-    window.location.href = "/print-report/0/0";
+    window.location.href = "/print-report?from_date=0&to_date=0";
   }
 
   document.addEventListener("DOMContentLoaded", function () {
@@ -67,21 +65,21 @@ block content %}
       button.addEventListener("click", function () {
         const billId = button.closest(".bill-row").dataset.itemId;
         const details = document.getElementById("details-" + billId);
-        console.log(billId, details);
         if (details.style.display === "none") {
-          fetchBillDetails(billId, details); // Fetch and display details
+          fetchBillDetails(billId, details);
           button.textContent = "-";
         } else {
-          details.style.display = "none"; // Hide details
+          details.style.display = "none";
           button.textContent = "+";
         }
       });
     });
 
     function fetchBillDetails(billId, detailsElement) {
-      fetch(`/bill-details/${billId}`)
+      fetch(`/get-bill-details?bill_id=${billId}`)
         .then((response) => response.json())
         .then((data) => {
+          console.log(data);
           const tableHTML = `
           <table>
             <thead>
@@ -92,7 +90,7 @@ block content %}
               </tr>
             </thead>
             <tbody>
-              ${data.items
+              ${data.bill_items
                 .map(
                   (item) => `
                   <tr>

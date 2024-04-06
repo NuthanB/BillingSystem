@@ -1,5 +1,4 @@
-<!-- index.html -->
-{% extends 'layout.html' %} {% block title %}Billing System{% endblock %} {%
+{% extends 'layout.html' %} {% block title %}Dashboard{% endblock %} {%
 block content %}
 <section class="billing-home">
   <div class="billing">
@@ -102,7 +101,6 @@ block content %}
       e.preventDefault();
       var itemId = $(this).data("item-id");
       $.getJSON("/delete-item", { item_id: itemId }, function (data) {
-        console.log(data);
         window.location.reload();
       });
       return false;
@@ -110,8 +108,7 @@ block content %}
   });
 
   function fetchItemCode(itemName) {
-    // Fetch item code using item name
-    return fetch(`/get_item_code/${itemName}`)
+    return fetch(`/get-item-code?name=${itemName}`)
       .then((response) => response.json())
       .then((data) => data.code)
       .catch((error) => {
@@ -127,10 +124,9 @@ block content %}
     code = codeField.value;
     console.log(code);
     if (code != "") {
-      fetch(`/get_item_name/${code}`)
+      fetch(`/get-item-name?code=${code}`)
         .then((response) => response.json())
         .then((data) => {
-          console.log(data);
           nameField.value = data.name;
         })
         .catch((error) => console.error("Error fetching item:", error));
@@ -138,13 +134,10 @@ block content %}
   }
 
   function getSuggestions(keyword) {
-    // Clear previous suggestions
     document.getElementById("suggestions").innerHTML = "";
-    // Make AJAX request to fetch suggestions
-    fetch(`/get_suggestions?keyword=${keyword}`)
+    fetch(`/get-suggestions?keyword=${keyword}`)
       .then((response) => response.json())
       .then((data) => {
-        // Populate suggestions div with the received suggestions
         data.forEach((suggestion) => {
           const suggestionElement = document.createElement("div");
           suggestionElement.classList.add("suggestion");
@@ -160,27 +153,18 @@ block content %}
   }
 
   function addItemToBill() {
-    // Get the selected item's name, quantity, and price
     var itemCode = document.getElementById("code").value;
     var itemName = document.getElementById("item_name").value;
     var itemQuantity = parseInt(document.getElementById("quantity").value);
 
-    // Check if item code is provided
     if (itemCode.trim() !== "") {
-      // If item code is provided, proceed as usual
-      console.log(itemCode, itemName, itemQuantity);
       addOrUpdateItemToBill(itemCode, itemName, itemQuantity);
     } else {
-      // If item code is not provided, fetch it using the item name
       fetchItemCode(itemName)
         .then((code) => {
-          // If item code is retrieved, add or update item to the bill
           if (code) {
-            console.log(code, itemName, itemQuantity);
             addOrUpdateItemToBill(code, itemName, itemQuantity);
           } else {
-            // If item code is not found, you can prompt the user to input the code manually
-            // Or provide an appropriate message to the user
             console.error("Item code not found for the provided item name.");
           }
         })
@@ -189,13 +173,11 @@ block content %}
   }
 
   function addOrUpdateItemToBill(itemCode, itemName, itemQuantity) {
-    // Fetch the item price from the server
-    fetch(`/get_item_price?item_code=${itemCode}`)
+    fetch(`/get-item-price?item_code=${itemCode}`)
       .then((response) => response.json())
       .then((data) => {
-        var itemPrice = data.price; // Original price of the item
+        var itemPrice = data.price;
         if (itemPrice) {
-          // Find the existing row if it exists
           var existingRow = findItemRowName(itemName);
           if (!existingRow) existingRow = findItemRow(itemCode);
 
@@ -203,31 +185,23 @@ block content %}
             var existingQuantity = parseInt(existingRow.cells[1].innerHTML);
             var newQuantity = existingQuantity + itemQuantity;
             existingRow.cells[1].innerHTML = newQuantity;
-
-            // Update total price for this item
-            existingRow.cells[2].innerHTML = (itemPrice * newQuantity).toFixed(
-              2
-            );
+            existingRow.cells[2].innerHTML = (itemPrice * newQuantity).toFixed(2);
 
             updateTotalAmount(itemQuantity * itemPrice);
           } else {
-            // Create a new row for the bill table
             var table = document.getElementById("bill_items");
             var newRow = table.insertRow();
 
-            // Insert cells for item name, quantity, price, and delete option
             var cellName = newRow.insertCell(0);
             var cellQuantity = newRow.insertCell(1);
             var cellPrice = newRow.insertCell(2);
             var cellDelete = newRow.insertCell(3);
 
-            // Populate cells with item details
             cellName.textContent = itemName;
             cellQuantity.textContent = itemQuantity;
             cellPrice.textContent = (itemPrice * itemQuantity).toFixed(2);
             cellPrice.classList.add("price");
 
-            // Create delete button and attach event listener
             var deleteButton = document.createElement("button");
             deleteButton.innerHTML = "&#10006;";
             deleteButton.classList.add("item-delete");
@@ -235,8 +209,6 @@ block content %}
               deleteItemFromBill(newRow);
             };
             cellDelete.appendChild(deleteButton);
-
-            // Update total amount in the bill
             updateTotalAmount(itemQuantity * itemPrice);
           }
         } else {
@@ -260,7 +232,7 @@ block content %}
     var table = document.getElementById("bill_items");
     for (var i = 0; i < table.rows.length; i++) {
       fetch(
-        `/check_match?item1=${table.rows[i].cells[0].textContent}&item2=${itemCode}`
+        `/check-match?item1=${table.rows[i].cells[0].textContent}&item2=${itemCode}`
       )
         .then((response) => response.json())
         .then((data) => {
@@ -282,7 +254,7 @@ block content %}
     fetchItemCode(itemName)
       .then((code) => {
         if (code) {
-          fetch(`/get_item_price?item_code=${code}`)
+          fetch(`/get-item-price?item_code=${code}`)
             .then((response) => response.json())
             .then((data) => {
               itemPrice = data.price;
@@ -311,17 +283,14 @@ block content %}
     var currentTotal =
       parseFloat(totalElement.textContent.replace("Total: ₹", "")) || 0;
 
-    console.log(amount, currentTotal);
-    var newTotal = currentTotal + amount;
-    console.log(newTotal);
+      var newTotal = currentTotal + amount;
     totalElement.textContent = "Total: ₹" + newTotal.toFixed(2);
   }
 
   function submitBill() {
-    // Get the items from the bill table
     var tableRows = document.querySelectorAll("#bill_items tr");
     var items = [];
-    var total = 0; // Initialize total amount
+    var total = 0;
 
     tableRows.forEach(function (row) {
       var item = {
@@ -332,20 +301,15 @@ block content %}
       console.log(item);
       items.push(item);
 
-      // Update total amount
-      total += item.quantity * item.price;
+      total += item.price;
     });
 
-    // Prepare the data to send to the server
     var data = {
       items: items,
       total: total,
     };
 
-    console.log(data);
-
-    // Make an AJAX request to submit the bill data to the server
-    fetch("/submit_bill", {
+    fetch("/submit-bill", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -355,19 +319,15 @@ block content %}
       .then((response) => {
         console.log(response);
         if (response.ok) {
-          console.log("Bill submitted successfully");
           window.location.reload();
-          window.location.href = "/print-bill/0";
+          window.location.href = "/print-bill?bill_id=0";
         } else if (response.status === 500) {
-          console.log("Insufficient Quantity");
-          console.error("Failed to submit bill:", response.statusText);
           throw new Error("Failed to submit bill: " + "Insufficient Quantity");
         }
       })
       .catch((error) => {
-        // Handle network or other errors
         console.error(error);
-        openModal();
+        openModal("Insufficient Quantity");
       });
   }
 </script>
