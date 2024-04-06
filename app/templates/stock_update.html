@@ -25,7 +25,7 @@ content %}
         <td class="options">
           <form
             class="stock-update"
-            action="{{ url_for('update_item_stock') }}"
+            action="{{ url_for('update_stock') }}"
             method="post"
           >
             <input type="hidden" name="item-id" value="{{ item.id }}" />

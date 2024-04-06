@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{% block title %}Your Website Title{% endblock %}</title>
+    <title>DSU FOOD COURT | {% block title %}{% endblock %}</title>
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='css/style.css') }}"
@@ -38,9 +38,25 @@
     <main>{% block content %}{% endblock %}</main>
     <footer>
       <p>
-        &copy; Dayananda Sagar University - Department of Computer Science Engineering
+        &copy; Dayananda Sagar University - Department of Computer Science
+        Engineering
       </p>
     </footer>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script>
+      document.addEventListener("keydown", function (event) {
+        if (event.key === "F1") {
+          window.location.href = "/";
+        } else if (event.key === "F2") {
+          window.location.href = "/report";
+        } else if (event.key === "F3") {
+          window.location.href = "/update-stock";
+        } else if (event.key === "F4") {
+          window.location.href = "/items";
+        } else if (event.key === "F5") {
+          window.location.href = "/user-activity";
+        }
+      });
+    </script>
   </body>
 </html>

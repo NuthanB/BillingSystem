@@ -1,4 +1,3 @@
-<!-- templates/add_item.html -->
 {% extends 'layout.html' %} {% block title %}Add Item{% endblock %} {% block
 content %}
 <section>
@@ -45,4 +44,51 @@ content %}
     </form>
   </div>
 </section>
+
+<section class="modal hidden">
+  <div class="text" id="errmsg">
+    <p>Invalid Item Code</p>
+  </div>
+</section>
+
+<div class="overlay hidden"></div>
+
+<script>
+  const modal = document.querySelector(".modal");
+  const overlay = document.querySelector(".overlay");
+
+  const closeModal = function () {
+    modal.classList.add("hidden");
+    overlay.classList.add("hidden");
+    window.location.reload();
+  };
+
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Enter" && !modal.classList.contains("hidden")) {
+      closeModal();
+    }
+  });
+
+  const openModal = function (message) {
+    document.getElementById("errmsg").textContent = message;
+    modal.classList.remove("hidden");
+    overlay.classList.remove("hidden");
+    console.log(message);
+  };
+
+  var codes = [];
+  fetch('/get-obj-codes')
+    .then((response) => response.json())
+    .then((data) => {
+      codes = data.codes;
+    });
+
+  var codeInput = document.getElementById('code');
+
+  codeInput.addEventListener('blur', () => {
+    if(codes.includes(codeInput.value)) {
+      openModal('Invalid Item Code');
+    }
+  });
+</script>
 {% endblock %}
