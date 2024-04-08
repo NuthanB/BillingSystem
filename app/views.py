@@ -14,8 +14,9 @@ def index():
         items = Item.query.all()
     except KeyError:
         return redirect('/login')
-    
+
     return render_template('index.html', items=items)
+
 
 @app.route('/get-suggestions')
 def get_suggestions():
@@ -30,16 +31,19 @@ def get_suggestions():
     else:
         return jsonify([])
 
+
 @app.route('/get-emails-unames', methods=['GET'])
 def get_emails_unames():
     emails = [user.email for user in User.query.all()]
     unames = [user.username for user in User.query.all()]
     return jsonify({'emails': emails, 'unames': unames})
 
+
 @app.route('/get-obj-codes', methods=['GET'])
 def get_obj_codes():
     codes = [item.code for item in Item.query.all()]
     return jsonify({'codes': codes})
+
 
 @app.route("/get-item-name")
 def get_item_name():
@@ -51,6 +55,7 @@ def get_item_name():
     except:
         return jsonify({'error': 'Item not found'}), 404
 
+
 @app.route("/get-item-code")
 def get_item_code():
     name = request.args.get('name')
@@ -61,6 +66,7 @@ def get_item_code():
     except:
         return jsonify({'error': 'Item not found'}), 404
 
+
 @app.route('/get-item-price')
 def get_item_price():
     code = request.args.get('item_code')
@@ -69,6 +75,7 @@ def get_item_price():
         return jsonify({'price': item.price})
     else:
         return jsonify({'error': 'Item not found'})
+
 
 def get_bill(bill):
     if bill:
@@ -105,7 +112,6 @@ def get_bill_details():
         return jsonify({'error': 'Bill not found'}), 404
 
 
-
 @app.route('/check-match')
 def check_match():
     item1Name = request.args.get('item1')
@@ -117,6 +123,7 @@ def check_match():
             return jsonify({'match': 'Y'})
     except:
         return jsonify({'error': 'Item not found'})
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -138,6 +145,7 @@ def login():
         else:
             return render_template('login.html', error='Invalid email or password.')
     return render_template('login.html')
+
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -164,10 +172,12 @@ def signup():
 
     return render_template('signup.html', modal_message=modal_message)
 
+
 @app.route('/logout', methods=['POST'])
 def logout():
     session.clear()
     return redirect(url_for('login'))
+
 
 @app.route('/create-bill', methods=['POST'])
 def create_bill():
@@ -231,10 +241,12 @@ def submit_bill():
     else:
         return jsonify({'error': 'User not authenticated'}), 401
 
+
 @app.route('/items')
 def items():
     items = Item.query.all()
     return render_template('items.html', items=items)
+
 
 @app.route('/add-item', methods=['GET', 'POST'])
 def add_item():
@@ -280,7 +292,6 @@ def update_stock():
         return redirect(url_for('items'))
 
 
-
 @app.route('/edit-item/<int:item_id>')
 def edit_item(item_id):
     item = Item.query.get(item_id)
@@ -308,11 +319,13 @@ def update_item():
         db.session.commit()
     return redirect(url_for('items'))
 
+
 @app.route('/report')
 def show_reports():
     bill = Bill.query.all()
     bill_items = BillItem.query.all()
     return render_template('report.html', bills=bill, bill_items=bill_items)
+
 
 @app.route('/filter-bills', methods=['GET', 'POST'])
 def filter_bills():
@@ -332,6 +345,7 @@ def filter_bills():
                                )
     else:
         return redirect("/report")
+
 
 @app.route('/delete-item', methods=['GET', 'POST'])
 def delete_item():
@@ -356,7 +370,7 @@ def delete_item():
 def print_bill():
     bill_id = int(request.args.get('bill_id'))
     bill = None
-    
+
     if bill_id:
         try:
             bill = Bill.query.filter_by(id=bill_id).first()
@@ -402,8 +416,10 @@ def print_report():
     return render_template('billwise_report.html', bills=bill)
 
 
-@app.route("/print-item-report/<from_date>/<to_date>")
-def print_item_report(from_date, to_date):
+@app.route("/print-item-report")
+def print_item_report():
+    from_date = request.args.get("from_date")
+    to_date = request.args.get("to_date")
     grouped_items = db.session.query(
         Item.group,
         BillItem.item_name,
@@ -411,7 +427,6 @@ def print_item_report(from_date, to_date):
         func.sum(BillItem.quantity * BillItem.price).label('total_price')
     ).join(Item, Item.id == BillItem.item_id).group_by(Item.group, BillItem.item_name).all()
 
-    # Create a dictionary to store grouped items
     grouped_items_dict = {}
     for group, item_name, total_quantity, total_price in grouped_items:
         if group not in grouped_items_dict:
