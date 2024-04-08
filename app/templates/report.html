@@ -1,5 +1,5 @@
-{% extends 'layout.html' %} {% block title %}Bills{% endblock %} {%
-block content %}
+{% extends 'layout.html' %} {% block title %}Bills{% endblock %} {% block
+content %}
 <section class="bill-report">
   <h2>SEARCH BILLS</h2>
   <form action="{{ url_for('filter_bills') }}" method="post">
@@ -33,7 +33,12 @@ block content %}
           <td>{{ bill.bill_date_time.strftime('%d-%m-%Y | %H:%M ') }}</td>
           <td>{{ bill.total }}</td>
           <td class="actions">
-            <img class="icon print-icon" src="../static/svg/print-solid.svg"/>
+            <button onclick="sendToPrint('{{ bill.id }}')">
+              <img
+                class="icon print-icon"
+                src="../static/svg/print-solid.svg"
+              />
+            </button>
             <button class="expand-bill">+</button>
           </td>
           <td
