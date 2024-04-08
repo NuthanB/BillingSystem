@@ -24,8 +24,8 @@ block content %}
       <tr class="bill-item-details">
         <td>{{ item.item_name }}</td>
         <td>{{ item.quantity }}</td>
+        <td>{{ item.price/item.quantity }}</td>
         <td>{{ item.price }}</td>
-        <td>{{ item.quantity * item.price }}</td>
       </tr>
       {% endfor %}
       <tr class="totalling">

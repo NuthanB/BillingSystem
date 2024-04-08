@@ -7,6 +7,7 @@ block content %}
     {% for user, activities in user_activities.items() %}
     <div class="user">
       <h3 class="user-email">{{ user.username }}</h3>
+      <h4 class="bill-count">Bill Count : {{ bill_count }}</h4>
       <div class="user-activity-logs">
         <table>
           <thead>

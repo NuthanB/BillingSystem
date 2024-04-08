@@ -34,10 +34,12 @@ block content %}
           <td>{{ bill.bill_date_time.strftime('%d-%m-%Y | %H:%M ') }}</td>
           <td>{{ bill.total }}</td>
           <td class="actions">
-            <i
-              class="fa-solid fa-print"
-              onclick="sendToPrint({{ bill.id }})"
-            ></i>
+            <button class="btn-print" onclick="sendToPrint('{{ bill.id }}')">
+              <img
+                class="icon print-icon"
+                src="../static/svg/print-solid.svg"
+              />
+            </button>
             <button class="expand-bill">+</button>
           </td>
           <td
@@ -85,34 +87,45 @@ block content %}
 
     function fetchBillDetails(billId, detailsElement) {
       fetch(`/get-bill-details?bill_id=${billId}`)
-        .then((response) => response.json())
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          return response.json();
+        })
         .then((data) => {
-          const tableHTML = `
-          <table>
-            <thead>
-              <tr>
-                <th>Item</th>
-                <th>Quantity</th>
-                <th>Price</th>
-              </tr>
-            </thead>
-            <tbody> 
-              ${data.items
-                .map(
-                  (item) => `
+          console.log("Response data:", data);
+          if (data && data.bill_items && data.bill_items.length > 0) {
+            const tableHTML = `
+              <table>
+                <thead>
                   <tr>
-                    <td>${item.item_name}</td> 
-                    <td>${item.quantity}</td>
-                    <td>${item.price}</td>
+                    <th>Item</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
                   </tr>
-                `
-                )
-                .join("")}
-            </tbody>
-          </table>
-        `;
-          detailsElement.innerHTML = tableHTML;
-          detailsElement.style.display = "table-cell";
+                </thead>
+                <tbody>
+                  ${data.bill_items
+                    .map(
+                      (item) => `
+                        <tr>
+                          <td>${item.item_name}</td>
+                          <td>${item.quantity}</td>
+                          <td>${item.price}</td>
+                        </tr>
+                      `
+                    )
+                    .join("")}
+                </tbody>
+              </table>
+            `;
+            detailsElement.innerHTML = tableHTML;
+            detailsElement.style.display = "table-row";
+          } else {
+            detailsElement.innerHTML = "No items found for this bill";
+            detailsElement.style.display = "table-row";
+          }
         })
         .catch((error) => console.error("Error fetching bill details:", error));
     }

@@ -47,7 +47,10 @@ content %}
       <div class="billing-actions">
         <div id="total">Total: ₹ 0</div>
         <button onclick="submitBill()" class="btn-submit">
-          <img class="icon print-icon" src="../static/svg/print-solid-white.svg"/>
+          <img
+            class="icon print-icon"
+            src="../static/svg/print-solid-white.svg"
+          />
         </button>
       </div>
       <table class="table">
@@ -218,6 +221,9 @@ content %}
             };
             cellDelete.appendChild(deleteButton);
             updateTotalAmount(itemQuantity * itemPrice);
+            document.getElementById("code").value = "";
+            document.getElementById("item_name").value = "";
+            document.getElementById("quantity").value = "";
           }
         } else {
           console.error("Price not found for the selected item.");
@@ -316,6 +322,8 @@ content %}
       items: items,
       total: total,
     };
+
+    console.log(data);
 
     fetch("/submit-bill", {
       method: "POST",
