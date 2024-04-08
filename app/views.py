@@ -95,6 +95,7 @@ def get_bill(bill):
                 'price': item.price
             })
 
+        print(bill_details)
         return bill_details
 
     else:
@@ -173,7 +174,7 @@ def signup():
     return render_template('signup.html', modal_message=modal_message)
 
 
-@app.route('/logout', methods=['POST'])
+@app.route('/logout', methods=['GET', 'POST'])
 def logout():
     session.clear()
     return redirect(url_for('login'))
@@ -256,6 +257,9 @@ def add_item():
         code = request.form['code']
         quantity = int(request.form['quantity'])
         price = float(request.form['price'])
+        
+        if name.lower() == "coffee" or name.lower() == "tea":
+            quantity = float('inf')
 
         user_id = session.get('user_id')
         if user_id:
@@ -271,6 +275,21 @@ def add_item():
         else:
             return redirect(url_for('login'))
     return render_template('add_item.html')
+
+@app.route('/del-item', methods = ['GET', 'POST'])
+def del_item():
+    item_id = request.args.get('item_id')
+    item = Item.query.filter_by(id=item_id).first()
+
+    if item:
+        activity = UserActivity(user_id=session['user_id'],
+                                    activity_performed=f"Deleted item {item.name}")
+        db.session.delete(item)
+        db.session.add(activity)
+        db.session.commit()
+        return jsonify({'message': "Item deleted successfully"}), 200
+    else:
+        return jsonify({'message': "Item not found"}), 404
 
 
 @app.route('/update-stock', methods=['GET', 'POST'])
@@ -345,25 +364,6 @@ def filter_bills():
                                )
     else:
         return redirect("/report")
-
-
-@app.route('/delete-item', methods=['GET', 'POST'])
-def delete_item():
-    if request.method == 'GET':
-        item_id = request.args.get('item_id')
-
-        if item_id:
-            item = Item.query.get(item_id)
-            if item:
-                db.session.delete(item)
-                db.session.commit()
-                return jsonify({'message': 'Item deleted successfully'}), 200
-            else:
-                return jsonify({'error': 'Item not found'}), 404
-        else:
-            return jsonify({'error': 'Missing item_id parameter'}), 400
-    else:
-        return jsonify({'error': 'Method not allowed'}), 405
 
 
 @app.route("/print-bill")
@@ -455,16 +455,16 @@ def print_item_report():
 
 @app.route("/user-activity")
 def user_activity():
-    activities = UserActivity.query.all()
+    user_id = session['user_id']
+    activities = UserActivity.query.filter_by(user_id=user_id).order_by(UserActivity.timestamp.desc()).all()
+    bill_count = Bill.query.filter_by(user_id=user_id).count()
 
     # Group activities by user
     user_activities = defaultdict(list)
     for activity in activities:
         user_activities[activity.user].append(activity)
 
-    print(user_activities)
-
-    return render_template("user_activity.html", user_activities=user_activities)
+    return render_template("user_activity.html", user_activities=user_activities, bill_count=bill_count)
 
 
 @app.route("/contact")
