@@ -22,11 +22,25 @@
 .icon {
   width: 30px;
   height: 30px;
+  cursor: pointer;
+}
+
+.btn-print {
+  outline: none;
+  border: none;
+  background-color: var(--accent-col);
+  border-radius: var(--border-rad);
+  padding: 5px;
 }
 
 .print-icon {
   width: 20px;
   height: 20px;
+}
+
+.trash-icon {
+  width: 15px;
+  height: 15px;
 }
 
 body {
@@ -433,6 +447,7 @@ h3 {
   margin-inline: auto;
 }
 
+
 .item-view-header {
   display: flex;
   justify-content: space-around;
@@ -474,7 +489,7 @@ h3 {
 .items-home {
   margin: 0;
   border: 2px solid var(--main-col);
-  height: 50vh;
+  height: auto;
   padding: 10px;
   background-color: var(--accent-col);
 }
@@ -549,15 +564,19 @@ h3 {
 }
 
 /* ------------------- REPORT -------------------------- */
-.bills {
+.bills, .item-table, .user-activity-logs {
   max-height: 50vh;
-  height: 50vh;
+  height: auto;
   overflow: scroll;
   margin-top: 2vh;
   border: 2px solid black;
   width: 50%;
   margin-inline: auto;
   background-color: var(--accent-col);
+}
+
+.item-table, .user-activity-logs {
+  width: auto;
 }
 
 .bills-item-table thead tr,
@@ -718,14 +737,16 @@ h3 {
 }
 
 /* --------------- ACTIVITY --------------------------- */
-.container .user-email {
+.container .user-email,
+.container .bill-count {
+  font-family: var(--body-font);
   font-size: 1.2rem;
   text-align: center;
   padding: 5px;
   border-radius: var(--border-rad);
   margin: 0;
   background-color: var(--accent-col);
-  width: 78%;
+  width: 70%;
 }
 
 .container {
@@ -738,13 +759,9 @@ h3 {
   width: 100%;
 }
 
-.all-users {
-  display: grid;
-  grid-template-columns: 5fr 5fr;
-}
-
 .container .user-activity-logs {
-  max-height: 30vh;
+  max-height: 50vh;
+  height: auto;
   overflow: scroll;
 }
 
@@ -754,12 +771,18 @@ h3 {
   align-items: center;
 }
 
+.container .bill-count {
+  background-color: var(--inp-fields-bg);
+}
+
 .container .user-activity-logs table thead tr,
 .container .user-activity-logs table tbody tr {
   display: grid;
-  grid-template-columns: 1fr 4fr 6fr;
+  grid-template-columns: 1fr 3fr 6fr;
   text-align: center;
   font-family: var(--body-font);
+  gap: 20px;
+  padding-right: 5px;
 }
 
 .container .user-activity-logs table thead tr th:last-child,
@@ -767,9 +790,6 @@ h3 {
   text-align: left;
 }
 
-.user-activity form input {
-  width: 20%;
-}
 
 /* --------------- CONTACT ---------------------------- */
 .contact {
