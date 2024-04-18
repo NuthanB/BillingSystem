@@ -257,7 +257,7 @@ def add_item():
         code = request.form['code']
         quantity = int(request.form['quantity'])
         price = float(request.form['price'])
-        
+
         if name.lower() == "coffee" or name.lower() == "tea":
             quantity = float('inf')
 
@@ -276,14 +276,15 @@ def add_item():
             return redirect(url_for('login'))
     return render_template('add_item.html')
 
-@app.route('/del-item', methods = ['GET', 'POST'])
+
+@app.route('/del-item', methods=['GET', 'POST'])
 def del_item():
     item_id = request.args.get('item_id')
     item = Item.query.filter_by(id=item_id).first()
 
     if item:
         activity = UserActivity(user_id=session['user_id'],
-                                    activity_performed=f"Deleted item {item.name}")
+                                activity_performed=f"Deleted item {item.name}")
         db.session.delete(item)
         db.session.add(activity)
         db.session.commit()
@@ -325,12 +326,14 @@ def update_item():
     item_id = request.form['id']
     name = request.form['name']
     group = request.form['group']
+    code = request.form['code']
     price = float(request.form['price'])
 
     item = Item.query.get(item_id)
     if item:
         item.name = name
         item.group = group
+        item.code = code
         item.price = price
         activity = UserActivity(user_id=session['user_id'],
                                 activity_performed=f"Edited item {name}, {group}, {price}")
@@ -342,8 +345,34 @@ def update_item():
 @app.route('/report')
 def show_reports():
     bill = Bill.query.all()
-    bill_items = BillItem.query.all()
-    return render_template('report.html', bills=bill, bill_items=bill_items)
+    grouped_items = db.session.query(
+        Item.group,
+        BillItem.item_name,
+        func.sum(BillItem.quantity).label('total_quantity'),
+        func.sum(BillItem.quantity * BillItem.price).label('total_price')
+    ).join(Item, Item.id == BillItem.item_id).group_by(Item.group, BillItem.item_name).all()
+
+    grouped_items_dict = {}
+    for group, item_name, total_quantity, total_price in grouped_items:
+        if group not in grouped_items_dict:
+            grouped_items_dict[group] = {
+                'total_quantity': 0, 'total_price': 0, 'items': {}}
+        grouped_items_dict[group]['total_quantity'] += total_quantity
+        grouped_items_dict[group]['total_price'] += total_price
+        if item_name not in grouped_items_dict[group]['items']:
+            grouped_items_dict[group]['items'][item_name] = {
+                'quantity': total_quantity, 'price': total_price}
+        else:
+            grouped_items_dict[group]['items'][item_name]['quantity'] += total_quantity
+            grouped_items_dict[group]['items'][item_name]['price'] += total_price
+
+    grand_total = sum(group['total_price']
+                      for group in grouped_items_dict.values())
+
+    return render_template('report.html',
+                           bills=bill,
+                           grouped_items=grouped_items_dict,
+                           grand_total=grand_total)
 
 
 @app.route('/filter-bills', methods=['GET', 'POST'])
@@ -352,16 +381,48 @@ def filter_bills():
         from_date = request.form['from_date']
         to_date = request.form['to_date']
 
-        filtered_bills = Bill.query.filter(
-            func.date(Bill.bill_date_time) >= from_date,
-            func.date(Bill.bill_date_time) <= to_date
-        ).all()
+        grouped_items = None
+        if from_date is not None and to_date is not None:
+            bills_within_date_range = Bill.query.filter(
+                func.date(Bill.bill_date_time) >= from_date,
+                func.date(Bill.bill_date_time) <= to_date
+            ).all()
+
+            print(bills_within_date_range)
+
+            grouped_items = db.session.query(
+                Item.group,
+                BillItem.item_name,
+                func.sum(BillItem.quantity).label('total_quantity'),
+                func.sum(BillItem.quantity * BillItem.price).label('total_price')
+            ).join(Item, Item.id == BillItem.item_id).join(Bill, Bill.id == BillItem.bill_id).filter(
+                Bill.id.in_([bill.id for bill in bills_within_date_range])
+            ).group_by(Item.group, BillItem.item_name).all()
+
+        grouped_items_dict = {}
+        if grouped_items:
+            for group, item_name, total_quantity, total_price in grouped_items:
+                if group not in grouped_items_dict:
+                    grouped_items_dict[group] = {
+                        'total_quantity': 0, 'total_price': 0, 'items': {}}
+                grouped_items_dict[group]['total_quantity'] += total_quantity
+                grouped_items_dict[group]['total_price'] += total_price
+                if item_name not in grouped_items_dict[group]['items']:
+                    grouped_items_dict[group]['items'][item_name] = {
+                        'quantity': total_quantity, 'price': total_price}
+                else:
+                    grouped_items_dict[group]['items'][item_name]['quantity'] += total_quantity
+                    grouped_items_dict[group]['items'][item_name]['price'] += total_price
+
+        grand_total = sum(group['total_price']
+                        for group in grouped_items_dict.values())
 
         return render_template("filtered_bills.html",
-                               bills=filtered_bills,
-                               from_date=from_date,
-                               to_date=to_date
-                               )
+                            bills=bills_within_date_range,
+                            grouped_items=grouped_items_dict,
+                            from_date=from_date,
+                            to_date=to_date,
+                            grand_total=grand_total)
     else:
         return redirect("/report")
 
@@ -420,32 +481,53 @@ def print_report():
 def print_item_report():
     from_date = request.args.get("from_date")
     to_date = request.args.get("to_date")
-    grouped_items = db.session.query(
-        Item.group,
-        BillItem.item_name,
-        func.sum(BillItem.quantity).label('total_quantity'),
-        func.sum(BillItem.quantity * BillItem.price).label('total_price')
-    ).join(Item, Item.id == BillItem.item_id).group_by(Item.group, BillItem.item_name).all()
+    grouped_items = None
+
+    if from_date != '0' and to_date != '0':
+        bills_within_date_range = Bill.query.filter(
+            func.date(Bill.bill_date_time) >= from_date,
+            func.date(Bill.bill_date_time) <= to_date
+        ).all()
+
+        print(bills_within_date_range)
+
+        grouped_items = db.session.query(
+            Item.group,
+            BillItem.item_name,
+            func.sum(BillItem.quantity).label('total_quantity'),
+            func.sum(BillItem.quantity * BillItem.price).label('total_price')
+        ).join(Item, Item.id == BillItem.item_id).join(Bill, Bill.id == BillItem.bill_id).filter(
+            Bill.id.in_([bill.id for bill in bills_within_date_range])
+        ).group_by(Item.group, BillItem.item_name).all()
+    
+    else:
+        grouped_items = db.session.query(
+            Item.group,
+            BillItem.item_name,
+            func.sum(BillItem.quantity).label('total_quantity'),
+            func.sum(BillItem.quantity * BillItem.price).label('total_price')
+        ).join(Item, Item.id == BillItem.item_id).group_by(Item.group, BillItem.item_name).all()
 
     grouped_items_dict = {}
-    for group, item_name, total_quantity, total_price in grouped_items:
-        if group not in grouped_items_dict:
-            grouped_items_dict[group] = {
-                'total_quantity': 0, 'total_price': 0, 'items': {}}
-        grouped_items_dict[group]['total_quantity'] += total_quantity
-        grouped_items_dict[group]['total_price'] += total_price
-        if item_name not in grouped_items_dict[group]['items']:
-            grouped_items_dict[group]['items'][item_name] = {
-                'quantity': total_quantity, 'price': total_price}
-        else:
-            grouped_items_dict[group]['items'][item_name]['quantity'] += total_quantity
-            grouped_items_dict[group]['items'][item_name]['price'] += total_price
+    if grouped_items:
+        for group, item_name, total_quantity, total_price in grouped_items:
+            if group not in grouped_items_dict:
+                grouped_items_dict[group] = {
+                    'total_quantity': 0, 'total_price': 0, 'items': {}}
+            grouped_items_dict[group]['total_quantity'] += total_quantity
+            grouped_items_dict[group]['total_price'] += total_price
+            if item_name not in grouped_items_dict[group]['items']:
+                grouped_items_dict[group]['items'][item_name] = {
+                    'quantity': total_quantity, 'price': total_price}
+            else:
+                grouped_items_dict[group]['items'][item_name]['quantity'] += total_quantity
+                grouped_items_dict[group]['items'][item_name]['price'] += total_price
 
     # Calculate grand total
     grand_total = sum(group['total_price']
                       for group in grouped_items_dict.values())
 
-    print(grouped_items_dict)
+    print(grouped_items, grouped_items_dict)
     return render_template('itemwise_report.html',
                            grouped_items=grouped_items_dict,
                            grand_total=grand_total,
@@ -456,7 +538,8 @@ def print_item_report():
 @app.route("/user-activity")
 def user_activity():
     user_id = session['user_id']
-    activities = UserActivity.query.filter_by(user_id=user_id).order_by(UserActivity.timestamp.desc()).all()
+    activities = UserActivity.query.filter_by(
+        user_id=user_id).order_by(UserActivity.timestamp.desc()).all()
     bill_count = Bill.query.filter_by(user_id=user_id).count()
 
     # Group activities by user
