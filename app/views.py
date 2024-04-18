@@ -213,6 +213,10 @@ def submit_bill():
         if data:
             items = data.get('items')
             total = data.get('total')
+            
+            if not items:
+                return jsonify({'error': 'No items added to the bill'}), 400
+            
             new_bill = Bill(user_id=user_id, total=total)
             db.session.add(new_bill)
 
@@ -344,7 +348,7 @@ def update_item():
 
 @app.route('/report')
 def show_reports():
-    bill = Bill.query.all()
+    bill = Bill.query.all()[::-1]
     grouped_items = db.session.query(
         Item.group,
         BillItem.item_name,
@@ -386,7 +390,7 @@ def filter_bills():
             bills_within_date_range = Bill.query.filter(
                 func.date(Bill.bill_date_time) >= from_date,
                 func.date(Bill.bill_date_time) <= to_date
-            ).all()
+            ).all()[::-1]
 
             print(bills_within_date_range)
 
