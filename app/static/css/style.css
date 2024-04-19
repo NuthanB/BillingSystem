@@ -445,6 +445,9 @@ h3 {
   max-width: 45%;
   border-radius: var(--border-rad);
   margin-inline: auto;
+  height: auto;
+  max-height: 60vh;
+  overflow-y: auto;
 }
 
 .item-view-header {
@@ -467,11 +470,6 @@ h3 {
   width: 100%;
 }
 
-.items {
-  height: auto;
-  max-height: 60vh;
-  overflow-y: auto;
-}
 
 .item-table thead tr,
 .bills-item-table thead tr {
@@ -488,7 +486,8 @@ h3 {
 .items-home {
   margin: 0;
   border: 2px solid var(--main-col);
-  height: auto;
+  height: 75vh;
+  max-height: 80vh;
   padding: 10px;
   background-color: var(--accent-col);
 }

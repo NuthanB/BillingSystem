@@ -51,15 +51,15 @@ content %}
     <div class="item-wise-bills">
       <h3>Item-wise Sales Report</h3>
       <div class="item-wise-header">
+        <p class="grand-total">
+          Grand Total: <strong>Rs. {{ grand_total }}</strong>
+        </p>
         <button
           onclick="print_item_reports('{{ from_date }}', '{{ to_date }}')"
           class="btn-submit btn-print"
         >
           Print Itemwise Reports
         </button>
-        <p class="grand-total">
-          Grand Total: <strong>Rs. {{ grand_total }}</strong>
-        </p>
       </div>
       <table class="item-wise-bills-table">
         <thead>

@@ -12,3 +12,4 @@ SQLAlchemy==2.0.28
 typing_extensions==4.10.0
 Werkzeug==3.0.1
 flaskwebgui==1.1.0
+Flask-Bcrypt==1.0.1
