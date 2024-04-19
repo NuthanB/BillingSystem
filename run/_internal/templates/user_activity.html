@@ -1,0 +1,35 @@
+<!-- user_activity.html -->
+{% extends 'layout.html' %} {% block title %}User Activity{% endblock %} {%
+block content %}
+<section class="container user-activity">
+  <h2>User Activity</h2>
+  <div class="all-users">
+    {% for user, activities in user_activities.items() %}
+    <div class="user">
+      <h3 class="user-email">{{ user.username }}</h3>
+      <h4 class="bill-count">Bill Count : {{ bill_count }}</h4>
+      <div class="user-activity-logs">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Timestamp</th>
+              <th>Activity Performed</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for activity in activities %}
+            <tr>
+              <td>{{ loop.index }}</td>
+              <td>{{ activity.timestamp.strftime('%d-%m-%Y | %H:%M ') }}</td>
+              <td>{{ activity.activity_performed }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

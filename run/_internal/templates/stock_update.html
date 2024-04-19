@@ -1,0 +1,46 @@
+<!-- templates/stock_update.html -->
+{% extends 'layout.html' %} {% block title %}Stock Update{% endblock %} {% block
+content %}
+<section class="items">
+  <h2>Items Data</h2>
+  <table class="item-table stock-update-table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Group</th>
+        <th>Available</th>
+        <th>Price</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in items %}
+      <tr>
+        <td>{{ item.id }}</td>
+        <td>{{ item.name }}</td>
+        <td>{{ item.group }}</td>
+        <td>{{ item.quantity }}</td>
+        <td>{{ item.price }}</td>
+        <td class="options">
+          <form
+            class="stock-update"
+            action="{{ url_for('update_stock') }}"
+            method="post"
+          >
+            <input type="hidden" name="item-id" value="{{ item.id }}" />
+            <input
+              type="number"
+              placeholder="Add Stock"
+              class="add-stock"
+              name="add-stock"
+            />
+            <button class="btn-add-stock" type="submit">+</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}
