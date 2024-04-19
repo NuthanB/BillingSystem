@@ -11,7 +11,8 @@ class User(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(120), nullable=False)
     items = db.relationship('Item', backref='user', lazy=True)
-    activity = db.relationship('UserActivity', backref='user', lazy=True)
+    activity = db.relationship('UserActivity', backref='user',
+                               lazy=True, cascade='all, delete-orphan')
 
 
 class Item(db.Model):

@@ -256,7 +256,6 @@ header .heading .btn-logout {
   text-align: center;
 }
 
-
 ::-webkit-scrollbar {
   width: 0px;
   background: transparent;
@@ -354,7 +353,8 @@ h3 {
 .current-bill .table thead tr th,
 .items .item-table thead tr th,
 .bills-item-table thead tr th,
-.container .user-activity-logs table thead tr th {
+.container .user-activity-logs table thead tr th,
+.item-wise-bills .item-wise-bills-table thead tr th {
   font-size: var(--default-f-size);
   letter-spacing: 0.1rem;
   color: var(--main-header-f-col);
@@ -445,8 +445,10 @@ h3 {
   max-width: 45%;
   border-radius: var(--border-rad);
   margin-inline: auto;
+  height: auto;
+  max-height: 60vh;
+  overflow-y: auto;
 }
-
 
 .item-view-header {
   display: flex;
@@ -468,11 +470,6 @@ h3 {
   width: 100%;
 }
 
-.items {
-  height: auto;
-  max-height: 60vh;
-  overflow-y: auto;
-}
 
 .item-table thead tr,
 .bills-item-table thead tr {
@@ -489,7 +486,8 @@ h3 {
 .items-home {
   margin: 0;
   border: 2px solid var(--main-col);
-  height: auto;
+  height: 75vh;
+  max-height: 80vh;
   padding: 10px;
   background-color: var(--accent-col);
 }
@@ -564,18 +562,77 @@ h3 {
 }
 
 /* ------------------- REPORT -------------------------- */
-.bills, .item-table, .user-activity-logs {
+.report-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  width: 90%;
+  padding: 0;
+  margin-inline: auto;
+}
+
+.bills,
+.item-wise-bills,
+.item-table,
+.user-activity-logs {
   max-height: 50vh;
   height: auto;
   overflow: scroll;
   margin-top: 2vh;
   border: 2px solid black;
-  width: 50%;
   margin-inline: auto;
   background-color: var(--accent-col);
 }
 
-.item-table, .user-activity-logs {
+.item-wise-bills {
+  width: 60%;
+}
+
+.item-wise-bills-table {
+  width: 100%;
+}
+
+.item-wise-bills .item-wise-header {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+.item-wise-bills .item-wise-header button {
+  height: 3vh;
+}
+
+.item-wise-bills .item-wise-header .grand-total {
+  text-align: center;
+  font-family: var(--body-font);
+}
+
+.item-wise-bills .item-wise-bills-table thead tr,
+.item-wise-bills .item-wise-bills-table tbody tr {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  font-family: var(--body-font);
+}
+
+.item-wise-bills .item-wise-bills-table thead tr {
+  border: 2px solid black;
+}
+
+.item-wise-bills .item-wise-bills-table thead tr th {
+  text-align: left;
+  padding: 5px;
+}
+
+.item-wise-bills .item-wise-bills-table tbody tr.group-title {
+  font-size: 1.2rem;
+  background-color: var(--accent-col);
+}
+
+.item-wise-bills .item-wise-bills-table thead tr {
+  background-color: var(--main-col);
+}
+
+.item-table,
+.user-activity-logs {
   width: auto;
 }
 
@@ -790,7 +847,6 @@ h3 {
   text-align: left;
 }
 
-
 /* --------------- CONTACT ---------------------------- */
 .contact {
   font-family: var(--body-font);
@@ -834,7 +890,8 @@ h3 {
   margin: 2px;
 }
 
-.member, .guide {
+.member,
+.guide {
   display: grid;
   grid-template-columns: 1fr 1fr;
   background-color: var(--accent-col);

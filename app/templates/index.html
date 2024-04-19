@@ -101,9 +101,17 @@ content %}
 <div class="overlay hidden"></div>
 
 <script>
+  document.getElementById("code").addEventListener("keypress", function (e) {
+    console.log(e);
+    if (e.key === "Enter") {
+      fillItemName();
+    }
+  });
+  
   document.addEventListener("contextmenu", function (e) {
     e.preventDefault();
   });
+
 
   $(function () {
     $("i#del-item").on("click", function (e) {
@@ -129,6 +137,7 @@ content %}
   function fillItemName() {
     const codeField = document.getElementById("code");
     const nameField = document.getElementById("item_name");
+    const quantityField = document.getElementById("quantity");
 
     code = codeField.value;
     console.log(code);
@@ -137,6 +146,7 @@ content %}
         .then((response) => response.json())
         .then((data) => {
           nameField.value = data.name;
+          quantityField.value = 1;
         })
         .catch((error) => console.error("Error fetching item:", error));
     }
@@ -154,6 +164,7 @@ content %}
           suggestionElement.onclick = () => {
             document.getElementById("item_name").value = suggestion;
             document.getElementById("suggestions").innerHTML = "";
+            document.getElementById("quantity").value = 1;
           };
           document.getElementById("suggestions").appendChild(suggestionElement);
         });
