@@ -1,0 +1,51 @@
+{% extends 'fresh.html' %} {% block title %}Login{% endblock %} {% block content
+%}
+<section class="login-section">
+  <div class="login-header">
+    <img class="icon login-icon" src="../static/svg/right-to-bracket-solid.svg">
+    <p style="color: white">LOGIN</p>
+  </div>
+  <form action="{{ url_for('login') }}" method="post" class="login-form">
+    <div class="form-group">
+      <input
+        placeholder="Username"
+        type="text"
+        id="uname"
+        name="uname"
+      />
+    </div>
+    <div class="form-group">
+      <input
+        placeholder="Email"
+        type="email"
+        id="email"
+        name="email"
+        required
+      />
+    </div>
+    <div class="form-group">
+      <input
+        placeholder="Password"
+        type="password"
+        id="password"
+        name="password"
+        required
+      />
+    </div>
+    <button type="submit" class="btn-submit" id="login">Login</button>
+    <button
+      onclick="new_user()"
+      type="button"
+      class="btn-submit"
+      formnovalidate
+    >
+      Sign Up
+    </button>
+  </form>
+</section>
+<script>
+  const new_user = () => {
+    window.location.href = "/signup";
+  };
+</script>
+{% endblock %}

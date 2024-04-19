@@ -1,0 +1,36 @@
+{% extends 'fresh.html' %} {% block title %}Bill-wise report{% endblock %} {%
+block content %}
+<section class="print-bill">
+  <div class="bill-report">
+    <h2>DSU FOOD COURT</h2>
+    <h3>DAYANANDA SAGAR UNIVERSITY</h3>
+    <p>Kudlu Gate, Hosur Main Road, Bangalore - 560068</p>
+    <hr />
+    <table>
+      <thead>
+        <tr class="bill-report-header">
+          <th>Bill ID</th>
+          <th>Date & Time</th>
+          <th>Bill Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for bill in bills %}
+        <tr class="bill-report-row">
+          <td>{{ bill.id }}</td>
+          <td>{{ bill.bill_date_time.strftime('%d-%m-%Y | %H:%M ') }}</td>
+          <td>{{ bill.total }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+<script>
+  function redirectAfterPrint() {
+    window.location.href = "/";
+  }
+  window.addEventListener("afterprint", redirectAfterPrint);
+  window.print();
+</script>
+{% endblock %}
