@@ -1,9 +1,11 @@
 from sqlalchemy.sql import func
 from flask import render_template, request, redirect, session, url_for, jsonify
-from app import app, db
-from app.models import User, Item, Bill, BillItem, UserActivity
 from sqlalchemy import func
 from collections import defaultdict
+
+from app import app, db
+from app.models import User, Item, Bill, BillItem, UserActivity
+from app import bcrypt
 
 
 @app.route('/')
@@ -133,9 +135,9 @@ def login():
         email = request.form['email']
         password = request.form['password']
 
-        user = User.query.filter_by(email=email, password=password).first()
+        user = User.query.filter_by(email=email, username=uname).first()
 
-        if user:
+        if user and bcrypt.check_password_hash(user.password, password):
             activity = UserActivity(
                 user_id=user.id, activity_performed="Logged in")
             db.session.add(activity)
@@ -166,7 +168,11 @@ def signup():
         elif pwd != re_pwd:
             modal_message = 'Passwords do not match.'
         else:
-            user = User(username=uname, email=email, password=pwd)
+            user = User(
+                username=uname, 
+                email=email, 
+                password=bcrypt.generate_password_hash(pwd).decode('utf-8')
+            )
             db.session.add(user)
             db.session.commit()
             return redirect(url_for('login'))
@@ -353,9 +359,11 @@ def show_reports():
         Item.group,
         BillItem.item_name,
         func.sum(BillItem.quantity).label('total_quantity'),
-        func.sum(BillItem.quantity * BillItem.price).label('total_price')
+        func.sum(BillItem.price).label('total_price')
     ).join(Item, Item.id == BillItem.item_id).group_by(Item.group, BillItem.item_name).all()
 
+    print(grouped_items)
+    
     grouped_items_dict = {}
     for group, item_name, total_quantity, total_price in grouped_items:
         if group not in grouped_items_dict:
