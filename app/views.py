@@ -507,7 +507,7 @@ def print_item_report():
             Item.group,
             BillItem.item_name,
             func.sum(BillItem.quantity).label('total_quantity'),
-            func.sum(BillItem.quantity * BillItem.price).label('total_price')
+            func.sum(BillItem.price).label('total_price')
         ).join(Item, Item.id == BillItem.item_id).join(Bill, Bill.id == BillItem.bill_id).filter(
             Bill.id.in_([bill.id for bill in bills_within_date_range])
         ).group_by(Item.group, BillItem.item_name).all()
@@ -517,7 +517,7 @@ def print_item_report():
             Item.group,
             BillItem.item_name,
             func.sum(BillItem.quantity).label('total_quantity'),
-            func.sum(BillItem.quantity * BillItem.price).label('total_price')
+            func.sum(BillItem.price).label('total_price')
         ).join(Item, Item.id == BillItem.item_id).group_by(Item.group, BillItem.item_name).all()
 
     grouped_items_dict = {}
