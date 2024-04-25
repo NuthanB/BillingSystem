@@ -761,7 +761,6 @@ h3 {
 }
 
 .itemwise-report-body {
-  margin-inline: auto;
   display: flex;
   flex-direction: column;
   justify-content: center;
