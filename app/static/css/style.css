@@ -706,7 +706,6 @@ h3 {
 /* ------------ PRINT BILL ---------------- */
 .print-bill,
 .itemwise-report {
-  max-width: 40vw;
   text-align: center;
   font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
   border: 1px solid black;
@@ -759,6 +758,14 @@ h3 {
   border: 1px solid black;
   margin-inline: auto;
   box-shadow: 5px 5px 0 black;
+}
+
+.itemwise-report-body {
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .itemwise-report-body table thead tr,
