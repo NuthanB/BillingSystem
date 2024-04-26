@@ -492,6 +492,11 @@ h3 {
   background-color: var(--accent-col);
 }
 
+.items-home .item-table-home tbody tr td:first-child {
+  text-transform: lowercase;
+  font-weight: 800;
+}
+
 .items-home .item-table-home thead tr,
 .items-home .item-table-home tbody tr {
   grid-template-columns: 2fr 6fr 2fr;

@@ -91,7 +91,6 @@ content %}
     document.getElementById("errmsg").textContent = message;
     modal.classList.remove("hidden");
     overlay.classList.remove("hidden");
-    console.log(message);
   };
 
   var emails = [],
@@ -102,7 +101,6 @@ content %}
       emails = data.emails;
       unames = data.unames;
 
-      console.log(emails, unames);
       var passwd = document.getElementById("pwd");
       var rePasswd = document.getElementById("rpwd");
       var emailInput = document.getElementById("email");

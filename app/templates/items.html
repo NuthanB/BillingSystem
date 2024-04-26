@@ -50,7 +50,6 @@ content %}
 
   function delete_item(itemId) {
     fetch(`/del-item?item_id=${itemId}`).then((response) => {
-      console.log(response);
       if (response.ok) {
         window.location.reload();
       }
