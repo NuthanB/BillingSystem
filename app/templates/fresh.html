@@ -17,11 +17,6 @@
   <body>
     {% block content %}{% endblock %}
     <script>
-      window.onload = function () {
-        const win = require("electron").remote.getCurrentWindow();
-        win.setResizable(false);
-      };
-
       document.onkeydown = function (e) {
         if (e.key === "F12") {
           e.preventDefault();

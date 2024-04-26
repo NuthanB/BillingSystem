@@ -5,7 +5,9 @@ block content %}
   <div class="itemwise-report-header">
     <h2>ITEM GROUP SALES REPORT</h2>
   </div>
+  {% if from_date != '0' and to_date != '0' %}
   <p>From {{ from_date }} TO {{ to_date }}</p>
+  {% endif %}
   <hr />
   <div class="itemwise-report-body">
     <table>
