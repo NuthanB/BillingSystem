@@ -132,7 +132,6 @@ content %}
           return response.json();
         })
         .then((data) => {
-          console.log("Response data:", data);
           if (data && data.bill_items && data.bill_items.length > 0) {
             const tableHTML = `
               <table>

@@ -94,7 +94,6 @@ content %}
 </section>
 <script>
   function sendToPrint(billId) {
-    console.log(billId);
     window.location.href = `/print-bill?bill_id=${billId}`;
   }
 
@@ -112,7 +111,6 @@ content %}
       button.addEventListener("click", function () {
         const billId = button.closest(".bill-row").dataset.itemId;
         const details = document.getElementById("details-" + billId);
-        console.log(billId, details);
         if (details.style.display === "none") {
           fetchBillDetails(billId, details);
           button.textContent = "-";
@@ -132,7 +130,6 @@ content %}
           return response.json();
         })
         .then((data) => {
-          console.log("Response data:", data);
           if (data && data.bill_items && data.bill_items.length > 0) {
             const tableHTML = `
               <table>
