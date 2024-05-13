@@ -1,0 +1,171 @@
+{% extends 'layout.html' %} {% block title %}Bills{% endblock %} {% block
+content %}
+<section class="bill-report">
+  <h2>SEARCH BILLS</h2>
+  <form action="{{ url_for('filter_bills') }}" method="post">
+    <input
+      placeholder="From date"
+      type="date"
+      id="from_date"
+      name="from_date"
+    />
+    <input placeholder="To date" type="date" id="to_date" name="to_date" />
+    <button type="submit" class="btn-submit">Search</button>
+  </form>
+  <div class="report-container">
+    <div class="bills">
+      <table class="bills-item-table">
+        <thead>
+          <tr>
+            <th>Bill ID</th>
+            <th>Date & Time</th>
+            <th>Bill Total</th>
+            <th>
+              <button class="btn-submit btn-print" onclick="print_reports()">
+                Print Report
+              </button>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for bill in bills %}
+          <tr class="bill-row" data-item-id="{{ bill.id }}">
+            <td>{{ bill.id }}</td>
+            <td>{{ bill.bill_date_time.strftime('%d-%m-%Y | %H:%M ') }}</td>
+            <td>{{ bill.total }}</td>
+            <td class="actions">
+              <button class="btn-print" onclick="sendToPrint('{{ bill.id }}')">
+                <img
+                  class="icon print-icon"
+                  src="../static/svg/print-solid.svg"
+                />
+              </button>
+              <button class="expand-bill">+</button>
+            </td>
+            <td
+              class="bill-details"
+              id="details-{{ bill.id }}"
+              style="display: none"
+            ></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="item-wise-bills">
+      <h3>Item-wise Sales Report</h3>
+      <div class="item-wise-header">
+        <p class="grand-total">
+          Grand Total: <strong>Rs. {{ grand_total }}</strong>
+        </p>
+        <button onclick="print_item_reports()" class="btn-submit btn-print">
+          Print Itemwise Report
+        </button>
+      </div>
+      <table class="item-wise-bills-table">
+        <thead>
+          <tr>
+            <th>Group Name</th>
+            <th>Quantity</th>
+            <th>Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for group, group_info in grouped_items.items() %}
+          <tr class="group-title">
+            <td>{{ group }}</td>
+          </tr>
+          {% for item, item_info in group_info['items'].items() %}
+          <tr class="group-details">
+            <td>{{ item|capitalize }}</td>
+            <td>{{ item_info['quantity'] }}</td>
+            <td>{{ item_info['price'] }}</td>
+          </tr>
+          {% endfor %}
+          <tr class="subtotal-row" style="border-top: 1px solid black">
+            <td>Sub Total</td>
+            <td>{{ group_info['total_quantity'] }}</td>
+            <td>{{ group_info['total_price'] }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+<script>
+  function sendToPrint(billId) {
+    window.location.href = `/print-bill?bill_id=${billId}`;
+  }
+
+  function print_reports() {
+    window.location.href = "/print-report?from_date=0&to_date=0";
+  }
+
+  function print_item_reports() {
+    window.location.href = `/print-item-report?from_date=0&to_date=0`;
+  }
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const expandButtons = document.querySelectorAll(".expand-bill");
+    expandButtons.forEach(function (button) {
+      button.addEventListener("click", function () {
+        const billId = button.closest(".bill-row").dataset.itemId;
+        const details = document.getElementById("details-" + billId);
+        if (details.style.display === "none") {
+          fetchBillDetails(billId, details);
+          button.textContent = "-";
+        } else {
+          details.style.display = "none";
+          button.textContent = "+";
+        }
+      });
+    });
+
+    function fetchBillDetails(billId, detailsElement) {
+      fetch(`/get-bill-details?bill_id=${billId}`)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          if (data && data.bill_items && data.bill_items.length > 0) {
+            const tableHTML = `
+              <table>
+                <thead>
+                  <tr>
+                    <th>Item</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${data.bill_items
+                    .map(
+                      (item) => `
+                        <tr>
+                          <td>${item.item_name}</td>
+                          <td>${item.quantity}</td>
+                          <td>${item.price}</td>
+                        </tr>
+                      `
+                    )
+                    .join("")}
+                </tbody>
+              </table>
+            `;
+            detailsElement.innerHTML = tableHTML;
+            detailsElement.style.display = "table-row";
+          } else {
+            detailsElement.innerHTML = "No items found for this bill";
+            detailsElement.style.display = "table-row";
+          }
+        })
+        .catch((error) => console.error("Error fetching bill details:", error));
+    }
+  });
+</script>
+{% endblock %}

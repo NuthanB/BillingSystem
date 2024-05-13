@@ -1,0 +1,59 @@
+<!-- templates/items.html -->
+{% extends 'layout.html' %} {% block title %}Items{% endblock %} {% block
+content %}
+<section class="items">
+  <div class="item-view-header">
+    <h2>Items</h2>
+    <button class="btn-add-items" onclick="sendToAddItem()">
+      Add new Item
+    </button>
+  </div>
+  <table class="item-table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Group</th>
+        <th>Available</th>
+        <th>Price</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in items %}
+      <tr>
+        <td>{{ item.id }}</td>
+        <td>{{ item.name }}</td>
+        <td>{{ item.group }}</td>
+        <td>{{ item.quantity }}</td>
+        <td>{{ item.price }}</td>
+        <td class="options">
+          <a href="{{ url_for('edit_item', item_id=item.id) }}">Edit</a>
+          <button
+            data-item-id="{{ item.id }}"
+            id="del-item"
+            class="btn-submit"
+            onclick="delete_item('{{item.id}}')"
+          >
+            <img class="icon trash-icon" src="../static/svg/trash-solid-white.svg" />
+          </button>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+<script type="text/javascript">
+  function sendToAddItem() {
+    window.location.href = "/add-item";
+  }
+
+  function delete_item(itemId) {
+    fetch(`/del-item?item_id=${itemId}`).then((response) => {
+      if (response.ok) {
+        window.location.reload();
+      }
+    });
+  }
+</script>
+{% endblock %}

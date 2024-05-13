@@ -1,0 +1,93 @@
+{% extends 'layout.html' %} {% block title %}Add Item{% endblock %} {% block
+content %}
+<section>
+  <div class="container">
+    <h2>Add New Item</h2>
+    <form class="add-items-form" action="{{ url_for('add_item') }}" method="post">
+      <input
+        placeholder="Item Name"
+        type="text"
+        id="name"
+        name="name"
+        required
+      />
+      <input
+        placeholder="Item Group"
+        type="text"
+        id="group"
+        name="group"
+        required
+      />
+      <input
+        placeholder="Item Code"
+        type="text"
+        id="code"
+        name="code"
+        required
+      />
+      <input
+        placeholder="Quantity Available"
+        type="number"
+        id="quantity"
+        name="quantity"
+        required
+      />
+      <input
+        placeholder="Price per item"
+        type="number"
+        id="price"
+        name="price"
+        step="0.01"
+        required
+      />
+      <button class="btn-submit" type="submit">Add Item</button>
+    </form>
+  </div>
+</section>
+
+<section class="modal hidden">
+  <div class="text" id="errmsg">
+    <p>Invalid Item Code</p>
+  </div>
+</section>
+
+<div class="overlay hidden"></div>
+
+<script>
+  const modal = document.querySelector(".modal");
+  const overlay = document.querySelector(".overlay");
+
+  const closeModal = function () {
+    modal.classList.add("hidden");
+    overlay.classList.add("hidden");
+    window.location.reload();
+  };
+
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Enter" && !modal.classList.contains("hidden")) {
+      closeModal();
+    }
+  });
+
+  const openModal = function (message) {
+    document.getElementById("errmsg").textContent = message;
+    modal.classList.remove("hidden");
+    overlay.classList.remove("hidden");
+  };
+
+  var codes = [];
+  fetch('/get-obj-codes')
+    .then((response) => response.json())
+    .then((data) => {
+      codes = data.codes;
+    });
+
+  var codeInput = document.getElementById('code');
+
+  codeInput.addEventListener('blur', () => {
+    if(codes.includes(codeInput.value)) {
+      openModal('Invalid Item Code');
+    }
+  });
+</script>
+{% endblock %}

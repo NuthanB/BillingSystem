@@ -4,25 +4,25 @@ block content %}
   <div class="bill-slip">
     <h2>DSU FOOD COURT</h2>
     <h3>DAYANANDA SAGAR UNIVERSITY</h3>
-    <p>Kudlu Gate, Hosur Main Road, Bangalore - 560068</p>
+    <p><small>Kudlu Gate, Hosur Main Road, Bangalore - 560068</small></p>
     <hr/>
     <div class="billing-details">
       <p>Bill No: {{ bill_id }}</p>
-      <p>Bill Date: {{ bill_date }}</p>
-      <p>Bill Time: {{ bill_time }}</p>
+      <p>Date: {{ bill_date }}</p>
+      <p>Time: {{ bill_time }}</p>
     </div>
     <hr/>
     <table>
       <tr class="bill-item-details-header">
-        <th>Item Name</th>
-        <th>Quantity</th>
-        <th>Price</th>
+        <th>Item</th>
+        <th>Qty</th>
+        <th>Pr</th>
         <th>Amount</th>
       </tr>
 
       {% for item in items %}
       <tr class="bill-item-details">
-        <td>{{ item.item_name }}</td>
+        <td>{{ item.item_name|capitalize }}</td>
         <td>{{ item.quantity }}</td>
         <td>{{ item.price/item.quantity }}</td>
         <td>{{ item.price }}</td>

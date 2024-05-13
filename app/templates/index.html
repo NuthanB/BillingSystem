@@ -151,9 +151,16 @@ content %}
       fetch(`/get-item-name?code=${code}`)
         .then((response) => response.json())
         .then((data) => {
-          nameField.value = data.name;
-          quantityField.value = 1;
-          quantityField.focus();
+          if(data.name) {
+            nameField.value = data.name;
+            quantityField.value = 1;
+            quantityField.focus();
+          } else {
+            codeField.value = "";
+            nameField.value = "";
+            quantityField.value = "";
+            codeField.focus();
+          }
         })
         .catch((error) => console.error("Error fetching item:", error));
     }

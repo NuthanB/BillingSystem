@@ -447,7 +447,7 @@ def print_bill():
 
         return render_template("token_print.html",
                                bill_id=bill.id,
-                               bill_date=bill_date,
+                               bill_date=bill_date.replace("-", "/"),
                                bill_time=bill_time,
                                total=bill_details["total"],
                                items=bill_details["bill_items"]
@@ -461,14 +461,18 @@ def print_report():
     from_date = request.args.get('from_date')
     to_date = request.args.get('to_date')
     if from_date != '0' and to_date != '0':
-        bill = Bill.query.filter(
+        bills = Bill.query.filter(
             func.date(Bill.bill_date_time) >= from_date,
             func.date(Bill.bill_date_time) <= to_date
         ).all()
     else:
-        bill = Bill.query.all()
-
-    return render_template('billwise_report.html', bills=bill)
+        bills = Bill.query.all()
+    
+    grand_total = 0
+    for bill in bills:
+        grand_total += float(bill.total)
+    
+    return render_template('billwise_report.html', bills=bills, total=grand_total)
 
 
 @app.route("/print-item-report")
@@ -480,7 +484,7 @@ def print_item_report():
     if from_date != '0' and to_date != '0':
         bills_within_date_range = Bill.query.filter(
             func.date(Bill.bill_date_time) >= from_date,
-            func.date(Bill.bill_date_time) <= to_date
+            func.date(Bill.bill_date_time) <= to_date,
         ).all()
 
 

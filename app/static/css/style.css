@@ -15,6 +15,32 @@
   --buttons-col: rgb(76, 55, 45);
 }
 
+@media print {
+  @page {
+    padding: 0;
+
+    /* remove headers and footers */
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    margin-left: 0 !important;
+
+    /* adding right margin to adjust printing */
+    margin-right: 30pt !important; 
+
+    size: A5;
+    background-color: #fff;
+  } 
+}
+
+html {
+  /* fallback to remove headers and footers if @page doesn't work */
+  margin: 0 !important;
+}
+
+hr {
+  margin: 0 auto;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -470,7 +496,6 @@ h3 {
   width: 100%;
 }
 
-
 .item-table thead tr,
 .bills-item-table thead tr {
   border-radius: var(--border-rad);
@@ -713,26 +738,28 @@ h3 {
 .itemwise-report {
   text-align: center;
   font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
-  border: 1px solid black;
+  width: 80%;
 }
 
 .print-bill .bill-slip .billing-details {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-gap: 0;
+  display: flex;
+  flex-flow: wrap;
+  width: 50%;
+  margin-inline: auto;
+  justify-content: space-evenly;
+  align-items: center;  
 }
+
 .print-bill h2,
 .print-bill h3,
 .print-bill p {
   margin: 0.5vw;
+  font-size: 0.8rem;
+  font-weight: 300;
 }
 
-.print-bill h2 {
-  font-size: 1.5rem;
-}
-
-.print-bill h3 {
-  font-size: 1.3rem;
+.print-bill p {
+  font-size: 0.7rem;
 }
 
 .print-bill table {
@@ -742,12 +769,18 @@ h3 {
 .print-bill table .bill-item-details-header {
   display: grid;
   grid-template-columns: 2fr 1fr 1fr 1fr;
+  font-size: 0.8rem;
+}
+
+.print-bill table .bill-item-details-header th {
+  font-weight: normal;
 }
 
 .print-bill table .bill-item-details,
 .print-bill table .totalling {
   display: grid;
-  grid-template-columns: 3fr 2fr 2fr 2fr;
+  grid-template-columns: 3fr 1fr 2fr 1fr;
+  font-size: 0.8rem;
 }
 
 .bill-report .btn-print,
@@ -763,6 +796,16 @@ h3 {
   border: 1px solid black;
   margin-inline: auto;
   box-shadow: 5px 5px 0 black;
+  margin-bottom: 10px;
+}
+
+.itemwise-report h3 {
+  font-size: 1rem;
+  margin-bottom: 5px;
+}
+
+.itemwise-report-header {
+  font-size: 0.6rem;
 }
 
 .itemwise-report-body {
@@ -770,6 +813,7 @@ h3 {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  font-size: 0.8rem;
 }
 
 .itemwise-report-body table thead tr,

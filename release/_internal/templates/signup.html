@@ -1,0 +1,132 @@
+{% extends 'fresh.html' %} {% block title %}Sign Up{% endblock %} {% block
+content %}
+<section class="signup-section">
+  <div class="signup-header">
+    <img class="icon signup-icon" src="../static/svg/user-plus-solid.svg">
+    <p style="color: white">SIGNUP</p>
+  </div>
+  <form
+    action="{{ url_for('signup') }}"
+    method="post"
+    class="signup-form"
+    id="sign-up"
+  >
+    <div class="form-group">
+      <input
+        placeholder="Username"
+        type="text"
+        id="uname"
+        name="uname"
+        required
+      />
+    </div>
+    <div class="form-group">
+      <input
+        placeholder="Email"
+        type="email"
+        id="email"
+        name="email"
+        required
+      />
+    </div>
+    <div class="form-group">
+      <input
+        placeholder="Password"
+        type="password"
+        id="pwd"
+        name="pwd"
+        required
+      />
+    </div>
+    <div class="form-group">
+      <input
+        placeholder="Retype Password"
+        type="password"
+        id="rpwd"
+        name="rpwd"
+        required
+      />
+    </div>
+    <button class="btn-submit" type="submit">Sign Up</button>
+    <button
+      onclick="existing_user()"
+      type="button"
+      class="btn-submit"
+      formnovalidate
+    >
+      Log In
+    </button>
+  </form>
+</section>
+
+<section class="modal hidden">
+  <div class="text" id="errmsg">
+    <p>Insufficient Quantity</p>
+  </div>
+</section>
+
+<div class="overlay hidden"></div>
+
+<script>
+  const existing_user = () => {
+    window.location.href = "/login";
+  };
+
+  const modal = document.querySelector(".modal");
+  const overlay = document.querySelector(".overlay");
+
+  const closeModal = function () {
+    modal.classList.add("hidden");
+    overlay.classList.add("hidden");
+    window.location.reload();
+  };
+
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Enter" && !modal.classList.contains("hidden")) {
+      closeModal();
+    }
+  });
+
+  const openModal = function (message) {
+    document.getElementById("errmsg").textContent = message;
+    modal.classList.remove("hidden");
+    overlay.classList.remove("hidden");
+  };
+
+  var emails = [],
+    unames = [];
+  fetch("/get-emails-unames")
+    .then((response) => response.json())
+    .then((data) => {
+      emails = data.emails;
+      unames = data.unames;
+
+      var passwd = document.getElementById("pwd");
+      var rePasswd = document.getElementById("rpwd");
+      var emailInput = document.getElementById("email");
+      var unameInput = document.getElementById("uname");
+
+      rePasswd.addEventListener("input", () => {
+        if (passwd.value !== rePasswd.value) {
+          passwd.style.border = "2px solid red";
+          rePasswd.style.border = "2px solid red";
+        } else {
+          passwd.style.border = "2px solid green";
+          rePasswd.style.border = "2px solid green";
+        }
+      });
+
+      emailInput.addEventListener("blur", () => {
+        if (emails.includes(emailInput.value)) {
+          openModal("Email is already taken");
+        }
+      });
+
+      unameInput.addEventListener("blur", () => {
+        if (unames.includes(unameInput.value)) {
+          openModal("Username is already taken");
+        }
+      });
+    });
+</script>
+{% endblock %}
