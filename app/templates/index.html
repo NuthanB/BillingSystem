@@ -53,18 +53,22 @@ content %}
           />
         </button>
       </div>
-      <table class="table">
-        <thead>
-          <tr>
-            <th>Item</th>
-            <th>Quantity</th>
-            <th>Price</th>
-          </tr>
-        </thead>
-        <tbody id="bill_items">
-          <!-- This will be populated dynamically with JavaScript -->
-        </tbody>
-      </table>
+      <div class="bill-table">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th>Quantity</th>
+              <th>Price</th>
+            </tr>
+          </thead>
+          <tbody id="bill_items">
+            <div class="billing-body">
+              <!-- This will be populated dynamically with JavaScript -->
+            </div>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
   <div class="items items-home">
@@ -113,16 +117,14 @@ content %}
       submitBill();
     }
   });
-  
-  quantityField.addEventListener('keypress', function (e) {
-    if (e.key === "Enter")
-      addItemToBill();
-  })
+
+  quantityField.addEventListener("keypress", function (e) {
+    if (e.key === "Enter") addItemToBill();
+  });
 
   document.addEventListener("contextmenu", function (e) {
     e.preventDefault();
   });
-
 
   $(function () {
     $("i#del-item").on("click", function (e) {
@@ -151,7 +153,7 @@ content %}
       fetch(`/get-item-name?code=${code}`)
         .then((response) => response.json())
         .then((data) => {
-          if(data.name) {
+          if (data.name) {
             nameField.value = data.name;
             quantityField.value = 1;
             quantityField.focus();
@@ -189,8 +191,8 @@ content %}
   function addItemToBill() {
     if (codeField.value.trim() !== "" && parseInt(quantityField.value) >= 1) {
       addOrUpdateItemToBill(
-        codeField.value, 
-        nameField.value, 
+        codeField.value,
+        nameField.value,
         parseInt(quantityField.value)
       );
     } else {
@@ -199,7 +201,7 @@ content %}
           if (code) {
             addOrUpdateItemToBill(
               code,
-              nameField.value, 
+              nameField.value,
               parseInt(quantityField.value)
             );
           } else {
@@ -352,7 +354,6 @@ content %}
       items: items,
       total: total,
     };
-
 
     fetch("/submit-bill", {
       method: "POST",
