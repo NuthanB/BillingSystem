@@ -109,13 +109,18 @@ content %}
   const nameField = document.getElementById("item_name");
   const quantityField = document.getElementById("quantity");
 
-  codeField.addEventListener("keydown", function (e) {
+  codeField.addEventListener("keydown", async function (e) {
     if (e.key === "Enter") {
-      fillItemName();
-      quantityField.focus();
+      await fillItemName();
+      if(codeField.value !== "")
+        quantityField.focus();
     } else if (e.key === "F8") {
       submitBill();
     }
+  });
+
+  quantityField.addEventListener("focus", function () {
+    quantityField.select();
   });
 
   quantityField.addEventListener("keypress", function (e) {
@@ -137,20 +142,21 @@ content %}
     });
   });
 
-  function fetchItemCode(itemName) {
+  function fillItemCode(itemName) {
     return fetch(`/get-item-code?name=${itemName}`)
       .then((response) => response.json())
-      .then((data) => data.code)
+      .then((data) => {
+        codeField.value = data.code;
+      })
       .catch((error) => {
         console.error("Error fetching item code:", error);
-        return null;
       });
   }
 
-  function fillItemName() {
+  async function fillItemName() {
     code = codeField.value.toLowerCase();
     if (code != "") {
-      fetch(`/get-item-name?code=${code}`)
+      await fetch(`/get-item-name?code=${code}`)
         .then((response) => response.json())
         .then((data) => {
           if (data.name) {
@@ -178,9 +184,11 @@ content %}
           suggestionElement.classList.add("suggestion");
           suggestionElement.textContent = suggestion;
           suggestionElement.onclick = () => {
+            fillItemCode(suggestion);
             nameField.value = suggestion;
             quantityField.value = 1;
             document.getElementById("suggestions").innerHTML = "";
+            quantityField.focus();
           };
           document.getElementById("suggestions").appendChild(suggestionElement);
         });
@@ -189,14 +197,19 @@ content %}
   }
 
   function addItemToBill() {
-    if (codeField.value.trim() !== "" && parseInt(quantityField.value) >= 1) {
+    console.log("Adding item to bill. Name field value:", nameField.value);
+    if (
+      codeField.value.trim() !== "" &&
+      nameField.value.trim() !== "" &&
+      parseInt(quantityField.value) >= 1
+    ) {
       addOrUpdateItemToBill(
         codeField.value,
         nameField.value,
         parseInt(quantityField.value)
       );
-    } else {
-      fetchItemCode(nameField.value)
+    } else if (nameField.value.trim() !== "") {
+      fillItemCode(nameField.value)
         .then((code) => {
           if (code) {
             addOrUpdateItemToBill(
@@ -209,6 +222,8 @@ content %}
           }
         })
         .catch((error) => console.error("Error fetching item code:", error));
+    } else {
+      console.error("Name field is empty. Cannot fetch item code.");
     }
   }
 
@@ -298,7 +313,7 @@ content %}
     var itemPrice = 0;
 
     var itemName = row.cells[0].textContent;
-    fetchItemCode(itemName)
+    fillItemCode(itemName)
       .then((code) => {
         if (code) {
           fetch(`/get-item-price?item_code=${code}`)

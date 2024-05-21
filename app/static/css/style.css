@@ -418,6 +418,7 @@ h3 {
 .bills-item-table tbody tr td {
   text-align: center;
   width: 100%;
+  border: 1px solid black;
 }
 
 .item-delete {
