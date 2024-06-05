@@ -5,7 +5,7 @@ block content %}
     <h2>DSU FOOD COURT</h2>
     <h3>DAYANANDA SAGAR UNIVERSITY</h3>
     <p>Kudlu Gate, Hosur Main Road, Bangalore - 560068</p>
-    <hr />
+    <h3 class="report-heading">BILLWISE REPORT</h3>
     <table>
       <thead>
         <tr class="bill-report-header">
@@ -25,14 +25,19 @@ block content %}
       </tbody>
     </table>
     <hr/>
-    <p class="grand-total"><strong><big>Grand Total:</big></strong> {{ total }}</p>
+    <div class="grand-total">
+      <p>Grand Total: </p>
+      <p>{{ total|float }}</p>
+    </div>
   </div>
 </section>
 <script>
+  /*
   function redirectAfterPrint() {
     window.location.href = "/";
   }
   window.addEventListener("afterprint", redirectAfterPrint);
   window.print();
+  */
 </script>
 {% endblock %}

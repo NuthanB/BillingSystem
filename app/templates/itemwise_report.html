@@ -39,7 +39,10 @@ block content %}
       </tbody>
     </table>
     <hr />
-    <p class="grand-total"><strong><big>Grand Total:</big></strong> {{ grand_total }}</p>
+    <div class="grand-total">
+      <p>Grand Total:</p>
+      <p>{{ grand_total|float }}</p>
+    </div>
   </div>
 </section>
 <script>
