@@ -15,6 +15,32 @@
   --buttons-col: rgb(76, 55, 45);
 }
 
+@media print {
+  @page {
+    padding: 0;
+
+    /* remove headers and footers */
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    margin-left: 0 !important;
+
+    /* adding right margin to adjust printing */
+    margin-right: 30pt !important;
+
+    size: A5;
+    background-color: #fff;
+  }
+}
+
+html {
+  /* fallback to remove headers and footers if @page doesn't work */
+  margin: 0 !important;
+}
+
+hr {
+  margin: 0 auto;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -319,6 +345,7 @@ h3 {
   border: none;
 }
 
+
 .current-bill .table thead tr,
 .bills-item-table thead tr,
 .container .user-activity-logs table thead tr {
@@ -361,8 +388,20 @@ h3 {
   text-transform: uppercase;
 }
 
+.current-bill .table tbody tr td {
+  border: 1px solid var(--buttons-col);
+  background-color: var(--accent-col);
+}
+
+
 .table {
   margin-bottom: 2vh;
+}
+
+.bill-table {
+  max-height: 50vh;
+  height: 100%;
+  overflow-y: auto;
 }
 
 .current-bill #total {
@@ -469,7 +508,6 @@ h3 {
   margin-inline: auto;
   width: 100%;
 }
-
 
 .item-table thead tr,
 .bills-item-table thead tr {
@@ -609,6 +647,7 @@ h3 {
 .item-wise-bills .item-wise-header .grand-total {
   text-align: center;
   font-family: var(--body-font);
+  font-size: 1.3rem;
 }
 
 .item-wise-bills .item-wise-bills-table thead tr,
@@ -709,45 +748,61 @@ h3 {
 }
 
 /* ------------ PRINT BILL ---------------- */
+.report-heading {
+  border-top: 2px solid black;
+  border-bottom: 2px solid black;
+}
+
 .print-bill,
 .itemwise-report {
   text-align: center;
   font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
-  border: 1px solid black;
+  width: 80%;
 }
 
 .print-bill .bill-slip .billing-details {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-gap: 0;
+  display: flex;
+  width: 80%;
+  margin-inline: auto;
+  justify-content: space-evenly;
+  align-items: center;
 }
+
 .print-bill h2,
 .print-bill h3,
 .print-bill p {
   margin: 0.5vw;
-}
-
-.print-bill h2 {
   font-size: 1.5rem;
 }
 
-.print-bill h3 {
-  font-size: 1.3rem;
+.print-bill p {
+  font-size: 1rem;
 }
 
 .print-bill table {
   margin-inline: auto;
 }
 
-.print-bill table .bill-item-details-header {
+.print-bill table .bill-item-details-header{
   display: grid;
   grid-template-columns: 2fr 1fr 1fr 1fr;
+  font-size: 1.5rem;
+}
+
+.print-bill table .bill-item-details-header th {
+  font-weight: normal;
 }
 
 .print-bill table .bill-item-details,
 .print-bill table .totalling {
   display: grid;
-  grid-template-columns: 3fr 2fr 2fr 2fr;
+  grid-template-columns: 3fr 1fr 2fr 1fr;
+  font-size: 1.2rem;
+}
+
+.totalling {
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
 }
 
 .bill-report .btn-print,
@@ -758,11 +813,75 @@ h3 {
   margin: 0;
 }
 
+.bill-report table {
+  margin-bottom: 5px;
+}
+
+.bill-report table tr:last-child td {
+  border-bottom: 1px solid black;
+  padding-bottom: 5px;
+}
+
+.bill-report-header th {
+  font-size: 1.3rem;
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
+}
+
+.bill-report-row {
+  font-size: 1.2rem;
+}
+
+.bill-report-header th:first-child,
+.bill-report-row td:first-child {
+  text-align: left;
+  border-left: 1px solid black;
+  border-right: 1px solid black;
+  padding: 0 5px;
+}
+
+.bill-report-header th:last-child,
+.bill-report-row td:last-child {
+  text-align: right;
+  border-left: 1px solid black;
+  border-right: 1px solid black;
+  padding: 0 5px;
+}
+
+.print-bill .bill-report .grand-total,
+.itemwise-report .itemwise-report-body .grand-total {
+  width: 50%;
+  margin-inline: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.print-bill .bill-report .grand-total p,
+.itemwise-report .itemwise-report-body .grand-total p {
+  font-size: 1.5rem;
+  font-weight: 900;
+}
+
+.item-wise-bills .item-wise-header .grand-total {
+  font-size: 1.2rem;
+}
+
 .itemwise-report-header {
   width: 50%;
   border: 1px solid black;
   margin-inline: auto;
   box-shadow: 5px 5px 0 black;
+  margin-bottom: 10px;
+}
+
+.itemwise-report h3 {
+  font-size: 1.5rem;
+  margin-bottom: 5px;
+}
+
+.itemwise-report-header {
+  font-size: 0.8rem;
 }
 
 .itemwise-report-body {
@@ -770,6 +889,7 @@ h3 {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  font-size: 1.2rem;
 }
 
 .itemwise-report-body table thead tr,
@@ -778,7 +898,8 @@ h3 {
   grid-template-columns: 3fr 1fr 2fr;
 }
 
-.itemwise-report-body table thead tr th {
+.itemwise-report-body .subtotal-row {
+  border-top: 1px solid black;
   border-bottom: 1px solid black;
 }
 
@@ -790,6 +911,20 @@ h3 {
 .subtotal-row {
   font-weight: 700;
   margin-bottom: 10px;
+}
+
+.thank-you {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+.thank-you p {
+  margin: 0;
+}
+
+.thank-you p:first-child {
+  font-weight: 800;
 }
 
 /* ----------------- STOCK UPDATION ------------------- */

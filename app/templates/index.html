@@ -53,18 +53,22 @@ content %}
           />
         </button>
       </div>
-      <table class="table">
-        <thead>
-          <tr>
-            <th>Item</th>
-            <th>Quantity</th>
-            <th>Price</th>
-          </tr>
-        </thead>
-        <tbody id="bill_items">
-          <!-- This will be populated dynamically with JavaScript -->
-        </tbody>
-      </table>
+      <div class="bill-table">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th>Quantity</th>
+              <th>Price</th>
+            </tr>
+          </thead>
+          <tbody id="bill-items">
+            <div class="billing-body">
+              <!-- This will be populated dynamically with JavaScript -->
+            </div>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
   <div class="items items-home">
@@ -105,61 +109,61 @@ content %}
   const nameField = document.getElementById("item_name");
   const quantityField = document.getElementById("quantity");
 
-  codeField.addEventListener("keydown", function (e) {
+  codeField.addEventListener("keydown", async function (e) {
     if (e.key === "Enter") {
-      fillItemName();
-      quantityField.focus();
+      await fillItemName();
+      if (codeField.value !== "") quantityField.focus();
     } else if (e.key === "F8") {
       submitBill();
     }
   });
-  
-  quantityField.addEventListener('keypress', function (e) {
-    if (e.key === "Enter")
-      addItemToBill();
-  })
+
+  quantityField.addEventListener("focus", function () {
+    quantityField.select();
+  });
+
+  quantityField.addEventListener("keypress", function (e) {
+    if (e.key === "Enter") addItemToBill();
+  });
 
   document.addEventListener("contextmenu", function (e) {
     e.preventDefault();
   });
 
 
-  $(function () {
-    $("i#del-item").on("click", function (e) {
-      e.preventDefault();
-      var itemId = $(this).data("item-id");
-      $.getJSON("/delete-item", { item_id: itemId }, function (data) {
-        window.location.reload();
-      });
-      return false;
-    });
-  });
-
-  function fetchItemCode(itemName) {
+  function getItemCode(itemName) {
     return fetch(`/get-item-code?name=${itemName}`)
       .then((response) => response.json())
-      .then((data) => data.code)
+      .then((data) => {
+        return data.code;
+      })
       .catch((error) => {
         console.error("Error fetching item code:", error);
-        return null;
       });
   }
 
-  function fillItemName() {
+  async function fillItemName() {
     code = codeField.value.toLowerCase();
     if (code != "") {
-      fetch(`/get-item-name?code=${code}`)
+      await fetch(`/get-item-name?code=${code}`)
         .then((response) => response.json())
         .then((data) => {
-          nameField.value = data.name;
-          quantityField.value = 1;
-          quantityField.focus();
+          if (data.name) {
+            nameField.value = data.name;
+            quantityField.value = 1;
+            quantityField.focus();
+          } else {
+            codeField.value = "";
+            nameField.value = "";
+            quantityField.value = "";
+            codeField.focus();
+          }
         })
         .catch((error) => console.error("Error fetching item:", error));
     }
   }
 
-  function getSuggestions(keyword) {
+  async function getSuggestions(keyword) {
     document.getElementById("suggestions").innerHTML = "";
     fetch(`/get-suggestions?keyword=${keyword}`)
       .then((response) => response.json())
@@ -168,10 +172,17 @@ content %}
           const suggestionElement = document.createElement("div");
           suggestionElement.classList.add("suggestion");
           suggestionElement.textContent = suggestion;
-          suggestionElement.onclick = () => {
-            nameField.value = suggestion;
-            quantityField.value = 1;
-            document.getElementById("suggestions").innerHTML = "";
+          suggestionElement.onclick = async () => {
+            try {
+              const code = await getItemCode(suggestion);
+              codeField.value = code;
+              nameField.value = suggestion;
+              quantityField.value = 1;
+              document.getElementById("suggestions").innerHTML = "";
+              quantityField.focus();
+            } catch (error) {
+                console.error("Error fetching item code:", error);
+            }
           };
           document.getElementById("suggestions").appendChild(suggestionElement);
         });
@@ -179,27 +190,33 @@ content %}
       .catch((error) => console.error("Error fetching suggestions:", error));
   }
 
-  function addItemToBill() {
-    if (codeField.value.trim() !== "" && parseInt(quantityField.value) >= 1) {
+  async function addItemToBill() {
+    console.log("Adding item to bill. Name field value:", nameField.value);
+    if (
+      codeField.value.trim() !== "" &&
+      nameField.value.trim() !== "" &&
+      parseInt(quantityField.value) >= 1
+    ) {
       addOrUpdateItemToBill(
-        codeField.value, 
-        nameField.value, 
+        codeField.value,
+        nameField.value,
         parseInt(quantityField.value)
       );
+    } else if (nameField.value.trim() !== "") {
+      try {
+        const code = await getItemCode(nameField.value);
+        if (code) {
+          addOrUpdateItemToBill(
+            code,
+            nameField.value,
+            parseInt(quantityField.value)
+          );
+        } else console.error("Item code not found for the provided item name.");
+      } catch (error) {
+        console.error("Error fetching item code:", error);
+      }
     } else {
-      fetchItemCode(nameField.value)
-        .then((code) => {
-          if (code) {
-            addOrUpdateItemToBill(
-              code,
-              nameField.value, 
-              parseInt(quantityField.value)
-            );
-          } else {
-            console.error("Item code not found for the provided item name.");
-          }
-        })
-        .catch((error) => console.error("Error fetching item code:", error));
+      console.error("Name field is empty. Cannot fetch item code.");
     }
   }
 
@@ -222,7 +239,7 @@ content %}
 
             updateTotalAmount(itemQuantity * itemPrice);
           } else {
-            var table = document.getElementById("bill_items");
+            var table = document.getElementById("bill-items");
             var newRow = table.insertRow();
 
             var cellName = newRow.insertCell(0);
@@ -257,7 +274,7 @@ content %}
   }
 
   function findItemRowName(itemName) {
-    var table = document.getElementById("bill_items");
+    var table = document.getElementById("bill-items");
     for (var i = 0; i < table.rows.length; i++) {
       if (table.rows[i].cells[0].textContent === itemName) {
         return table.rows[i];
@@ -267,7 +284,7 @@ content %}
   }
 
   function findItemRow(itemCode) {
-    var table = document.getElementById("bill_items");
+    var table = document.getElementById("bill-items");
     for (var i = 0; i < table.rows.length; i++) {
       fetch(
         `/check-match?item1=${table.rows[i].cells[0].textContent}&item2=${itemCode}`
@@ -281,39 +298,42 @@ content %}
     return null;
   }
 
-  function deleteItemFromBill(row) {
-    var table = document.getElementById("bill_items");
-    var quantity = parseInt(row.cells[1].textContent);
-    var rowIndex = row.rowIndex;
-    var price = parseFloat(row.cells[2].innerHTML);
-    var itemPrice = 0;
+  async function deleteItemFromBill(row) {
+    try {
+      var table = document.getElementById("bill-items");
+      var quantity = parseInt(row.cells[1].textContent);
+      var rowIndex = row.rowIndex;
+      var price = parseFloat(row.cells[2].innerHTML);
+      var itemPrice = 0;
 
-    var itemName = row.cells[0].textContent;
-    fetchItemCode(itemName)
-      .then((code) => {
-        if (code) {
-          fetch(`/get-item-price?item_code=${code}`)
-            .then((response) => response.json())
-            .then((data) => {
-              itemPrice = data.price;
+      var itemName = row.cells[0].textContent;
+      const code = await getItemCode(itemName);
 
-              if (quantity > 1) {
-                row.cells[1].textContent -= 1;
-                row.cells[2].textContent -= itemPrice;
-              } else {
-                if (rowIndex >= 0 && rowIndex < table.rows.length)
-                  table.deleteRow(rowIndex);
-                else if (rowIndex == table.rows.length) table.deleteRow(-1);
-                else console.error("Row index is out of range.");
-              }
+      if (code) {
+        const response = await fetch(`/get-item-price?item_code=${code}`);
+        const data = await response.json();
+        itemPrice = data.price;
 
-              updateTotalAmount(-itemPrice);
-            });
+        if (quantity > 1) {
+          row.cells[1].textContent = quantity - 1;
+          row.cells[2].textContent = (price - itemPrice).toFixed(2);
         } else {
-          console.error("Item code not found for the provided item name.");
+          if (rowIndex >= 0 && rowIndex < table.rows.length) {
+            table.deleteRow(rowIndex);
+          } else if (rowIndex === table.rows.length) {
+            table.deleteRow(-1);
+          } else {
+            console.error("Row index is out of range.");
+          }
         }
-      })
-      .catch((error) => console.error("Error fetching item code:", error));
+
+        updateTotalAmount(-itemPrice);
+      } else {
+        console.error("Item code not found for the provided item name.");
+      }
+    } catch (error) {
+      console.error("Error fetching item code or price:", error);
+    }
   }
 
   function updateTotalAmount(amount) {
@@ -326,7 +346,7 @@ content %}
   }
 
   function submitBill() {
-    var tableRows = document.querySelectorAll("#bill_items tr");
+    var tableRows = document.querySelectorAll("#bill-items tr");
     var items = [];
     var total = 0;
 
@@ -345,7 +365,6 @@ content %}
       items: items,
       total: total,
     };
-
 
     fetch("/submit-bill", {
       method: "POST",
