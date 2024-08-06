@@ -1,12 +1,80 @@
-from sqlalchemy.sql import func
-from flask import render_template, request, redirect, session, url_for, jsonify
+from flaskwebgui import FlaskUI
+from flask_sqlalchemy import SQLAlchemy
+from flask_bcrypt import Bcrypt
+from datetime import datetime
+from pytz import timezone
 from sqlalchemy import func
+from sqlalchemy.sql import func
+from flask import Flask, render_template, request, redirect, session, url_for, jsonify
 from collections import defaultdict
-from datetime import datetime, date
 
-from app import app, db
-from app.models import User, Item, Bill, BillItem, UserActivity
-from app import bcrypt
+import webview
+
+def is_user_logged_in():
+    return 'user_id' in session
+    
+app = Flask(__name__, template_folder='templates', static_folder='static')
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+db = SQLAlchemy(app)
+app.secret_key = '12345'
+bcrypt = Bcrypt(app)
+
+webview.create_window('DSU Canteen', app)
+
+
+with app.app_context():
+    db.create_all()
+
+    
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(100), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    password = db.Column(db.String(120), nullable=False)
+    items = db.relationship('Item', backref='user', lazy=True)
+    activity = db.relationship('UserActivity', backref='user',
+                               lazy=True, cascade='all, delete-orphan')
+
+
+class Item(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    group = db.Column(db.String(100), nullable=False)
+    quantity = db.Column(db.Integer, nullable=False)
+    price = db.Column(db.Float, nullable=False)
+    code = db.Column(db.String(100), unique=True, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    items = db.relationship('BillItem', backref='item',
+                            lazy=True, cascade='all, delete-orphan')
+
+
+class Bill(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    bill_date_time = db.Column(
+        db.DateTime, default=lambda: datetime.now(timezone("Asia/Kolkata")))
+    total = db.Column(db.Float, nullable=False)
+    items = db.relationship('BillItem', backref='bill',
+                            lazy=True, cascade='all, delete-orphan')
+
+
+class BillItem(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    bill_id = db.Column(db.Integer, db.ForeignKey(
+        'bill.id', ondelete='CASCADE'), nullable=False)
+    item_id = db.Column(db.Integer, db.ForeignKey(
+        'item.id', ondelete='CASCADE'), nullable=False)
+    item_name = db.Column(db.String(100), nullable=False)
+    quantity = db.Column(db.Integer, nullable=False)
+    price = db.Column(db.Float, nullable=False)
+
+
+class UserActivity(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    timestamp = db.Column(
+        db.DateTime, default=lambda: datetime.now(timezone("Asia/Kolkata")))
+    activity_performed = db.Column(db.String(200), nullable=False)
 
 
 @app.route('/')
@@ -555,3 +623,8 @@ def user_activity():
 @app.route("/contact")
 def contact():
     return render_template("contact.html")
+
+
+if __name__ == "__main__":
+    webview.start()
+    # FlaskUI(app=app, server="flask", fullscreen=True).run()

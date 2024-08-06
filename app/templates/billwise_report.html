@@ -1,11 +1,14 @@
 {% extends 'fresh.html' %} {% block title %}Bill-wise report{% endblock %} {%
 block content %}
 <section class="print-bill">
-  <div class="bill-report">
+  <div class=" print-bill-report bill-report">
     <h2>DSU FOOD COURT</h2>
     <h3>DAYANANDA SAGAR UNIVERSITY</h3>
     <p>Kudlu Gate, Hosur Main Road, Bangalore - 560068</p>
     <h3 class="report-heading">BILLWISE REPORT</h3>
+    {% if from_date != '0' and to_date != '0' %}
+    <p>From {{ from_date }} TO {{ to_date }}</p>
+    {% endif %}
     <table>
       <thead>
         <tr class="bill-report-header">
@@ -24,7 +27,6 @@ block content %}
         {% endfor %}
       </tbody>
     </table>
-    <hr/>
     <div class="grand-total">
       <p>Grand Total: </p>
       <p>{{ total|float }}</p>

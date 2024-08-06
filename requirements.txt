@@ -14,3 +14,4 @@ Werkzeug==3.0.1
 flaskwebgui==1.1.0
 Flask-Bcrypt==1.0.1
 pytz==2024.1
+pywebview==5.1

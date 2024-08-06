@@ -817,7 +817,7 @@ h3 {
   margin-bottom: 5px;
 }
 
-.bill-report table tr:last-child td {
+.print-bill-report table tr:last-child td {
   border-bottom: 1px solid black;
   padding-bottom: 5px;
 }
@@ -850,7 +850,7 @@ h3 {
 
 .print-bill .bill-report .grand-total,
 .itemwise-report .itemwise-report-body .grand-total {
-  width: 50%;
+  width: 80%;
   margin-inline: auto;
   display: flex;
   justify-content: center;
@@ -859,7 +859,7 @@ h3 {
 
 .print-bill .bill-report .grand-total p,
 .itemwise-report .itemwise-report-body .grand-total p {
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   font-weight: 900;
 }
 
